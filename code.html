@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TrekPeru Explorer Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#064c39",
+              "primary-hover": "#085e47",
+              "accent": "#f97316", 
+              "accent-hover": "#ea580c",
+              "background-light": "#f6f8f7",
+              "background-dark": "#0f1514", // Deep dark earthy tone
+              "surface-dark": "#1c2724",
+            },
+            fontFamily: {
+              "display": ["Inter", "sans-serif"],
+              "body": ["Inter", "sans-serif"],
+            },
+            borderRadius: {"DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "2xl": "1.5rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(17, 24, 22, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Custom scrollbar for sidebar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111816; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #283934; 
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b544d; 
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display min-h-screen flex flex-col overflow-x-hidden">
+<!-- TopNavBar: Glassmorphism -->
+<header class="fixed top-0 w-full z-50 glass-panel">
+<div class="px-6 md:px-10 py-3 flex items-center justify-between max-w-[1440px] mx-auto">
+<div class="flex items-center gap-4 text-white">
+<div class="size-8 text-primary bg-white rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">hiking</span>
+</div>
+<h2 class="text-white text-lg font-bold tracking-tight">TrekPeru</h2>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-white text-sm font-medium hover:text-accent transition-colors" href="#">Explore</a>
+<a class="text-white/70 text-sm font-medium hover:text-white transition-colors" href="#">Dashboard</a>
+<a class="text-white/70 text-sm font-medium hover:text-white transition-colors" href="#">Language</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="hidden sm:flex h-10 px-5 items-center justify-center rounded-xl bg-accent hover:bg-accent-hover text-white text-sm font-bold shadow-lg shadow-accent/20 transition-all">
+<span>Create Route</span>
+</button>
+<div class="size-10 rounded-full border-2 border-primary overflow-hidden cursor-pointer" data-alt="User profile avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCzJIVeBBCW3_cV9pemCPpdh69tvHAjxmo8qqIWcKGBvg3TpJTD6lJrNPd3anTnRBrpKIEtTiFfGwHeqAbd0SAmC28pWJcE243h3drs0jV2K_c4OZz7gBoPt8PfFRRedtBiC1vAJaOSyuuOuaDS4XDMrxkkQFlyblwjZCCdtROQxZBjBMThg_pDHWWuZws-69_oUmHCjnvI8eXlJRnmVKE5410vvkgqOjhRFBbm3bqrnMjZJpBlsUYiecl5b9ZNKd6dD3oPgV9ijfY"); background-size: cover;'></div>
+<!-- Mobile Menu Icon -->
+<button class="md:hidden text-white">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Layout -->
+<div class="flex flex-col pt-16 min-h-screen">
+<!-- Hero Section -->
+<div class="relative w-full h-[500px] flex items-center justify-center bg-cover bg-center overflow-hidden" data-alt="Misty Andean mountain landscape with green peaks" style='background-image: linear-gradient(rgba(6, 76, 57, 0.4) 0%, rgba(15, 21, 20, 1) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuC_YqRWpOE1qYAgQ-NK2OU7RJde5irYb0nXd5-iaWGo_oP-lq4ABkt45nkFjKDVJyM3IOLhFd10IOOhEjhS0fQF_QBpQ7dfyvoPjGtVymKhZOSV5ah4pT1886oP76xEzYhVHb1R4wao10z7TTBVz17eiZemVB6qo1qlIe3KNoImr40rXmbRw10aPyN6QuWicwfl6OdOAvxSSM26tZuFvQGPoAjfCf7V3CDxjpFCN5l9T9Z4YeUt8_8tiPP-CIFwX2SQ-R91LkR7R4o");'>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-black/30"></div>
+<div class="relative z-10 flex flex-col items-center max-w-4xl px-4 text-center space-y-8 mt-10">
+<div class="space-y-4">
+<h1 class="text-4xl md:text-6xl font-black text-white tracking-tight drop-shadow-md">
+                        Discover the Andes
+                    </h1>
+<p class="text-lg md:text-xl text-white/90 font-medium max-w-2xl mx-auto drop-shadow-sm">
+                        Find and join the best trekking groups in Peru. From the classic Inca Trail to hidden gems.
+                    </p>
+</div>
+<!-- Search Bar -->
+<div class="w-full max-w-xl">
+<div class="relative flex items-center w-full h-14 md:h-16 bg-surface-dark/90 backdrop-blur-sm border border-white/10 rounded-2xl shadow-2xl focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all">
+<div class="pl-5 text-gray-400">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="w-full h-full bg-transparent border-none text-white placeholder-gray-400 focus:ring-0 px-4 text-base" placeholder="Search Inca Trail, Salkantay, Ausangate..." type="text"/>
+<div class="pr-2">
+<button class="h-10 md:h-12 px-6 rounded-xl bg-primary hover:bg-primary-hover text-white font-bold transition-colors">
+                                Search
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Dashboard Content Container -->
+<div class="flex flex-col lg:flex-row flex-1 max-w-[1440px] mx-auto w-full p-4 md:p-8 gap-8">
+<!-- Sidebar: Filters -->
+<aside class="w-full lg:w-72 shrink-0 space-y-8">
+<!-- Map Widget -->
+<div class="relative w-full aspect-video lg:aspect-square rounded-2xl overflow-hidden shadow-lg border border-white/5 group cursor-pointer bg-surface-dark">
+<img alt="Stylized map showing route waypoints and terrain" class="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" data-location="Cusco Region Map" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlNTQgfmc3Rj0zA7An36Xjy_9xOJvIxfT0tCp0K-9MWVN8FK7rVlzgzZ-mICTAUT2wW4BGBNeUSw3gGpUz7-1TWDhOFp4SR7xYtEdZrKzCYAqdzNSGrHQh2OiJ7kFcJEklnNRA4MaiMdNmHzN7K2Rs7GyZlzGnk3gqCbInDh14GxPfp1OTODETuIN2mtE3jS6CfSNfn2P0Hg2Dy00N2Yz8Z72x8kwBZi0ypWQN76i80eyqXCEWHwbTQmUvMHCh7M-SkMoe3RFPvKA"/>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<div class="size-12 rounded-full bg-accent text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">map</span>
+</div>
+<span class="mt-3 text-white font-bold text-sm tracking-wide uppercase">Open Interactive Map</span>
+</div>
+</div>
+<div class="bg-surface-dark rounded-2xl p-6 border border-white/5 shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-white text-xl font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">tune</span> Filters
+                        </h3>
+<button class="text-xs text-gray-400 hover:text-white uppercase font-semibold">Reset</button>
+</div>
+<div class="space-y-8">
+<!-- Difficulty -->
+<div class="space-y-3">
+<p class="text-white text-sm font-semibold uppercase tracking-wider opacity-80">Difficulty</p>
+<div class="flex flex-wrap gap-2">
+<label class="cursor-pointer">
+<input checked="" class="peer sr-only" type="checkbox"/>
+<div class="px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 text-gray-300 text-sm font-medium peer-checked:bg-primary/20 peer-checked:border-primary peer-checked:text-primary transition-all">
+                                        Easy
+                                    </div>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" type="checkbox"/>
+<div class="px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 text-gray-300 text-sm font-medium peer-checked:bg-primary/20 peer-checked:border-primary peer-checked:text-primary transition-all">
+                                        Moderate
+                                    </div>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" type="checkbox"/>
+<div class="px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 text-gray-300 text-sm font-medium peer-checked:bg-primary/20 peer-checked:border-primary peer-checked:text-primary transition-all">
+                                        Hard
+                                    </div>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" type="checkbox"/>
+<div class="px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 text-gray-300 text-sm font-medium peer-checked:bg-primary/20 peer-checked:border-primary peer-checked:text-primary transition-all">
+                                        Extreme
+                                    </div>
+</label>
+</div>
+</div>
+<!-- Altitude Slider -->
+<div class="space-y-4">
+<div class="flex justify-between items-center text-sm">
+<p class="text-white font-semibold uppercase tracking-wider opacity-80">Max Altitude</p>
+<span class="text-primary font-bold">4,200m</span>
+</div>
+<div class="relative h-2 bg-white/10 rounded-full">
+<div class="absolute left-0 top-0 h-full bg-primary rounded-full w-2/3"></div>
+<div class="absolute top-1/2 left-2/3 -translate-y-1/2 -translate-x-1/2 size-4 bg-white rounded-full shadow cursor-pointer border-2 border-primary"></div>
+</div>
+<div class="flex justify-between text-xs text-gray-500 font-medium">
+<span>1,000m</span>
+<span>6,000m</span>
+</div>
+</div>
+<!-- Duration Slider -->
+<div class="space-y-4">
+<div class="flex justify-between items-center text-sm">
+<p class="text-white font-semibold uppercase tracking-wider opacity-80">Duration</p>
+<span class="text-primary font-bold">4-7 Days</span>
+</div>
+<div class="relative h-2 bg-white/10 rounded-full">
+<div class="absolute left-[20%] right-[30%] top-0 h-full bg-primary rounded-full"></div>
+<div class="absolute top-1/2 left-[20%] -translate-y-1/2 -translate-x-1/2 size-4 bg-white rounded-full shadow cursor-pointer border-2 border-primary"></div>
+<div class="absolute top-1/2 right-[30%] -translate-y-1/2 translate-x-1/2 size-4 bg-white rounded-full shadow cursor-pointer border-2 border-primary"></div>
+</div>
+<div class="flex justify-between text-xs text-gray-500 font-medium">
+<span>1 Day</span>
+<span>15+ Days</span>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content: Route Grid -->
+<main class="flex-1">
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-2xl font-bold text-white">Recommended Routes</h2>
+<div class="flex items-center gap-2">
+<span class="text-sm text-gray-400">Sort by:</span>
+<select class="bg-surface-dark border-none text-white text-sm font-medium rounded-lg py-1 pl-3 pr-8 focus:ring-1 focus:ring-primary cursor-pointer">
+<option>Popularity</option>
+<option>Newest</option>
+<option>Difficulty</option>
+</select>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+<!-- Card 1 -->
+<div class="group flex flex-col bg-surface-dark border border-white/5 rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/30 transition-all duration-300">
+<div class="relative h-48 overflow-hidden">
+<img alt="Snow capped mountain peak at sunrise" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsITknXQffvD2Iqj8uBLEjFZYMDi7GjD7FdXu9js7nPabDY5IX2rW-Zg-PrJy1mVddBqO44CMAxk19b0M8Lvsin2TU0nLubCG2FgcY9fDTlhtQtnBQBx8TzFltAZdh9NOQW7KQ0nl8XzLsVbuj4p1NZXJn0T-Jc_LM2plG26GWSasQuzNM7A_4Elr2FlD2QUp78T9c8kkfcPF0NTWxJLoDhAZzA4aEjK3gkSn-9rBNEiT6eko5xVrdgT6nuoyMj4MoRrmSZ-Dab88"/>
+<div class="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-lg flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-400 text-[16px] fill-1">star</span>
+<span class="text-white text-xs font-bold">4.9</span>
+</div>
+<button class="absolute top-3 right-3 p-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</button>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<div class="flex items-center gap-2 mb-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-red-500/20 text-red-400">Hard</span>
+<span class="text-gray-500 text-xs">•</span>
+<span class="text-gray-400 text-xs font-medium">4 Days</span>
+</div>
+<h3 class="text-white text-lg font-bold leading-tight mb-2 group-hover:text-primary transition-colors">Classic Inca Trail</h3>
+<p class="text-gray-400 text-sm line-clamp-2 mb-4">The most famous trek in South America, ending at the iconic Machu Picchu.</p>
+<div class="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-gray-300 text-xs">
+<span class="material-symbols-outlined text-[16px]">hiking</span>
+<span>42km</span>
+</div>
+<button class="px-4 py-2 bg-primary/20 hover:bg-primary hover:text-white text-primary-hover text-sm font-bold rounded-lg transition-all">
+                                    Join Trek
+                                </button>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="group flex flex-col bg-surface-dark border border-white/5 rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/30 transition-all duration-300">
+<div class="relative h-48 overflow-hidden">
+<img alt="Turquoise alpine lake surrounded by mountains" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqHf5Q8krqpvSSTrL-Ca3wcPB-8-lamRL5YGkU7NQ8Q4NzIxmuf5GnJqMQWJe4qf3xRXrTAZcD6I3u6-xMvbxctm4hfLGbJwqPGoQIIFHEGfni_xODaRtuPe4y5kWQ3Zg5OQtdVg_I-UiFgvGyaDDmaacgZ2RZsZqumH3R6grWTqcBSDbDLrrF5UkvGaXegoV3UTCVvEto1P1NnXzy0DYhEp6rgZeaRXn85E6POFJeFw8luu_t7c0dGLkQtSCSIOOsWHuLvOUD1Jw"/>
+<div class="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-lg flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-400 text-[16px] fill-1">star</span>
+<span class="text-white text-xs font-bold">4.7</span>
+</div>
+<button class="absolute top-3 right-3 p-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</button>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<div class="flex items-center gap-2 mb-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-yellow-500/20 text-yellow-400">Moderate</span>
+<span class="text-gray-500 text-xs">•</span>
+<span class="text-gray-400 text-xs font-medium">1 Day</span>
+</div>
+<h3 class="text-white text-lg font-bold leading-tight mb-2 group-hover:text-primary transition-colors">Laguna 69</h3>
+<p class="text-gray-400 text-sm line-clamp-2 mb-4">A stunning turquoise lake nestled under the massive Chacraraju peak in Huaraz.</p>
+<div class="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-gray-300 text-xs">
+<span class="material-symbols-outlined text-[16px]">hiking</span>
+<span>14km</span>
+</div>
+<button class="px-4 py-2 bg-primary/20 hover:bg-primary hover:text-white text-primary-hover text-sm font-bold rounded-lg transition-all">
+                                    Join Trek
+                                </button>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="group flex flex-col bg-surface-dark border border-white/5 rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/30 transition-all duration-300">
+<div class="relative h-48 overflow-hidden">
+<img alt="Llamas grazing on a high mountain plateau" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAks10DmoIZuB3fkrfsxuFqVvYM2tQNTp459HOHxfCpnOMSfREHQmHHzo9mFwapi__E4JF7HLTR2ezyby9fADpmwwsfVJkYYqZHK7WanfuyOUJtrWFhTmjqeY6YX816JAo0fO1n-AwF8cYDoufdi5wm_7f-HNuRur3wIbNsS97P9wfdnoK4LW75KrxxPgJkvvy4au66K_bM7Xr3jQbBrdtd2hJ022N1rKzsNT918s6Fbd-VGkYId8odx9RAbDQs2fcuJ8wLGCFf6oQ"/>
+<div class="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-lg flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-400 text-[16px] fill-1">star</span>
+<span class="text-white text-xs font-bold">5.0</span>
+</div>
+<button class="absolute top-3 right-3 p-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</button>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<div class="flex items-center gap-2 mb-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-purple-500/20 text-purple-400">Extreme</span>
+<span class="text-gray-500 text-xs">•</span>
+<span class="text-gray-400 text-xs font-medium">10 Days</span>
+</div>
+<h3 class="text-white text-lg font-bold leading-tight mb-2 group-hover:text-primary transition-colors">Huayhuash Circuit</h3>
+<p class="text-gray-400 text-sm line-clamp-2 mb-4">Often rated as one of the best alpine treks in the world. High altitude adventure.</p>
+<div class="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-gray-300 text-xs">
+<span class="material-symbols-outlined text-[16px]">hiking</span>
+<span>130km</span>
+</div>
+<button class="px-4 py-2 bg-primary/20 hover:bg-primary hover:text-white text-primary-hover text-sm font-bold rounded-lg transition-all">
+                                    Join Trek
+                                </button>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="group flex flex-col bg-surface-dark border border-white/5 rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/30 transition-all duration-300">
+<div class="relative h-48 overflow-hidden">
+<img alt="Rainbow mountain Vinicunca with colorful stripes" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCroBQNRmA8PYy1ZD6_zP2mmRsMpK9TxymtIqKB8eamJpcAm5oZLp7MYzvaYSFhY7HTif-nxoOSlAmp9RweFAuoVF89EPn3Wsu_C0JsFmLXIb4-ZmyCTxwG4yqlX4V8KzNK4dhYhW_PbyOnhMg-UZ2dZWNe9zwb56kJbIdEd931_r7eEqPhGjk3afr7B3BYWeIUDbq1VqYtjkocydW1jV2cBdRP8fVn2iwDiTC1TIo1JKQqSJF9f2gbb6FlRyKNnWWGkxtgfcjWk9c"/>
+<div class="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-lg flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-400 text-[16px] fill-1">star</span>
+<span class="text-white text-xs font-bold">4.5</span>
+</div>
+<button class="absolute top-3 right-3 p-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</button>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<div class="flex items-center gap-2 mb-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-yellow-500/20 text-yellow-400">Moderate</span>
+<span class="text-gray-500 text-xs">•</span>
+<span class="text-gray-400 text-xs font-medium">1 Day</span>
+</div>
+<h3 class="text-white text-lg font-bold leading-tight mb-2 group-hover:text-primary transition-colors">Rainbow Mountain</h3>
+<p class="text-gray-400 text-sm line-clamp-2 mb-4">Visit the famous Vinicunca, the mountain of seven colors near Cusco.</p>
+<div class="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-gray-300 text-xs">
+<span class="material-symbols-outlined text-[16px]">hiking</span>
+<span>10km</span>
+</div>
+<button class="px-4 py-2 bg-primary/20 hover:bg-primary hover:text-white text-primary-hover text-sm font-bold rounded-lg transition-all">
+                                    Join Trek
+                                </button>
+</div>
+</div>
+</div>
+<!-- Card 5 -->
+<div class="group flex flex-col bg-surface-dark border border-white/5 rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/30 transition-all duration-300">
+<div class="relative h-48 overflow-hidden">
+<img alt="Looking down into the Colca Canyon" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB--6DAJYO0PYpzYpfzI1u9B5ifgg4h1ZSYUJdZiNMShGkQlNhUM72lXPLowP0nZtEE7aqZB09cQTUkeWnmmRRn7aHTiGi4DZjF3pbGDWW4kjVcqDribBGwaiRzK5S7HfQcJAdwTj-zXdsWQovDiUJjLR4R99uE5boXjHzR6-wSoJuaWQLIchlWsGfTxSgGg0Wvl6XUPOtD6Fy1mfd5jST_fo-bj_eGGfTUGbtE58AhUeyFBpeAXfk2mLdlk340uXNXum7s9vUTwAE"/>
+<div class="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-lg flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-400 text-[16px] fill-1">star</span>
+<span class="text-white text-xs font-bold">4.6</span>
+</div>
+<button class="absolute top-3 right-3 p-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</button>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<div class="flex items-center gap-2 mb-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-blue-500/20 text-blue-400">Easy</span>
+<span class="text-gray-500 text-xs">•</span>
+<span class="text-gray-400 text-xs font-medium">3 Days</span>
+</div>
+<h3 class="text-white text-lg font-bold leading-tight mb-2 group-hover:text-primary transition-colors">Colca Canyon</h3>
+<p class="text-gray-400 text-sm line-clamp-2 mb-4">Trek into one of the world's deepest canyons and spot Andean condors.</p>
+<div class="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-gray-300 text-xs">
+<span class="material-symbols-outlined text-[16px]">hiking</span>
+<span>22km</span>
+</div>
+<button class="px-4 py-2 bg-primary/20 hover:bg-primary hover:text-white text-primary-hover text-sm font-bold rounded-lg transition-all">
+                                    Join Trek
+                                </button>
+</div>
+</div>
+</div>
+<!-- Card 6 -->
+<div class="group flex flex-col bg-surface-dark border border-white/5 rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/30 transition-all duration-300">
+<div class="relative h-48 overflow-hidden">
+<img alt="Green lush ruins of Choquequirao" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlHar7HLoqQntnHtB0IX1BJEprt7nmsGR63MylHLyDJXhgYfA9ED8Rda7mymWOsPNekeBo8YDH1f4WEWTxJTA1QwTOMHEMaZqwYIaWWGwwyvt8Bmu5vRZoYD1Ub7uH9d-IeJ3ds-oyPp3ogpZy-SM3ubBFl7u35IsnYAVQPEcM-FkqV9vJIiSdjhmkkoAHs3TyK_F68b4sUOl86svCD-fz5A3tYtZfhz_vfaz6KR3BTnBCGFM8gXnNMak03Y0loSP_oPnCb_pWAiA"/>
+<div class="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-lg flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-400 text-[16px] fill-1">star</span>
+<span class="text-white text-xs font-bold">4.8</span>
+</div>
+<button class="absolute top-3 right-3 p-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</button>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<div class="flex items-center gap-2 mb-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-red-500/20 text-red-400">Hard</span>
+<span class="text-gray-500 text-xs">•</span>
+<span class="text-gray-400 text-xs font-medium">4 Days</span>
+</div>
+<h3 class="text-white text-lg font-bold leading-tight mb-2 group-hover:text-primary transition-colors">Choquequirao</h3>
+<p class="text-gray-400 text-sm line-clamp-2 mb-4">The "Sister City" of Machu Picchu, accessible only by a tough trek.</p>
+<div class="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-gray-300 text-xs">
+<span class="material-symbols-outlined text-[16px]">hiking</span>
+<span>58km</span>
+</div>
+<button class="px-4 py-2 bg-primary/20 hover:bg-primary hover:text-white text-primary-hover text-sm font-bold rounded-lg transition-all">
+                                    Join Trek
+                                </button>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-8 flex justify-center">
+<button class="flex items-center gap-2 px-6 py-3 rounded-xl border border-white/10 text-white font-medium hover:bg-white/5 transition-colors">
+<span>Load More Routes</span>
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</button>
+</div>
+</main>
+</div>
+</div>
+</body></html>

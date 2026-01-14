@@ -1,0 +1,168 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Backgrounds - Light Mode */
+    --background: 0 0% 100%;
+    /* Pure white */
+    --foreground: 165 85% 16%;
+    /* #064c39 - Deep forest green */
+
+    /* Cards & Surfaces */
+    --card: 0 0% 100%;
+    --card-foreground: 165 85% 16%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 165 85% 16%;
+
+    /* Primary - Forest Green */
+    --primary: 165 85% 16%;
+    /* #064c39 */
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary - Soft greens */
+    --secondary: 150 15% 96%;
+    /* Lighter green for secondary */
+    --secondary-foreground: 165 85% 16%;
+
+    /* Muted - Subtle backgrounds */
+    --muted: 210 20% 98%;
+    /* Neutral cool grey */
+    --muted-foreground: 215 15% 45%;
+    /* Neutral dark grey */
+
+    /* Accent - Warm Orange */
+    --accent: 25 95% 53%;
+    /* #f97316 */
+    --accent-foreground: 0 0% 100%;
+
+    /* Destructive */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Borders & Inputs */
+    --border: 220 13% 91%;
+    /* Neutral border */
+    --input: 220 13% 91%;
+    --ring: 165 85% 16%;
+
+    /* Border Radius */
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Backgrounds - Dark Mode */
+    --background: 170 17% 7%;
+    /* #0f1514 - Deep dark earthy */
+    --foreground: 150 11% 97%;
+
+    /* Cards & Surfaces */
+    --card: 164 16% 13%;
+    /* #1c2724 - Surface dark */
+    --card-foreground: 150 11% 97%;
+    --popover: 164 16% 13%;
+    --popover-foreground: 150 11% 97%;
+
+    /* Primary - Lighter green for dark mode */
+    --primary: 164 84% 20%;
+    /* #085e47 - Primary hover from code.html */
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary - Dark surfaces */
+    --secondary: 164 16% 18%;
+    --secondary-foreground: 150 11% 97%;
+
+    /* Muted - Dark muted */
+    --muted: 164 16% 15%;
+    --muted-foreground: 150 8% 65%;
+
+    /* Accent - Warm Orange (slightly adjusted for dark) */
+    --accent: 21 90% 48%;
+    /* #ea580c - Accent hover */
+    --accent-foreground: 0 0% 100%;
+
+    /* Destructive */
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Borders & Inputs */
+    --border: 164 16% 20%;
+    --input: 164 16% 20%;
+    --ring: 164 84% 30%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+}
+
+/* Glass morphism utilities */
+@layer utilities {
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-dark {
+    background: rgba(17, 24, 22, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-panel {
+    background: rgba(17, 24, 22, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+}
+
+/* Custom scrollbar */
+@layer base {
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+    border-radius: 5px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary) / 0.6);
+    border-radius: 5px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary));
+  }
+
+  .dark ::-webkit-scrollbar-track {
+    background: hsl(var(--card));
+  }
+
+  .dark ::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary) / 0.8);
+  }
+
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary));
+  }
+}
+
+/* Mapbox styles */
+.mapboxgl-ctrl-logo {
+  display: none !important;
+}
