@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { CommentForm } from './CommentForm';
@@ -190,7 +191,7 @@ export function CommentsList({
         {!isAuthenticated && commentsEnabled && (
           <div className="text-center py-4 text-muted-foreground text-sm">
             <Button variant="link" asChild>
-              <a href="/es/login">{t('loginToComment')}</a>
+              <Link href="/es/login">{t('loginToComment')}</Link>
             </Button>
           </div>
         )}

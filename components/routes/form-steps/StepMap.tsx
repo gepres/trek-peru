@@ -40,11 +40,11 @@ export function StepMap({
             <p className="text-sm font-medium">Instrucciones:</p>
             <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
               <li>
-                <strong>Punto de encuentro:</strong> Haz clic en el botón "Agregar Punto de Encuentro"
+                <strong>Punto de encuentro:</strong> Haz clic en el botón &quot;Agregar Punto de Encuentro&quot;
                 y luego clic en el mapa donde será el punto de partida
               </li>
               <li>
-                <strong>Dibujar ruta:</strong> Haz clic en "Dibujar Ruta" y marca los puntos
+                <strong>Dibujar ruta:</strong> Haz clic en &quot;Dibujar Ruta&quot; y marca los puntos
                 del recorrido haciendo clic en el mapa
               </li>
               <li>
