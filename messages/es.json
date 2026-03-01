@@ -44,7 +44,9 @@
     "logoutSuccess": "Sesión cerrada exitosamente",
     "loginError": "Error al iniciar sesión",
     "registerError": "Error al registrarse",
-    "loading": "Cargando..."
+    "loading": "Cargando...",
+    "phone": "Teléfono",
+    "phoneHint": "Ingresa tu número con prefijo (ej: +51987654321)"
   },
   "routes": {
     "title": "Rutas de Trekking",

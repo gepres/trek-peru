@@ -26,6 +26,9 @@ export const registerSchema = z.object({
     .min(3, 'El nombre de usuario debe tener al menos 3 caracteres')
     .max(50, 'El nombre de usuario no puede exceder 50 caracteres')
     .regex(/^[a-zA-Z0-9_-]+$/, 'El nombre de usuario solo puede contener letras, números, guiones y guiones bajos'),
+  // Número completo editable — debe tener el formato +51XXXXXXXXX
+  phone: z.string()
+    .regex(/^\+51\d{9}$/, 'Ingresa un número válido: +51 seguido de 9 dígitos'),
 }).refine((data) => data.password === data.confirmPassword, {
   message: 'Las contraseñas no coinciden',
   path: ['confirmPassword'],

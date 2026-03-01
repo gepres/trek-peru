@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Phone } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { registerSchema, type RegisterInput } from '@/lib/validations/user.schema';
 import { Button } from '@/components/ui/button';
@@ -32,6 +32,7 @@ export function RegisterForm({ locale }: RegisterFormProps) {
     formState: { errors },
   } = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
+    defaultValues: { phone: '+51' },
   });
 
   // Manejar envío del formulario
@@ -48,6 +49,7 @@ export function RegisterForm({ locale }: RegisterFormProps) {
           data: {
             full_name: data.full_name,
             username: data.username,
+            phone: data.phone,
           },
         },
       });
@@ -55,6 +57,14 @@ export function RegisterForm({ locale }: RegisterFormProps) {
       if (authError) {
         setError(authError.message);
         return;
+      }
+
+      // Guardar teléfono directamente en el perfil (respaldo al trigger)
+      if (authData.user) {
+        await supabase
+          .from('profiles')
+          .update({ phone: data.phone })
+          .eq('id', authData.user.id);
       }
 
       // Redirigir al dashboard después de registro exitoso
@@ -75,7 +85,7 @@ export function RegisterForm({ locale }: RegisterFormProps) {
         <Input
           id="full_name"
           type="text"
-          placeholder="Juan Pérez"
+          placeholder="Nombre completo"
           {...register('full_name')}
           disabled={isLoading}
         />
@@ -90,12 +100,35 @@ export function RegisterForm({ locale }: RegisterFormProps) {
         <Input
           id="username"
           type="text"
-          placeholder="juanperez"
+          placeholder="nombre_usuario"
           {...register('username')}
           disabled={isLoading}
         />
         {errors.username && (
           <p className="text-sm text-red-600">{errors.username.message}</p>
+        )}
+      </div>
+
+      {/* Phone — prefijo +51 fijo, el usuario escribe solo los 9 dígitos */}
+      <div className="space-y-2">
+        <Label htmlFor="phone" className="flex items-center gap-1.5">
+          <Phone className="h-3.5 w-3.5" />
+          {t('phone')}
+          <span className="text-red-500">*</span>
+        </Label>
+        {/* Número completo editable — pre-relleno con +51 */}
+        <Input
+          id="phone"
+          type="tel"
+          inputMode="tel"
+          placeholder="+51 987 654 321"
+          {...register('phone')}
+          disabled={isLoading}
+        />
+        {errors.phone ? (
+          <p className="text-sm text-red-600">{errors.phone.message}</p>
+        ) : (
+          <p className="text-xs text-muted-foreground">{t('phoneHint')}</p>
         )}
       </div>
 

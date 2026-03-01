@@ -43,7 +43,9 @@
     "registerSuccess": "Registration successful",
     "logoutSuccess": "Logged out successfully",
     "loginError": "Error logging in",
-    "registerError": "Error registering"
+    "registerError": "Error registering",
+    "phone": "Phone",
+    "phoneHint": "Enter your number with country code (e.g. +51987654321)"
   },
   "routes": {
     "title": "Trekking Routes",
