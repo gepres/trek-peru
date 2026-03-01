@@ -8,7 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { CommentForm } from './CommentForm';
 import { CommentItem } from './CommentItem';
-import { useComments } from '@/hooks/useComments';
+import { useComments } from '@/presentation/hooks/useComments';
 import { createClient } from '@/lib/supabase/client';
 import { MessageCircle, MessageCircleOff, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';

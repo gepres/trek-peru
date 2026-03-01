@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRoutes } from '@/lib/hooks/useRoutes';
+import { useRoutes } from '@/presentation/hooks/useRoutes';
 import { RouteCard } from './RouteCard';
 import { RouteFilters } from './RouteFilters';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';

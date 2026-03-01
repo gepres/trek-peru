@@ -22,9 +22,11 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"],
+      "@/domain/*": ["./domain/*"],
+      "@/infrastructure/*": ["./infrastructure/*"],
+      "@/application/*": ["./application/*"],
+      "@/presentation/*": ["./presentation/*"]
     },
     "target": "ES2017"
   },

@@ -1,6 +1,6 @@
 'use client';
 
-import { useAttendees } from '@/lib/hooks/useAttendees';
+import { useAttendees } from '@/presentation/hooks/useAttendees';
 import { AttendeeCard } from './AttendeeCard';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { EmptyState } from '@/components/shared/EmptyState';

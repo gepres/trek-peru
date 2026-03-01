@@ -2,6 +2,13 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { createCommentRepository } from '@/infrastructure/supabase';
+import {
+  getComments as getCommentsUseCase,
+  addComment as addCommentUseCase,
+  editComment as editCommentUseCase,
+  deleteComment as deleteCommentUseCase,
+} from '@/application/comments';
 import { CommentWithUser } from '@/types/route.types';
 
 interface UseCommentsReturn {
@@ -76,24 +83,15 @@ export function useComments(routeId: string, routeCreatorId: string): UseComment
     return rootComments;
   }, [currentUserId, routeCreatorId]);
 
-  // Cargar comentarios
+  // Cargar comentarios via use-case
   const fetchComments = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
 
-      const { data, error: fetchError } = await supabase
-        .from('comments')
-        .select(`
-          *,
-          user:profiles(id, username, full_name, avatar_url)
-        `)
-        .eq('route_id', routeId)
-        .order('created_at', { ascending: false });
-
-      if (fetchError) throw fetchError;
-
-      const organized = organizeComments(data || []);
+      const repository = createCommentRepository(supabase);
+      const data = await getCommentsUseCase(repository, routeId);
+      const organized = organizeComments(data);
       setComments(organized);
     } catch (err: any) {
       console.error('Error fetching comments:', err);
@@ -103,7 +101,7 @@ export function useComments(routeId: string, routeCreatorId: string): UseComment
     }
   }, [routeId, supabase, organizeComments]);
 
-  // Agregar comentario
+  // Agregar comentario via use-case
   const addComment = useCallback(async (
     content: string,
     parentId?: string,
@@ -116,17 +114,8 @@ export function useComments(routeId: string, routeCreatorId: string): UseComment
         return false;
       }
 
-      const { error: insertError } = await supabase
-        .from('comments')
-        .insert({
-          route_id: routeId,
-          user_id: user.id,
-          content: content.trim(),
-          parent_id: parentId || null,
-          image_url: imageUrl || null
-        });
-
-      if (insertError) throw insertError;
+      const repository = createCommentRepository(supabase);
+      await addCommentUseCase(repository, routeId, user.id, content, parentId, imageUrl);
 
       await fetchComments();
       return true;
@@ -137,7 +126,7 @@ export function useComments(routeId: string, routeCreatorId: string): UseComment
     }
   }, [routeId, supabase, fetchComments]);
 
-  // Editar comentario
+  // Editar comentario via use-case
   const editComment = useCallback(async (
     commentId: string,
     content: string
@@ -149,28 +138,8 @@ export function useComments(routeId: string, routeCreatorId: string): UseComment
         return false;
       }
 
-      // Verificar que el usuario es el dueño del comentario
-      const { data: comment } = await supabase
-        .from('comments')
-        .select('user_id')
-        .eq('id', commentId)
-        .single();
-
-      if (!comment || comment.user_id !== user.id) {
-        setError('No tienes permiso para editar este comentario');
-        return false;
-      }
-
-      const { error: updateError } = await supabase
-        .from('comments')
-        .update({
-          content: content.trim(),
-          is_edited: true,
-          edited_at: new Date().toISOString()
-        })
-        .eq('id', commentId);
-
-      if (updateError) throw updateError;
+      const repository = createCommentRepository(supabase);
+      await editCommentUseCase(repository, commentId, user.id, content);
 
       await fetchComments();
       return true;
@@ -181,7 +150,7 @@ export function useComments(routeId: string, routeCreatorId: string): UseComment
     }
   }, [supabase, fetchComments]);
 
-  // Eliminar comentario
+  // Eliminar comentario via use-case
   const deleteComment = useCallback(async (commentId: string): Promise<boolean> => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -190,39 +159,8 @@ export function useComments(routeId: string, routeCreatorId: string): UseComment
         return false;
       }
 
-      // Verificar permisos (dueño del comentario o creador de la ruta)
-      const { data: comment } = await supabase
-        .from('comments')
-        .select('user_id')
-        .eq('id', commentId)
-        .single();
-
-      if (!comment) {
-        setError('Comentario no encontrado');
-        return false;
-      }
-
-      const isCommentOwner = comment.user_id === user.id;
-      const isRouteCreator = user.id === routeCreatorId;
-
-      if (!isCommentOwner && !isRouteCreator) {
-        setError('No tienes permiso para eliminar este comentario');
-        return false;
-      }
-
-      // Eliminar respuestas primero (si las hay)
-      await supabase
-        .from('comments')
-        .delete()
-        .eq('parent_id', commentId);
-
-      // Eliminar el comentario
-      const { error: deleteError } = await supabase
-        .from('comments')
-        .delete()
-        .eq('id', commentId);
-
-      if (deleteError) throw deleteError;
+      const repository = createCommentRepository(supabase);
+      await deleteCommentUseCase(repository, commentId, user.id, routeCreatorId);
 
       await fetchComments();
       return true;

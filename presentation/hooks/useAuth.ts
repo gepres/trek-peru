@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { User } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
+import { createUserRepository } from '@/infrastructure/supabase';
+import { getProfile } from '@/application/auth';
 import { Profile } from '@/types/user.types';
 
 // Hook para autenticación y gestión de usuario
@@ -39,16 +41,11 @@ export function useAuth() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Obtener perfil del usuario
+  // Obtener perfil del usuario via use-case
   async function fetchProfile(userId: string) {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .maybeSingle();
-
-      if (error) throw error;
+      const repository = createUserRepository(supabase);
+      const data = await getProfile(repository, userId);
       setProfile(data);
     } catch (error) {
       console.error('Error fetching profile:', error);

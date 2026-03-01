@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { createAttendeeRepository } from '@/infrastructure/supabase';
+import { getAttendees, getMyAttendances, getMyAttendance } from '@/application/attendees';
 import { AttendeeWithUser } from '@/types/route.types';
 
 // Hook para obtener asistentes de una ruta
@@ -9,7 +11,6 @@ export function useAttendees(routeId: string) {
   const [attendees, setAttendees] = useState<AttendeeWithUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const supabase = createClient();
 
   useEffect(() => {
     if (routeId) {
@@ -22,17 +23,9 @@ export function useAttendees(routeId: string) {
       setLoading(true);
       setError(null);
 
-      const { data, error } = await supabase
-        .from('attendees')
-        .select(`
-          *,
-          user:profiles(*)
-        `)
-        .eq('route_id', routeId)
-        .order('registration_date', { ascending: true });
-
-      if (error) throw error;
-      setAttendees(data || []);
+      const repository = createAttendeeRepository(createClient());
+      const data = await getAttendees(repository, routeId);
+      setAttendees(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
       console.error('Error fetching attendees:', err);
@@ -44,12 +37,11 @@ export function useAttendees(routeId: string) {
   return { attendees, loading, error, refetch: fetchAttendees };
 }
 
-// Hook para obtener las rutas donde el usuario es asistente
+// Hook para obtener las rutas donde el usuario autenticado es asistente
 export function useMyAttendances() {
   const [attendances, setAttendances] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const supabase = createClient();
 
   useEffect(() => {
     fetchMyAttendances();
@@ -60,23 +52,13 @@ export function useMyAttendances() {
       setLoading(true);
       setError(null);
 
+      const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('No authenticated user');
 
-      const { data, error } = await supabase
-        .from('attendees')
-        .select(`
-          *,
-          route:routes(
-            *,
-            creator:profiles(*)
-          )
-        `)
-        .eq('user_id', user.id)
-        .order('registration_date', { ascending: false });
-
-      if (error) throw error;
-      setAttendances(data || []);
+      const repository = createAttendeeRepository(supabase);
+      const data = await getMyAttendances(repository, user.id);
+      setAttendances(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
       console.error('Error fetching my attendances:', err);
@@ -88,12 +70,11 @@ export function useMyAttendances() {
   return { attendances, loading, error, refetch: fetchMyAttendances };
 }
 
-// Hook para verificar si el usuario está inscrito en una ruta
+// Hook para verificar si el usuario autenticado está inscrito en una ruta
 export function useMyAttendance(routeId: string) {
   const [attendance, setAttendance] = useState<AttendeeWithUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const supabase = createClient();
 
   useEffect(() => {
     if (routeId) {
@@ -106,23 +87,15 @@ export function useMyAttendance(routeId: string) {
       setLoading(true);
       setError(null);
 
+      const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         setLoading(false);
         return;
       }
 
-      const { data, error } = await supabase
-        .from('attendees')
-        .select(`
-          *,
-          user:profiles(*)
-        `)
-        .eq('route_id', routeId)
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      if (error) throw error;
+      const repository = createAttendeeRepository(supabase);
+      const data = await getMyAttendance(repository, routeId, user.id);
       setAttendance(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');

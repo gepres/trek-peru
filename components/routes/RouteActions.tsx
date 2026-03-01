@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { AttendeesList } from './AttendeesList';
-import { useMyAttendance } from '@/lib/hooks/useAttendees';
+import { useMyAttendance } from '@/presentation/hooks/useAttendees';
 import { createClient } from '@/lib/supabase/client';
 import { toast } from '@/components/ui/use-toast';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';

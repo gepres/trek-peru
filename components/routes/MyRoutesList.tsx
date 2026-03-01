@@ -1,6 +1,6 @@
 'use client';
 
-import { useMyRoutes } from '@/lib/hooks/useRoutes';
+import { useMyRoutes } from '@/presentation/hooks/useRoutes';
 import { RouteCard } from './RouteCard';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { EmptyState } from '@/components/shared/EmptyState';

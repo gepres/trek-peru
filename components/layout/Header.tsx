@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useAuth } from '@/lib/hooks/useAuth';
+import { useAuth } from '@/presentation/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { UserMenu } from '@/components/shared/UserMenu';

@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { createFavoriteRepository } from '@/infrastructure/supabase';
+import { getFavorites, toggleFavorite as toggleFavoriteUseCase } from '@/application/favorites';
 import { Favorite } from '@/types/route.types';
 import { RouteWithCreator } from '@/types/route.types';
 
@@ -25,7 +27,7 @@ export function useFavorites(): UseFavoritesReturn {
 
   const supabase = createClient();
 
-  // Cargar favoritos del usuario
+  // Cargar favoritos del usuario via use-case
   const fetchFavorites = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -39,34 +41,10 @@ export function useFavorites(): UseFavoritesReturn {
         return;
       }
 
-      // Obtener IDs de favoritos
-      const { data: favoritesData, error: favError } = await supabase
-        .from('favorites')
-        .select('route_id')
-        .eq('user_id', user.id);
-
-      if (favError) throw favError;
-
-      const ids = new Set(favoritesData?.map(f => f.route_id) || []);
+      const repository = createFavoriteRepository(supabase);
+      const { routes, ids } = await getFavorites(repository, user.id);
+      setFavorites(routes);
       setFavoriteIds(ids);
-
-      // Si hay favoritos, obtener las rutas completas
-      if (ids.size > 0) {
-        const { data: routesData, error: routesError } = await supabase
-          .from('routes')
-          .select(`
-            *,
-            creator:profiles(id, username, full_name, avatar_url),
-            attendees(count)
-          `)
-          .in('id', Array.from(ids))
-          .order('created_at', { ascending: false });
-
-        if (routesError) throw routesError;
-        setFavorites(routesData || []);
-      } else {
-        setFavorites([]);
-      }
     } catch (err: any) {
       console.error('Error fetching favorites:', err);
       setError(err.message || 'Error al cargar favoritos');
@@ -80,7 +58,7 @@ export function useFavorites(): UseFavoritesReturn {
     return favoriteIds.has(routeId);
   }, [favoriteIds]);
 
-  // Agregar a favoritos
+  // Agregar a favoritos via use-case
   const addFavorite = useCallback(async (routeId: string): Promise<boolean> => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -89,27 +67,9 @@ export function useFavorites(): UseFavoritesReturn {
         return false;
       }
 
-      const { error: insertError } = await supabase
-        .from('favorites')
-        .insert({
-          user_id: user.id,
-          route_id: routeId
-        });
-
-      if (insertError) {
-        // Si ya existe, ignorar el error
-        if (insertError.code === '23505') {
-          return true;
-        }
-        throw insertError;
-      }
-
-      // Actualizar estado local
+      const repository = createFavoriteRepository(supabase);
+      await repository.add(user.id, routeId); // add directo: toggleFavorite haría fetch extra
       setFavoriteIds(prev => new Set([...prev, routeId]));
-
-      // Incrementar contador en la ruta (optimistic update)
-      await supabase.rpc('increment_favorites', { route_id: routeId });
-
       return true;
     } catch (err: any) {
       console.error('Error adding favorite:', err);
@@ -118,7 +78,7 @@ export function useFavorites(): UseFavoritesReturn {
     }
   }, [supabase]);
 
-  // Quitar de favoritos
+  // Quitar de favoritos via repositorio
   const removeFavorite = useCallback(async (routeId: string): Promise<boolean> => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -127,25 +87,14 @@ export function useFavorites(): UseFavoritesReturn {
         return false;
       }
 
-      const { error: deleteError } = await supabase
-        .from('favorites')
-        .delete()
-        .eq('user_id', user.id)
-        .eq('route_id', routeId);
+      const repository = createFavoriteRepository(supabase);
+      await repository.remove(user.id, routeId);
 
-      if (deleteError) throw deleteError;
-
-      // Actualizar estado local
       setFavoriteIds(prev => {
         const newSet = new Set(prev);
         newSet.delete(routeId);
         return newSet;
       });
-
-      // Decrementar contador en la ruta
-      await supabase.rpc('decrement_favorites', { route_id: routeId });
-
-      // Actualizar lista de favoritos
       setFavorites(prev => prev.filter(r => r.id !== routeId));
 
       return true;
@@ -156,14 +105,30 @@ export function useFavorites(): UseFavoritesReturn {
     }
   }, [supabase]);
 
-  // Toggle favorito
+  // Toggle favorito via use-case (actualiza estado local optimistamente)
   const toggleFavorite = useCallback(async (routeId: string): Promise<boolean> => {
-    if (isFavorite(routeId)) {
-      return removeFavorite(routeId);
-    } else {
-      return addFavorite(routeId);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setError('Debes iniciar sesión');
+        return false;
+      }
+
+      const repository = createFavoriteRepository(supabase);
+      const { added } = await toggleFavoriteUseCase(repository, user.id, routeId);
+
+      if (added) {
+        setFavoriteIds(prev => new Set([...prev, routeId]));
+      } else {
+        setFavoriteIds(prev => { const s = new Set(prev); s.delete(routeId); return s; });
+        setFavorites(prev => prev.filter(r => r.id !== routeId));
+      }
+      return true;
+    } catch (err: any) {
+      setError(err.message || 'Error al cambiar favorito');
+      return false;
     }
-  }, [isFavorite, addFavorite, removeFavorite]);
+  }, [supabase]);
 
   // Cargar favoritos al montar
   useEffect(() => {
@@ -208,14 +173,9 @@ export function useIsFavorite(routeId: string) {
           return;
         }
 
-        const { data, error } = await supabase
-          .from('favorites')
-          .select('id')
-          .eq('user_id', user.id)
-          .eq('route_id', routeId)
-          .single();
-
-        setIsFavorite(!!data && !error);
+        const repository = createFavoriteRepository(supabase);
+        const result = await repository.findByRouteAndUser(routeId, user.id);
+        setIsFavorite(result);
       } catch {
         setIsFavorite(false);
       } finally {
