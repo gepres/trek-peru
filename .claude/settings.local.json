@@ -16,7 +16,10 @@
       "Bash(find:*)",
       "Bash(grep:*)",
       "Bash(npx supabase:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(git -C /d/PROYECTOS/gepres/trek log --oneline -10)",
+      "Bash(git -C /d/PROYECTOS/gepres/trek diff --stat HEAD)",
+      "Bash(git -C /d/PROYECTOS/gepres/trek diff HEAD -- components/layout/Header.tsx package.json)"
     ]
   }
 }

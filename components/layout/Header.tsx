@@ -8,8 +8,9 @@ import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { UserMenu } from '@/components/shared/UserMenu';
 import { Menu, X, Mountain, Plus } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { cn } from '@/lib/utils/cn';
 
 interface HeaderProps {
   locale: string;
@@ -21,6 +22,20 @@ export function Header({ locale }: HeaderProps) {
   const pathname = usePathname();
   const { user, profile, signOut } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // Detectar scroll para cambiar estilos del header
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    // Verificar posición inicial
+    handleScroll();
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Enlaces de navegación
   const navLinks = [
@@ -41,7 +56,14 @@ export function Header({ locale }: HeaderProps) {
   };
 
   return (
-    <header className="fixed top-0 z-50 w-full glass-panel">
+    <header
+      className={cn(
+        "fixed top-0 z-50 w-full transition-all duration-200",
+        isScrolled
+          ? "bg-[rgba(17,24,22,0.7)] backdrop-blur-[12px] border-b border-white/5"
+          : "bg-transparent backdrop-blur-[2px]"
+      )}
+    >
       <div className="px-6 md:px-10 py-3 flex items-center justify-between max-w-[1440px] mx-auto">
         {/* Logo */}
         <Link href={`/${locale}`} className="flex items-center gap-4 text-white">

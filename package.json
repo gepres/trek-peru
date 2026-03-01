@@ -2,6 +2,7 @@
   "name": "trek-peru",
   "version": "0.1.0",
   "private": true,
+  "author": "Genaro Pretill Escobar",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
