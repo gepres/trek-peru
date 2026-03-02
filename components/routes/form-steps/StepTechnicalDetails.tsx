@@ -56,18 +56,46 @@ const TECHNICAL_LEVELS = [
 ];
 
 // Tip con prompt de IA para obtener datos técnicos difíciles de conocer
-function AltitudeTip({ routeTitle }: { routeTitle: string }) {
+function AltitudeTip({
+  routeTitle,
+  departureDate,
+  meetingTime,
+}: {
+  routeTitle: string;
+  departureDate?: string;
+  meetingTime?: string;
+}) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const nombre = routeTitle?.trim() || 'nombre de la ruta';
 
+  // Formatear fecha YYYY-MM-DD → DD/MM/YYYY para el prompt
+  function formatDate(raw?: string): string {
+    if (!raw) return '';
+    const parts = raw.substring(0, 10).split('-');
+    if (parts.length !== 3) return raw;
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+
+  // Construir la línea de clima según los datos del Paso 2
+  const fechaFormateada = formatDate(departureDate);
+  let climaLinea: string;
+  if (fechaFormateada && meetingTime) {
+    climaLinea = `el ${fechaFormateada} a las ${meetingTime}`;
+  } else if (fechaFormateada) {
+    climaLinea = `el ${fechaFormateada}`;
+  } else {
+    climaLinea = '(agrega la fecha de salida en el Paso 2 — Logística)';
+  }
+
   const prompt = `Dame los datos técnicos de la ruta de trekking "${nombre}" en Perú:
+- Distancia total (km)
 - Desnivel positivo (m)
 - Desnivel negativo (m)
 - Altitud mínima (m.s.n.m)
 - Altitud máxima (m.s.n.m)
-- Distancia total (km)`;
+- Clima esperado ${climaLinea}`;
 
   const googleQuery = `datos técnicos trekking "${nombre}" Perú desnivel altitud`;
   const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(googleQuery)}`;
@@ -165,6 +193,9 @@ export function StepTechnicalDetails({
   const terrainType = watch('terrain_type') || [];
   // Título del Paso 1 — se usa en el tip de IA
   const routeTitle = watch('title') || '';
+  // Fecha y hora del Paso 2 — se incluyen en el prompt de clima
+  const departureDate = watch('departure_date') || '';
+  const meetingTime = watch('meeting_time') || '';
   // Tab de unidad de temperatura para el campo Clima Esperado
   const [tempUnit, setTempUnit] = useState<'C' | 'F'>('C');
 
@@ -303,7 +334,11 @@ export function StepTechnicalDetails({
           </div>
 
           {/* ── Tip de IA — prompt listo para copiar ── */}
-          <AltitudeTip routeTitle={routeTitle} />
+          <AltitudeTip
+            routeTitle={routeTitle}
+            departureDate={departureDate}
+            meetingTime={meetingTime}
+          />
 
           {/* Equipo esencial */}
           <div className="space-y-2">

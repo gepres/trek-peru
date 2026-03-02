@@ -25,6 +25,21 @@ export function RouteMap({
   const map = useRef<mapboxgl.Map | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
 
+  // Observar cambios de tamaño del contenedor (p.ej. al cambiar de tab)
+  // y llamar map.resize() para que Mapbox recalcule sus dimensiones
+  useEffect(() => {
+    if (!mapContainer.current) return;
+
+    const observer = new ResizeObserver(() => {
+      if (map.current) {
+        map.current.resize();
+      }
+    });
+
+    observer.observe(mapContainer.current);
+    return () => observer.disconnect();
+  }, []);
+
   useEffect(() => {
     // Verificar token de Mapbox
     const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
@@ -236,7 +251,9 @@ export function RouteMap({
   }
 
   return (
-    <div className={className}>
+    // El wrapper lleva `relative` para que el skeleton `absolute inset-0`
+    // quede confinado dentro del área del mapa y no se sobreponga al Card
+    <div className={`relative ${className}`}>
       <div ref={mapContainer} style={{ height }} className="rounded-lg overflow-hidden" />
       {!mapLoaded && (
         <div className="absolute inset-0 bg-muted animate-pulse rounded-lg" />

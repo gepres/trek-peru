@@ -109,8 +109,9 @@ export function ImageGallery({
           </div>
         ))}
 
-        {/* Botón para agregar más imágenes */}
-        {editable && canAddMore && (
+        {/* Botón para agregar más imágenes — solo cuando ya hay al menos una imagen;
+            cuando la galería está vacía, el placeholder grande de abajo cumple esta función */}
+        {editable && canAddMore && images.length > 0 && (
           <div className="aspect-video rounded-lg border-2 border-dashed border-border bg-muted/30 hover:bg-muted/50 transition-colors flex items-center justify-center p-4">
             <ImageUpload
               bucket={bucket}
