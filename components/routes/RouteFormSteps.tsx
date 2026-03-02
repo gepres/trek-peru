@@ -240,6 +240,30 @@ export function RouteFormSteps({ route, locale }: RouteFormStepsProps) {
       const timestamp = Date.now();
       const slug = `${baseSlug}-${timestamp}`;
 
+      // Sanitizar coordenadas: filtrar valores NaN, Infinity o fuera del rango geográfico
+      // (puede ocurrir con GPX mal formados o puntos añadidos manualmente con error)
+      const validCoords = routeCoordinates.filter(([lng, lat]) =>
+        Number.isFinite(lng) && Number.isFinite(lat) &&
+        lat >= -90 && lat <= 90 &&
+        lng >= -180 && lng <= 180
+      );
+
+      // PostGIS requiere mínimo 2 puntos para un LineString válido.
+      // Con 0 ó 1 punto se envía null (la columna es nullable).
+      //
+      // IMPORTANTE: la columna route_coordinates es GEOGRAPHY(LINESTRING, 4326).
+      // PostgREST llama a geography_in() que solo acepta WKT/EWKT string.
+      // Enviar un objeto GeoJSON { type, coordinates } causa "parse error - invalid geometry".
+      // Solución: convertir a EWKT → "SRID=4326;LINESTRING(lng lat, lng lat, ...)"
+      const buildEWKT = (coords: [number, number][]): string => {
+        const pts = coords.map(([lng, lat]) => `${lng} ${lat}`).join(',');
+        return `SRID=4326;LINESTRING(${pts})`;
+      };
+
+      const routeGeometry = validCoords.length >= 2
+        ? buildEWKT(validCoords)
+        : null;
+
       // Preparar datos para la base de datos
       const routeData = {
         ...restData,
@@ -248,10 +272,7 @@ export function RouteFormSteps({ route, locale }: RouteFormStepsProps) {
         featured_image: featuredImage,
         images,
         required_equipment: equipment, // Usar required_equipment en lugar de essential_equipment
-        route_coordinates: routeCoordinates.length > 0 ? {
-          type: 'LineString',
-          coordinates: routeCoordinates,
-        } : null,
+        route_coordinates: routeGeometry,
         meeting_point: meetingPoint,
         waypoints,
         // Mantener duration_type, duration_value y daily_itinerary

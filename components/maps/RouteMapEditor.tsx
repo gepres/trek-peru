@@ -15,7 +15,8 @@ import { exportToGPX, downloadGPX } from '@/lib/utils/gpx-parser';
 import { MapPin, Navigation, Trash2, Save, Download } from 'lucide-react';
 
 interface RouteMapEditorProps {
-  initialRouteCoordinates?: any;
+  // Coordenadas iniciales de la ruta como array [lng, lat][]
+  initialRouteCoordinates?: [number, number][];
   initialMeetingPoint?: MeetingPoint;
   initialWaypoints?: Waypoint[];
   onRouteChange?: (coordinates: [number, number][]) => void;
@@ -42,13 +43,22 @@ export function RouteMapEditor({
   const map = useRef<mapboxgl.Map | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [editorMode, setEditorMode] = useState<EditorMode>(null);
-  const [routePoints, setRoutePoints] = useState<[number, number][]>([]);
+  // Inicializar desde prop para que edición cargue las coordenadas existentes sin esperar el useEffect
+  const [routePoints, setRoutePoints] = useState<[number, number][]>(initialRouteCoordinates || []);
   const [meetingPoint, setMeetingPoint] = useState<MeetingPoint | null>(initialMeetingPoint || null);
   const [waypoints, setWaypoints] = useState<Waypoint[]>(initialWaypoints);
   const [waypointName, setWaypointName] = useState('');
+  // Ref para que el click handler del mapa lea siempre el nombre más reciente
+  // sin necesitar re-crear el listener en cada pulsación de tecla (stale closure)
+  const waypointNameRef = useRef('');
   const markers = useRef<mapboxgl.Marker[]>([]);
   const meetingMarker = useRef<mapboxgl.Marker | null>(null);
   const [gpxError, setGpxError] = useState<string | null>(null);
+
+  // Sincronizar ref con state para que el click handler siempre lea el valor actual
+  useEffect(() => {
+    waypointNameRef.current = waypointName;
+  }, [waypointName]);
 
   useEffect(() => {
     const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
@@ -135,20 +145,23 @@ export function RouteMapEditor({
     };
   }, [editorMode]);
 
-  // Cargar datos iniciales
+  // Cuando el mapa termina de cargar, centrar la vista en las coordenadas iniciales
+  // (routePoints, meetingPoint y waypoints ya están inicializados desde props;
+  //  los useEffects de cada estado se encargan de renderizar los elementos en el mapa)
   useEffect(() => {
-    if (!mapLoaded) return;
+    if (!mapLoaded || !map.current) return;
 
-    if (initialRouteCoordinates?.coordinates) {
-      setRoutePoints(initialRouteCoordinates.coordinates);
-    }
-
-    if (initialMeetingPoint) {
-      setMeetingPoint(initialMeetingPoint);
-    }
-
-    if (initialWaypoints.length > 0) {
-      setWaypoints(initialWaypoints);
+    // Centrar en la ruta inicial si existe
+    if (routePoints.length > 0) {
+      const bounds = new mapboxgl.LngLatBounds();
+      routePoints.forEach((coord) => bounds.extend(coord));
+      map.current.fitBounds(bounds, { padding: 50, maxZoom: 14 });
+    } else if (meetingPoint?.coordinates) {
+      // Centrar en el punto de encuentro si no hay ruta
+      map.current.flyTo({
+        center: [meetingPoint.coordinates.longitude, meetingPoint.coordinates.latitude],
+        zoom: 12,
+      });
     }
   }, [mapLoaded]);
 
@@ -256,16 +269,21 @@ export function RouteMapEditor({
   }
 
   function addWaypoint(coords: [number, number]) {
+    // Usar waypointNameRef en lugar de waypointName para evitar stale closure:
+    // el useEffect del click handler solo se re-ejecuta al cambiar editorMode,
+    // por lo que capturaría waypointName = '' si se lee del estado directamente.
+    const name = waypointNameRef.current.trim() || `Waypoint ${waypoints.length + 1}`;
     const newWaypoint: Waypoint = {
       coordinates: {
         latitude: coords[1],
         longitude: coords[0],
       },
-      name: waypointName || `Waypoint ${waypoints.length + 1}`,
+      name,
       order: waypoints.length + 1,
     };
     setWaypoints((prev) => [...prev, newWaypoint]);
     setWaypointName('');
+    waypointNameRef.current = '';
     setEditorMode(null);
   }
 

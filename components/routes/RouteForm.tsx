@@ -339,9 +339,7 @@ export function RouteForm({ route, locale }: RouteFormProps) {
         <CardContent>
           <RouteMapEditor
             initialRouteCoordinates={
-              route?.route_coordinates
-                ? { coordinates: route.route_coordinates.coordinates }
-                : undefined
+              route?.route_coordinates?.coordinates ?? undefined
             }
             initialMeetingPoint={route?.meeting_point}
             initialWaypoints={route?.waypoints || []}
