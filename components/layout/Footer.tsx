@@ -61,24 +61,24 @@ export function Footer({ locale }: FooterProps) {
             <h3 className="font-semibold mb-4 text-white">Información</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#" className="text-primary-foreground/70 hover:text-white transition-colors">
+                <Link href={`/${locale}/about`} className="text-primary-foreground/70 hover:text-white transition-colors">
                   Acerca de
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-primary-foreground/70 hover:text-white transition-colors">
+                <Link href={`/${locale}/terms`} className="text-primary-foreground/70 hover:text-white transition-colors">
                   Términos de Uso
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-primary-foreground/70 hover:text-white transition-colors">
+                <Link href={`/${locale}/privacy`} className="text-primary-foreground/70 hover:text-white transition-colors">
                   Política de Privacidad
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-primary-foreground/70 hover:text-white transition-colors">
+                <Link href={`/${locale}/contact`} className="text-primary-foreground/70 hover:text-white transition-colors">
                   Contacto
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
