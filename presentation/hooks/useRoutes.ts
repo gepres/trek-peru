@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { createRouteRepository } from '@/infrastructure/supabase';
-import { getRoutes, getRoute, getMyRoutes } from '@/application/routes';
+import { getRoutes, getRoute, getMyRoutes, deleteRoute } from '@/application/routes';
 import { RouteWithCreator, RouteFilters } from '@/types/route.types';
 
 // Hook para obtener y gestionar rutas públicas con filtros
@@ -66,11 +66,12 @@ export function useRoute(routeId: string) {
   return { route, loading, error, refetch: fetchRoute };
 }
 
-// Hook para obtener rutas creadas por el usuario autenticado
+// Hook para obtener y gestionar rutas creadas por el usuario autenticado
 export function useMyRoutes() {
   const [routes, setRoutes] = useState<RouteWithCreator[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchMyRoutes();
@@ -96,5 +97,21 @@ export function useMyRoutes() {
     }
   }
 
-  return { routes, loading, error, refetch: fetchMyRoutes };
+  // Eliminar una ruta: borra de BD y actualiza lista local optimistamente
+  async function removeRoute(routeId: string): Promise<void> {
+    try {
+      setDeletingId(routeId);
+      const supabase = createClient();
+      const repository = createRouteRepository(supabase);
+      await deleteRoute(repository, routeId);
+      setRoutes((prev) => prev.filter((r) => r.id !== routeId));
+    } catch (err) {
+      console.error('Error al eliminar ruta:', err);
+      throw err;
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
+  return { routes, loading, error, refetch: fetchMyRoutes, removeRoute, deletingId };
 }

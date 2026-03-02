@@ -57,7 +57,7 @@ export async function generateMetadata({
   const description = route.description?.substring(0, 160) ||
     `Ruta de trekking ${difficultyLabels[route.difficulty] || ''} en ${route.region || 'Perú'}. ${route.distance ? `${route.distance}km` : ''} ${route.max_altitude ? `hasta ${route.max_altitude}m de altitud` : ''}`.trim();
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://trekperu.com';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.vercel.app';
 
   return {
     title: `${route.title} | TrekPeru`,

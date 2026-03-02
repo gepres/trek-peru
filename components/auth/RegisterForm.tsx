@@ -44,11 +44,16 @@ export function RegisterForm({ locale }: RegisterFormProps) {
       setIsLoading(true);
       setError(null);
 
-      // Registrar usuario en Supabase Auth
+      // Registrar usuario en Supabase Auth.
+      // emailRedirectTo usa el origen actual del navegador → funciona en localhost Y en producción
+      // sin cambiar el código. Supabase lo incluirá en el enlace del correo de confirmación.
+      const callbackUrl = `${window.location.origin}/api/auth/callback?next=/${locale}/routes`;
+
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
+          emailRedirectTo: callbackUrl,
           data: {
             full_name: data.full_name,
             username: data.username,

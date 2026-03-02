@@ -3450,9 +3450,1086 @@
     },
     {
       "type": "frame",
+      "id": "TEvZw",
+      "x": 4100,
+      "y": 4058,
+      "name": "☀️ Routes — Light Desktop",
+      "width": 1440,
+      "fill": "#F5F3EF",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "tc33X",
+          "name": "Header",
+          "width": "fill_container",
+          "height": 72,
+          "fill": "#FAFAF8",
+          "padding": [
+            0,
+            64
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "LXg3j",
+              "name": "rhLogoArea",
+              "height": "fill_container",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "SoTq5",
+                  "name": "rhLogoBadge",
+                  "width": 30,
+                  "height": 30,
+                  "fill": "#F97316",
+                  "cornerRadius": 7,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "SIwWD",
+                      "name": "rhLogoT",
+                      "fill": "#FFFFFF",
+                      "content": "T",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "800"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "EmakK",
+                  "name": "rhLogoTxt",
+                  "fill": "#0F0F12",
+                  "content": "TrekPeru",
+                  "fontFamily": "Inter",
+                  "fontSize": 17,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "tIVEO",
+              "name": "rhSpacer",
+              "width": "fill_container",
+              "height": "fill_container",
+              "fill": "#00000000"
+            },
+            {
+              "type": "frame",
+              "id": "ZbVpA",
+              "name": "rhNav",
+              "height": "fill_container",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "7Gico",
+                  "name": "rhNavExpl",
+                  "fill": "#F97316",
+                  "cornerRadius": 8,
+                  "gap": 6,
+                  "padding": [
+                    8,
+                    14
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "KABk5",
+                      "name": "rhNavExplTxt",
+                      "fill": "#FFFFFF",
+                      "content": "Explorar",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "gbjqA",
+                  "name": "rhNavMis",
+                  "fill": "#FFFFFF08",
+                  "cornerRadius": 8,
+                  "padding": [
+                    8,
+                    14
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "lNtMG",
+                      "name": "rhNavMisTxt",
+                      "fill": "#64646E",
+                      "content": "Mis Rutas",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "unN8f",
+                  "name": "rhNavComun",
+                  "fill": "#FFFFFF08",
+                  "cornerRadius": 8,
+                  "padding": [
+                    8,
+                    14
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "b4m7r",
+                      "name": "rhNavComunTxt",
+                      "fill": "#64646E",
+                      "content": "Comunidad",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "iNMFn",
+              "name": "rhSpacer2",
+              "width": 32,
+              "height": "fill_container",
+              "fill": "#00000000"
+            },
+            {
+              "type": "frame",
+              "id": "Yciz0",
+              "name": "rhAuth",
+              "height": "fill_container",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "SoEK2",
+                  "name": "rhNotif",
+                  "width": 36,
+                  "height": 36,
+                  "fill": "#F0EEE9",
+                  "cornerRadius": 18,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "JdnzP",
+                      "name": "rhNotifTxt",
+                      "content": "🔔",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ZNhmP",
+                  "name": "rhAvatar",
+                  "width": 36,
+                  "height": 36,
+                  "fill": "#F97316",
+                  "cornerRadius": 18,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "C6Fvi",
+                      "name": "rhAvatarTxt",
+                      "fill": "#FFFFFF",
+                      "content": "GP",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "v7SEw",
+          "name": "Routes Body",
+          "width": "fill_container",
+          "height": 900,
+          "children": [
+            {
+              "type": "frame",
+              "id": "tBcYW",
+              "name": "Sidebar",
+              "width": 400,
+              "height": "fill_container",
+              "fill": "#FAFAF8",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "KA9ap",
+                  "name": "Search Area",
+                  "width": "fill_container",
+                  "fill": "#FAFAF8",
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": [
+                    16,
+                    16,
+                    12,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "JqLEn",
+                      "name": "sbSearchBar",
+                      "width": "fill_container",
+                      "fill": "#F0EEE9",
+                      "cornerRadius": 10,
+                      "gap": 10,
+                      "padding": [
+                        10,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "x3r0J",
+                          "name": "sbSearchIcon",
+                          "content": "🔍",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "CQetH",
+                          "name": "sbSearchTxt",
+                          "fill": "#A8A8B0",
+                          "content": "Buscar rutas, regiones...",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "hJfX3",
+                      "name": "sbFilters",
+                      "width": "fill_container",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "VJsp5",
+                          "name": "sbFilt1",
+                          "fill": "#F97316",
+                          "cornerRadius": 20,
+                          "padding": [
+                            6,
+                            14
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "qsfxh",
+                              "name": "sbFilt1Txt",
+                              "fill": "#FFFFFF",
+                              "content": "Todas",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "d9shx",
+                          "name": "sbFilt2",
+                          "fill": "#F0EEE9",
+                          "cornerRadius": 20,
+                          "padding": [
+                            6,
+                            14
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "72WSo",
+                              "name": "sbFilt2Txt",
+                              "fill": "#64646E",
+                              "content": "Fácil",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "2QXLy",
+                          "name": "sbFilt3",
+                          "fill": "#F0EEE9",
+                          "cornerRadius": 20,
+                          "padding": [
+                            6,
+                            14
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "nRVoF",
+                              "name": "sbFilt3Txt",
+                              "fill": "#64646E",
+                              "content": "Moderado",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "XzVDF",
+                          "name": "sbFilt4",
+                          "fill": "#F0EEE9",
+                          "cornerRadius": 20,
+                          "padding": [
+                            6,
+                            14
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "1jipS",
+                              "name": "sbFilt4Txt",
+                              "fill": "#64646E",
+                              "content": "Difícil",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Gw9JD",
+                  "name": "sbCount",
+                  "width": "fill_container",
+                  "padding": [
+                    0,
+                    16,
+                    8,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "BVaoq",
+                      "name": "sbCountTxt",
+                      "fill": "#A8A8B0",
+                      "content": "350 rutas encontradas",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "JxW5E",
+                      "name": "sbCountSpacer",
+                      "width": "fill_container",
+                      "height": 1,
+                      "fill": "#00000000"
+                    },
+                    {
+                      "type": "text",
+                      "id": "gD9cm",
+                      "name": "sbSortTxt",
+                      "fill": "#F97316",
+                      "content": "Ordenar ↕",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ViGMN",
+                  "name": "Route List",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 1,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "hLxoQ",
+                      "name": "Route Item 1",
+                      "width": "fill_container",
+                      "fill": "#F97316",
+                      "gap": 14,
+                      "padding": [
+                        14,
+                        16
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "T5Qgv",
+                          "name": "rli1Thumb",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "catauggie",
+                            "link": "https://unsplash.com/@catauggie",
+                            "author": "SnapSaga"
+                          },
+                          "width": 72,
+                          "height": 72,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1771262587633-185f4550214c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzI0MTMwMDF8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "cornerRadius": 10
+                        },
+                        {
+                          "type": "frame",
+                          "id": "ICZI9",
+                          "name": "rli1Info",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 6,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "o7Wx7",
+                              "name": "rli1Title",
+                              "fill": "#FFFFFF",
+                              "content": "Vinicunca — Montaña de 7 Colores",
+                              "lineHeight": 1.3,
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "700"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "JhmCJ",
+                              "name": "rli1Meta",
+                              "gap": 12,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "BhPQA",
+                                  "name": "rli1Dist",
+                                  "fill": "#FFFFFF99",
+                                  "content": "18.4 km",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 12,
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "OOrDg",
+                                  "name": "rli1Alt",
+                                  "fill": "#FFFFFF99",
+                                  "content": "5,200m",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 12,
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "KFtKe",
+                                  "name": "rli1Diff",
+                                  "fill": "#FFFFFF99",
+                                  "content": "● Moderado",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 11,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "JiXYS",
+                      "name": "Route Item 2",
+                      "width": "fill_container",
+                      "fill": "#FFFFFF",
+                      "gap": 14,
+                      "padding": [
+                        14,
+                        16
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "6dkZe",
+                          "name": "rli2Thumb",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "passimage",
+                            "link": "https://unsplash.com/@passimage",
+                            "author": "Snap Wander"
+                          },
+                          "width": 72,
+                          "height": 72,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1759513293475-6f690d64bab9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzI0MTMwMjl8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "cornerRadius": 10
+                        },
+                        {
+                          "type": "frame",
+                          "id": "En8KN",
+                          "name": "rli2Info",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 6,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "QzCwX",
+                              "name": "rli2Title",
+                              "fill": "#0F0F12",
+                              "content": "Camino Inca — Machu Picchu",
+                              "lineHeight": 1.3,
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "700"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "hoNh1",
+                              "name": "rli2Badges",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "n5IpF",
+                                  "name": "rli2DiffBadge",
+                                  "fill": "#EF444420",
+                                  "cornerRadius": 5,
+                                  "padding": [
+                                    3,
+                                    8
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "HNAmQ",
+                                      "name": "rli2DiffTxt",
+                                      "fill": "#EF4444",
+                                      "content": "DIFÍCIL",
+                                      "fontFamily": "Inter",
+                                      "fontSize": 10,
+                                      "fontWeight": "700"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "XAhqz",
+                              "name": "rli2Meta",
+                              "gap": 12,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "1RMtK",
+                                  "name": "rli2Dist",
+                                  "fill": "#A8A8B0",
+                                  "content": "43 km · 4 días · ↑4,215m",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "JUSet",
+                      "name": "Route Item 3",
+                      "width": "fill_container",
+                      "fill": "#FFFFFF",
+                      "gap": 14,
+                      "padding": [
+                        14,
+                        16
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "Y8tit",
+                          "name": "rli3Thumb",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "nvv",
+                            "link": "https://unsplash.com/@nvv",
+                            "author": "Vlad Namashko"
+                          },
+                          "width": 72,
+                          "height": 72,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1751431586264-3343d4203ec0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzI0MTMwMjl8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "cornerRadius": 10
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Az83J",
+                          "name": "rli3Info",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 6,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "yyltx",
+                              "name": "rli3Title",
+                              "fill": "#0F0F12",
+                              "content": "Lago Humantay — Glaciar Turquesa",
+                              "lineHeight": 1.3,
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "700"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "EWOez",
+                              "name": "rli3Badges",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "K4OEC",
+                                  "name": "rli3DiffBadge",
+                                  "fill": "#22C55E20",
+                                  "cornerRadius": 5,
+                                  "padding": [
+                                    3,
+                                    8
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "fv4Ki",
+                                      "name": "rli3DiffTxt",
+                                      "fill": "#22C55E",
+                                      "content": "FÁCIL",
+                                      "fontFamily": "Inter",
+                                      "fontSize": 10,
+                                      "fontWeight": "700"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "Q1z75",
+                              "name": "rli3Meta",
+                              "gap": 12,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "VnUFz",
+                                  "name": "rli3Dist",
+                                  "fill": "#A8A8B0",
+                                  "content": "7.2 km · 3-4 hrs · ↑4,200m",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "DByjP",
+                      "name": "Route Item 4",
+                      "width": "fill_container",
+                      "fill": "#FFFFFF",
+                      "gap": 14,
+                      "padding": [
+                        14,
+                        16
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "tZlzC",
+                          "name": "rli4Thumb",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "sophiasimoes",
+                            "link": "https://unsplash.com/@sophiasimoes",
+                            "author": "Sophia Simoes"
+                          },
+                          "width": 72,
+                          "height": 72,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1769359656399-cb8261222ffa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzI0MTMwMzB8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "cornerRadius": 10
+                        },
+                        {
+                          "type": "frame",
+                          "id": "UglYn",
+                          "name": "rli4Info",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 6,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "ukE1K",
+                              "name": "rli4Title",
+                              "fill": "#0F0F12",
+                              "content": "Valle del Colca — Cañón Profundo",
+                              "lineHeight": 1.3,
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "700"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "Jcdpt",
+                              "name": "rli4Badges",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "OFFlP",
+                                  "name": "rli4DiffBadge",
+                                  "fill": "#EAB30820",
+                                  "cornerRadius": 5,
+                                  "padding": [
+                                    3,
+                                    8
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "HdqhP",
+                                      "name": "rli4DiffTxt",
+                                      "fill": "#EAB308",
+                                      "content": "MODERADO",
+                                      "fontFamily": "Inter",
+                                      "fontSize": 10,
+                                      "fontWeight": "700"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "WYiu8",
+                              "name": "rli4Meta",
+                              "gap": 12,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "IqeVO",
+                                  "name": "rli4Dist",
+                                  "fill": "#A8A8B0",
+                                  "content": "24 km · 2 días · ↑3,520m",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ojZ3P",
+              "name": "Map Area",
+              "metadata": {
+                "type": "unsplash",
+                "username": "usgs",
+                "link": "https://unsplash.com/@usgs",
+                "author": "USGS"
+              },
+              "width": "fill_container",
+              "height": "fill_container",
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "https://images.unsplash.com/photo-1578309742909-3e42b061e294?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzI0MTI5Nzd8&ixlib=rb-4.1.0&q=80&w=1080",
+                "mode": "fill"
+              },
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "mVLrT",
+                  "x": 20,
+                  "y": 20,
+                  "name": "Map Controls",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 12,
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "yJM2D",
+                      "name": "mapCtrlZoomIn",
+                      "width": 40,
+                      "height": 40,
+                      "fill": "#F0EEE9",
+                      "cornerRadius": [
+                        10,
+                        10,
+                        0,
+                        0
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Xno72",
+                          "name": "mapCtrlZoomInTxt",
+                          "fill": "#0F0F12",
+                          "content": "+",
+                          "fontFamily": "Inter",
+                          "fontSize": 20,
+                          "fontWeight": "300"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "1TlhG",
+                      "name": "mapCtrlDivider",
+                      "width": 40,
+                      "height": 1,
+                      "fill": "#E4E1DD"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bI2b2",
+                      "name": "mapCtrlZoomOut",
+                      "width": 40,
+                      "height": 40,
+                      "fill": "#F0EEE9",
+                      "cornerRadius": [
+                        0,
+                        0,
+                        10,
+                        10
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "vXhq7",
+                          "name": "mapCtrlZoomOutTxt",
+                          "fill": "#0F0F12",
+                          "content": "−",
+                          "fontFamily": "Inter",
+                          "fontSize": 20,
+                          "fontWeight": "300"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "8KhD7",
+                  "x": 340,
+                  "y": 200,
+                  "name": "Pin Active",
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "q9D8Z",
+                      "name": "mapPin1Dot",
+                      "width": 20,
+                      "height": 20,
+                      "fill": "#F97316",
+                      "cornerRadius": 10
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "gp7QK",
+                  "x": 560,
+                  "y": 350,
+                  "name": "Pin 2",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "VY1Xo",
+                      "name": "mapPin2Dot",
+                      "width": 14,
+                      "height": 14,
+                      "fill": "#E4E1DD",
+                      "cornerRadius": 7
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "wA3md",
+                  "x": 720,
+                  "y": 180,
+                  "name": "Pin 3",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "oPpxr",
+                      "name": "mapPin3Dot",
+                      "width": 14,
+                      "height": 14,
+                      "fill": "#E4E1DD",
+                      "cornerRadius": 7
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "gaowe",
+                  "x": 340,
+                  "y": 230,
+                  "name": "Route Popup",
+                  "width": 280,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 14,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Tp5L4",
+                      "name": "mapPopupTitle",
+                      "fill": "#0F0F12",
+                      "content": "Vinicunca — Montaña de 7 Colores",
+                      "lineHeight": 1.3,
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ieuRj",
+                      "name": "mapPopupMeta",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Cnrdi",
+                          "name": "mapPopupDist",
+                          "fill": "#64646E",
+                          "content": "📍 18.4 km",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "b9GXm",
+                          "name": "mapPopupAlt",
+                          "fill": "#64646E",
+                          "content": "↑ 5,200m",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "c5kx6",
+                      "name": "mapPopupBtnRow",
+                      "width": "fill_container",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "6qVag",
+                          "name": "mapPopupBtn",
+                          "width": "fill_container",
+                          "fill": "#F97316",
+                          "cornerRadius": 8,
+                          "padding": [
+                            8,
+                            16
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "GVA6G",
+                              "name": "mapPopupBtnTxt",
+                              "fill": "#FFFFFF",
+                              "content": "Ver detalle →",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
       "id": "jmNAD",
-      "x": 2500,
-      "y": 3800,
+      "x": 2499,
+      "y": 4058,
       "name": "🌑 Routes — Dark Desktop",
       "width": 1440,
       "fill": "#0B0B0E",
@@ -13985,1083 +15062,6 @@
                   "fontFamily": "Inter",
                   "fontSize": 12,
                   "fontWeight": "normal"
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "type": "frame",
-      "id": "TEvZw",
-      "x": 4100,
-      "y": 3800,
-      "name": "☀️ Routes — Light Desktop",
-      "width": 1440,
-      "fill": "#F5F3EF",
-      "layout": "vertical",
-      "children": [
-        {
-          "type": "frame",
-          "id": "tc33X",
-          "name": "Header",
-          "width": "fill_container",
-          "height": 72,
-          "fill": "#FAFAF8",
-          "padding": [
-            0,
-            64
-          ],
-          "children": [
-            {
-              "type": "frame",
-              "id": "LXg3j",
-              "name": "rhLogoArea",
-              "height": "fill_container",
-              "gap": 10,
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "SoTq5",
-                  "name": "rhLogoBadge",
-                  "width": 30,
-                  "height": 30,
-                  "fill": "#F97316",
-                  "cornerRadius": 7,
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "SIwWD",
-                      "name": "rhLogoT",
-                      "fill": "#FFFFFF",
-                      "content": "T",
-                      "fontFamily": "Inter",
-                      "fontSize": 15,
-                      "fontWeight": "800"
-                    }
-                  ]
-                },
-                {
-                  "type": "text",
-                  "id": "EmakK",
-                  "name": "rhLogoTxt",
-                  "fill": "#0F0F12",
-                  "content": "TrekPeru",
-                  "fontFamily": "Inter",
-                  "fontSize": 17,
-                  "fontWeight": "700"
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "tIVEO",
-              "name": "rhSpacer",
-              "width": "fill_container",
-              "height": "fill_container",
-              "fill": "#00000000"
-            },
-            {
-              "type": "frame",
-              "id": "ZbVpA",
-              "name": "rhNav",
-              "height": "fill_container",
-              "gap": 8,
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "7Gico",
-                  "name": "rhNavExpl",
-                  "fill": "#F97316",
-                  "cornerRadius": 8,
-                  "gap": 6,
-                  "padding": [
-                    8,
-                    14
-                  ],
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "KABk5",
-                      "name": "rhNavExplTxt",
-                      "fill": "#FFFFFF",
-                      "content": "Explorar",
-                      "fontFamily": "Inter",
-                      "fontSize": 13,
-                      "fontWeight": "600"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "gbjqA",
-                  "name": "rhNavMis",
-                  "fill": "#FFFFFF08",
-                  "cornerRadius": 8,
-                  "padding": [
-                    8,
-                    14
-                  ],
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "lNtMG",
-                      "name": "rhNavMisTxt",
-                      "fill": "#64646E",
-                      "content": "Mis Rutas",
-                      "fontFamily": "Inter",
-                      "fontSize": 13,
-                      "fontWeight": "500"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "unN8f",
-                  "name": "rhNavComun",
-                  "fill": "#FFFFFF08",
-                  "cornerRadius": 8,
-                  "padding": [
-                    8,
-                    14
-                  ],
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "b4m7r",
-                      "name": "rhNavComunTxt",
-                      "fill": "#64646E",
-                      "content": "Comunidad",
-                      "fontFamily": "Inter",
-                      "fontSize": 13,
-                      "fontWeight": "500"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "iNMFn",
-              "name": "rhSpacer2",
-              "width": 32,
-              "height": "fill_container",
-              "fill": "#00000000"
-            },
-            {
-              "type": "frame",
-              "id": "Yciz0",
-              "name": "rhAuth",
-              "height": "fill_container",
-              "gap": 10,
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "SoEK2",
-                  "name": "rhNotif",
-                  "width": 36,
-                  "height": 36,
-                  "fill": "#F0EEE9",
-                  "cornerRadius": 18,
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "JdnzP",
-                      "name": "rhNotifTxt",
-                      "content": "🔔",
-                      "fontFamily": "Inter",
-                      "fontSize": 15,
-                      "fontWeight": "normal"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "ZNhmP",
-                  "name": "rhAvatar",
-                  "width": 36,
-                  "height": 36,
-                  "fill": "#F97316",
-                  "cornerRadius": 18,
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "C6Fvi",
-                      "name": "rhAvatarTxt",
-                      "fill": "#FFFFFF",
-                      "content": "GP",
-                      "fontFamily": "Inter",
-                      "fontSize": 13,
-                      "fontWeight": "700"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "frame",
-          "id": "v7SEw",
-          "name": "Routes Body",
-          "width": "fill_container",
-          "height": 900,
-          "children": [
-            {
-              "type": "frame",
-              "id": "tBcYW",
-              "name": "Sidebar",
-              "width": 400,
-              "height": "fill_container",
-              "fill": "#FAFAF8",
-              "layout": "vertical",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "KA9ap",
-                  "name": "Search Area",
-                  "width": "fill_container",
-                  "fill": "#FAFAF8",
-                  "layout": "vertical",
-                  "gap": 12,
-                  "padding": [
-                    16,
-                    16,
-                    12,
-                    16
-                  ],
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "JqLEn",
-                      "name": "sbSearchBar",
-                      "width": "fill_container",
-                      "fill": "#F0EEE9",
-                      "cornerRadius": 10,
-                      "gap": 10,
-                      "padding": [
-                        10,
-                        14
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "x3r0J",
-                          "name": "sbSearchIcon",
-                          "content": "🔍",
-                          "fontFamily": "Inter",
-                          "fontSize": 14,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "CQetH",
-                          "name": "sbSearchTxt",
-                          "fill": "#A8A8B0",
-                          "content": "Buscar rutas, regiones...",
-                          "fontFamily": "Inter",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "hJfX3",
-                      "name": "sbFilters",
-                      "width": "fill_container",
-                      "gap": 8,
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "VJsp5",
-                          "name": "sbFilt1",
-                          "fill": "#F97316",
-                          "cornerRadius": 20,
-                          "padding": [
-                            6,
-                            14
-                          ],
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "qsfxh",
-                              "name": "sbFilt1Txt",
-                              "fill": "#FFFFFF",
-                              "content": "Todas",
-                              "fontFamily": "Inter",
-                              "fontSize": 12,
-                              "fontWeight": "600"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "d9shx",
-                          "name": "sbFilt2",
-                          "fill": "#F0EEE9",
-                          "cornerRadius": 20,
-                          "padding": [
-                            6,
-                            14
-                          ],
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "72WSo",
-                              "name": "sbFilt2Txt",
-                              "fill": "#64646E",
-                              "content": "Fácil",
-                              "fontFamily": "Inter",
-                              "fontSize": 12,
-                              "fontWeight": "500"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "2QXLy",
-                          "name": "sbFilt3",
-                          "fill": "#F0EEE9",
-                          "cornerRadius": 20,
-                          "padding": [
-                            6,
-                            14
-                          ],
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "nRVoF",
-                              "name": "sbFilt3Txt",
-                              "fill": "#64646E",
-                              "content": "Moderado",
-                              "fontFamily": "Inter",
-                              "fontSize": 12,
-                              "fontWeight": "500"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "XzVDF",
-                          "name": "sbFilt4",
-                          "fill": "#F0EEE9",
-                          "cornerRadius": 20,
-                          "padding": [
-                            6,
-                            14
-                          ],
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "1jipS",
-                              "name": "sbFilt4Txt",
-                              "fill": "#64646E",
-                              "content": "Difícil",
-                              "fontFamily": "Inter",
-                              "fontSize": 12,
-                              "fontWeight": "500"
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "Gw9JD",
-                  "name": "sbCount",
-                  "width": "fill_container",
-                  "padding": [
-                    0,
-                    16,
-                    8,
-                    16
-                  ],
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "BVaoq",
-                      "name": "sbCountTxt",
-                      "fill": "#A8A8B0",
-                      "content": "350 rutas encontradas",
-                      "fontFamily": "Inter",
-                      "fontSize": 12,
-                      "fontWeight": "500"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "JxW5E",
-                      "name": "sbCountSpacer",
-                      "width": "fill_container",
-                      "height": 1,
-                      "fill": "#00000000"
-                    },
-                    {
-                      "type": "text",
-                      "id": "gD9cm",
-                      "name": "sbSortTxt",
-                      "fill": "#F97316",
-                      "content": "Ordenar ↕",
-                      "fontFamily": "Inter",
-                      "fontSize": 12,
-                      "fontWeight": "500"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "ViGMN",
-                  "name": "Route List",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 1,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "hLxoQ",
-                      "name": "Route Item 1",
-                      "width": "fill_container",
-                      "fill": "#F97316",
-                      "gap": 14,
-                      "padding": [
-                        14,
-                        16
-                      ],
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "T5Qgv",
-                          "name": "rli1Thumb",
-                          "metadata": {
-                            "type": "unsplash",
-                            "username": "catauggie",
-                            "link": "https://unsplash.com/@catauggie",
-                            "author": "SnapSaga"
-                          },
-                          "width": 72,
-                          "height": 72,
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "https://images.unsplash.com/photo-1771262587633-185f4550214c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzI0MTMwMDF8&ixlib=rb-4.1.0&q=80&w=1080",
-                            "mode": "fill"
-                          },
-                          "cornerRadius": 10
-                        },
-                        {
-                          "type": "frame",
-                          "id": "ICZI9",
-                          "name": "rli1Info",
-                          "width": "fill_container",
-                          "layout": "vertical",
-                          "gap": 6,
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "o7Wx7",
-                              "name": "rli1Title",
-                              "fill": "#FFFFFF",
-                              "content": "Vinicunca — Montaña de 7 Colores",
-                              "lineHeight": 1.3,
-                              "fontFamily": "Inter",
-                              "fontSize": 14,
-                              "fontWeight": "700"
-                            },
-                            {
-                              "type": "frame",
-                              "id": "JhmCJ",
-                              "name": "rli1Meta",
-                              "gap": 12,
-                              "children": [
-                                {
-                                  "type": "text",
-                                  "id": "BhPQA",
-                                  "name": "rli1Dist",
-                                  "fill": "#FFFFFF99",
-                                  "content": "18.4 km",
-                                  "fontFamily": "Inter",
-                                  "fontSize": 12,
-                                  "fontWeight": "500"
-                                },
-                                {
-                                  "type": "text",
-                                  "id": "OOrDg",
-                                  "name": "rli1Alt",
-                                  "fill": "#FFFFFF99",
-                                  "content": "5,200m",
-                                  "fontFamily": "Inter",
-                                  "fontSize": 12,
-                                  "fontWeight": "500"
-                                },
-                                {
-                                  "type": "text",
-                                  "id": "KFtKe",
-                                  "name": "rli1Diff",
-                                  "fill": "#FFFFFF99",
-                                  "content": "● Moderado",
-                                  "fontFamily": "Inter",
-                                  "fontSize": 11,
-                                  "fontWeight": "600"
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "JiXYS",
-                      "name": "Route Item 2",
-                      "width": "fill_container",
-                      "fill": "#FFFFFF",
-                      "gap": 14,
-                      "padding": [
-                        14,
-                        16
-                      ],
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "6dkZe",
-                          "name": "rli2Thumb",
-                          "metadata": {
-                            "type": "unsplash",
-                            "username": "passimage",
-                            "link": "https://unsplash.com/@passimage",
-                            "author": "Snap Wander"
-                          },
-                          "width": 72,
-                          "height": 72,
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "https://images.unsplash.com/photo-1759513293475-6f690d64bab9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzI0MTMwMjl8&ixlib=rb-4.1.0&q=80&w=1080",
-                            "mode": "fill"
-                          },
-                          "cornerRadius": 10
-                        },
-                        {
-                          "type": "frame",
-                          "id": "En8KN",
-                          "name": "rli2Info",
-                          "width": "fill_container",
-                          "layout": "vertical",
-                          "gap": 6,
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "QzCwX",
-                              "name": "rli2Title",
-                              "fill": "#0F0F12",
-                              "content": "Camino Inca — Machu Picchu",
-                              "lineHeight": 1.3,
-                              "fontFamily": "Inter",
-                              "fontSize": 14,
-                              "fontWeight": "700"
-                            },
-                            {
-                              "type": "frame",
-                              "id": "hoNh1",
-                              "name": "rli2Badges",
-                              "gap": 8,
-                              "children": [
-                                {
-                                  "type": "frame",
-                                  "id": "n5IpF",
-                                  "name": "rli2DiffBadge",
-                                  "fill": "#EF444420",
-                                  "cornerRadius": 5,
-                                  "padding": [
-                                    3,
-                                    8
-                                  ],
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "HNAmQ",
-                                      "name": "rli2DiffTxt",
-                                      "fill": "#EF4444",
-                                      "content": "DIFÍCIL",
-                                      "fontFamily": "Inter",
-                                      "fontSize": 10,
-                                      "fontWeight": "700"
-                                    }
-                                  ]
-                                }
-                              ]
-                            },
-                            {
-                              "type": "frame",
-                              "id": "XAhqz",
-                              "name": "rli2Meta",
-                              "gap": 12,
-                              "children": [
-                                {
-                                  "type": "text",
-                                  "id": "1RMtK",
-                                  "name": "rli2Dist",
-                                  "fill": "#A8A8B0",
-                                  "content": "43 km · 4 días · ↑4,215m",
-                                  "fontFamily": "Inter",
-                                  "fontSize": 12,
-                                  "fontWeight": "normal"
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "JUSet",
-                      "name": "Route Item 3",
-                      "width": "fill_container",
-                      "fill": "#FFFFFF",
-                      "gap": 14,
-                      "padding": [
-                        14,
-                        16
-                      ],
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "Y8tit",
-                          "name": "rli3Thumb",
-                          "metadata": {
-                            "type": "unsplash",
-                            "username": "nvv",
-                            "link": "https://unsplash.com/@nvv",
-                            "author": "Vlad Namashko"
-                          },
-                          "width": 72,
-                          "height": 72,
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "https://images.unsplash.com/photo-1751431586264-3343d4203ec0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzI0MTMwMjl8&ixlib=rb-4.1.0&q=80&w=1080",
-                            "mode": "fill"
-                          },
-                          "cornerRadius": 10
-                        },
-                        {
-                          "type": "frame",
-                          "id": "Az83J",
-                          "name": "rli3Info",
-                          "width": "fill_container",
-                          "layout": "vertical",
-                          "gap": 6,
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "yyltx",
-                              "name": "rli3Title",
-                              "fill": "#0F0F12",
-                              "content": "Lago Humantay — Glaciar Turquesa",
-                              "lineHeight": 1.3,
-                              "fontFamily": "Inter",
-                              "fontSize": 14,
-                              "fontWeight": "700"
-                            },
-                            {
-                              "type": "frame",
-                              "id": "EWOez",
-                              "name": "rli3Badges",
-                              "gap": 8,
-                              "children": [
-                                {
-                                  "type": "frame",
-                                  "id": "K4OEC",
-                                  "name": "rli3DiffBadge",
-                                  "fill": "#22C55E20",
-                                  "cornerRadius": 5,
-                                  "padding": [
-                                    3,
-                                    8
-                                  ],
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "fv4Ki",
-                                      "name": "rli3DiffTxt",
-                                      "fill": "#22C55E",
-                                      "content": "FÁCIL",
-                                      "fontFamily": "Inter",
-                                      "fontSize": 10,
-                                      "fontWeight": "700"
-                                    }
-                                  ]
-                                }
-                              ]
-                            },
-                            {
-                              "type": "frame",
-                              "id": "Q1z75",
-                              "name": "rli3Meta",
-                              "gap": 12,
-                              "children": [
-                                {
-                                  "type": "text",
-                                  "id": "VnUFz",
-                                  "name": "rli3Dist",
-                                  "fill": "#A8A8B0",
-                                  "content": "7.2 km · 3-4 hrs · ↑4,200m",
-                                  "fontFamily": "Inter",
-                                  "fontSize": 12,
-                                  "fontWeight": "normal"
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "DByjP",
-                      "name": "Route Item 4",
-                      "width": "fill_container",
-                      "fill": "#FFFFFF",
-                      "gap": 14,
-                      "padding": [
-                        14,
-                        16
-                      ],
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "tZlzC",
-                          "name": "rli4Thumb",
-                          "metadata": {
-                            "type": "unsplash",
-                            "username": "sophiasimoes",
-                            "link": "https://unsplash.com/@sophiasimoes",
-                            "author": "Sophia Simoes"
-                          },
-                          "width": 72,
-                          "height": 72,
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "https://images.unsplash.com/photo-1769359656399-cb8261222ffa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzI0MTMwMzB8&ixlib=rb-4.1.0&q=80&w=1080",
-                            "mode": "fill"
-                          },
-                          "cornerRadius": 10
-                        },
-                        {
-                          "type": "frame",
-                          "id": "UglYn",
-                          "name": "rli4Info",
-                          "width": "fill_container",
-                          "layout": "vertical",
-                          "gap": 6,
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "ukE1K",
-                              "name": "rli4Title",
-                              "fill": "#0F0F12",
-                              "content": "Valle del Colca — Cañón Profundo",
-                              "lineHeight": 1.3,
-                              "fontFamily": "Inter",
-                              "fontSize": 14,
-                              "fontWeight": "700"
-                            },
-                            {
-                              "type": "frame",
-                              "id": "Jcdpt",
-                              "name": "rli4Badges",
-                              "gap": 8,
-                              "children": [
-                                {
-                                  "type": "frame",
-                                  "id": "OFFlP",
-                                  "name": "rli4DiffBadge",
-                                  "fill": "#EAB30820",
-                                  "cornerRadius": 5,
-                                  "padding": [
-                                    3,
-                                    8
-                                  ],
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "HdqhP",
-                                      "name": "rli4DiffTxt",
-                                      "fill": "#EAB308",
-                                      "content": "MODERADO",
-                                      "fontFamily": "Inter",
-                                      "fontSize": 10,
-                                      "fontWeight": "700"
-                                    }
-                                  ]
-                                }
-                              ]
-                            },
-                            {
-                              "type": "frame",
-                              "id": "WYiu8",
-                              "name": "rli4Meta",
-                              "gap": 12,
-                              "children": [
-                                {
-                                  "type": "text",
-                                  "id": "IqeVO",
-                                  "name": "rli4Dist",
-                                  "fill": "#A8A8B0",
-                                  "content": "24 km · 2 días · ↑3,520m",
-                                  "fontFamily": "Inter",
-                                  "fontSize": 12,
-                                  "fontWeight": "normal"
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "ojZ3P",
-              "name": "Map Area",
-              "metadata": {
-                "type": "unsplash",
-                "username": "usgs",
-                "link": "https://unsplash.com/@usgs",
-                "author": "USGS"
-              },
-              "width": "fill_container",
-              "height": "fill_container",
-              "fill": {
-                "type": "image",
-                "enabled": true,
-                "url": "https://images.unsplash.com/photo-1578309742909-3e42b061e294?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzI0MTI5Nzd8&ixlib=rb-4.1.0&q=80&w=1080",
-                "mode": "fill"
-              },
-              "layout": "none",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "mVLrT",
-                  "x": 20,
-                  "y": 20,
-                  "name": "Map Controls",
-                  "fill": "#FFFFFF",
-                  "cornerRadius": 12,
-                  "layout": "vertical",
-                  "gap": 2,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "yJM2D",
-                      "name": "mapCtrlZoomIn",
-                      "width": 40,
-                      "height": 40,
-                      "fill": "#F0EEE9",
-                      "cornerRadius": [
-                        10,
-                        10,
-                        0,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "Xno72",
-                          "name": "mapCtrlZoomInTxt",
-                          "fill": "#0F0F12",
-                          "content": "+",
-                          "fontFamily": "Inter",
-                          "fontSize": 20,
-                          "fontWeight": "300"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "1TlhG",
-                      "name": "mapCtrlDivider",
-                      "width": 40,
-                      "height": 1,
-                      "fill": "#E4E1DD"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "bI2b2",
-                      "name": "mapCtrlZoomOut",
-                      "width": 40,
-                      "height": 40,
-                      "fill": "#F0EEE9",
-                      "cornerRadius": [
-                        0,
-                        0,
-                        10,
-                        10
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "vXhq7",
-                          "name": "mapCtrlZoomOutTxt",
-                          "fill": "#0F0F12",
-                          "content": "−",
-                          "fontFamily": "Inter",
-                          "fontSize": 20,
-                          "fontWeight": "300"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "8KhD7",
-                  "x": 340,
-                  "y": 200,
-                  "name": "Pin Active",
-                  "layout": "vertical",
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "q9D8Z",
-                      "name": "mapPin1Dot",
-                      "width": 20,
-                      "height": 20,
-                      "fill": "#F97316",
-                      "cornerRadius": 10
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "gp7QK",
-                  "x": 560,
-                  "y": 350,
-                  "name": "Pin 2",
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "VY1Xo",
-                      "name": "mapPin2Dot",
-                      "width": 14,
-                      "height": 14,
-                      "fill": "#E4E1DD",
-                      "cornerRadius": 7
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "wA3md",
-                  "x": 720,
-                  "y": 180,
-                  "name": "Pin 3",
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "oPpxr",
-                      "name": "mapPin3Dot",
-                      "width": 14,
-                      "height": 14,
-                      "fill": "#E4E1DD",
-                      "cornerRadius": 7
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "gaowe",
-                  "x": 340,
-                  "y": 230,
-                  "name": "Route Popup",
-                  "width": 280,
-                  "fill": "#FFFFFF",
-                  "cornerRadius": 14,
-                  "layout": "vertical",
-                  "gap": 12,
-                  "padding": 16,
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "Tp5L4",
-                      "name": "mapPopupTitle",
-                      "fill": "#0F0F12",
-                      "content": "Vinicunca — Montaña de 7 Colores",
-                      "lineHeight": 1.3,
-                      "fontFamily": "Inter",
-                      "fontSize": 13,
-                      "fontWeight": "700"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "ieuRj",
-                      "name": "mapPopupMeta",
-                      "gap": 16,
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "Cnrdi",
-                          "name": "mapPopupDist",
-                          "fill": "#64646E",
-                          "content": "📍 18.4 km",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "b9GXm",
-                          "name": "mapPopupAlt",
-                          "fill": "#64646E",
-                          "content": "↑ 5,200m",
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "c5kx6",
-                      "name": "mapPopupBtnRow",
-                      "width": "fill_container",
-                      "gap": 8,
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "6qVag",
-                          "name": "mapPopupBtn",
-                          "width": "fill_container",
-                          "fill": "#F97316",
-                          "cornerRadius": 8,
-                          "padding": [
-                            8,
-                            16
-                          ],
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "GVA6G",
-                              "name": "mapPopupBtnTxt",
-                              "fill": "#FFFFFF",
-                              "content": "Ver detalle →",
-                              "fontFamily": "Inter",
-                              "fontSize": 12,
-                              "fontWeight": "600"
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
                 }
               ]
             }
