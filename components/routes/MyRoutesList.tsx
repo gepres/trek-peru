@@ -58,14 +58,14 @@ export function MyRoutesList({ locale }: MyRoutesListProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {routes.map((route) => (
-          <div key={route.id} className="space-y-2">
+          <div key={route.id} className="space-y-2 mb-10 lg:mb-0">
             <RouteCard route={route} locale={locale} />
             {/* Botón de gestión de asistentes — solo visible para el creador en este listado */}
             <Button
               asChild
               variant="outline"
               size="sm"
-              className="w-full gap-2"
+              className="w-full gap-2 relative"
             >
               <Link href={`/${locale}/my-routes/${route.id}/attendees`}>
                 <Users className="h-3.5 w-3.5" />

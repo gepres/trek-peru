@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { useStorageDelete } from '@/presentation/hooks';
 import { ImageUpload } from './ImageUpload';
 import { X, ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
@@ -27,13 +28,24 @@ export function ImageGallery({
   className = '',
 }: ImageGalleryProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+  // Clave que se incrementa tras cada subida para resetear el estado interno de ImageUpload
+  const [uploadKey, setUploadKey] = useState(0);
+  const { deleteFile } = useStorageDelete();
 
   const handleUploadComplete = (url: string) => {
     const newImages = [...images, url];
     onImagesChange?.(newImages);
+    // Resetear ImageUpload para que no muestre el preview de la imagen recién subida
+    setUploadKey((k) => k + 1);
   };
 
-  const handleRemoveImage = (index: number) => {
+  // Elimina la imagen del storage y luego actualiza el estado local
+  const handleRemoveImage = async (index: number) => {
+    try {
+      await deleteFile(images[index], bucket);
+    } catch (err) {
+      console.error('Error al eliminar imagen del storage:', err);
+    }
     const newImages = images.filter((_, i) => i !== index);
     onImagesChange?.(newImages);
   };
@@ -68,6 +80,8 @@ export function ImageGallery({
               src={imageUrl}
               alt={`Imagen ${index + 1}`}
               fill
+              quality={90}
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               className="object-cover transition-transform duration-300 group-hover:scale-110"
             />
 
@@ -110,10 +124,12 @@ export function ImageGallery({
         ))}
 
         {/* Botón para agregar más imágenes — solo cuando ya hay al menos una imagen;
-            cuando la galería está vacía, el placeholder grande de abajo cumple esta función */}
+            cuando la galería está vacía, el placeholder grande de abajo cumple esta función.
+            key={uploadKey} fuerza remount tras cada subida para limpiar el preview interno */}
         {editable && canAddMore && images.length > 0 && (
           <div className="aspect-video rounded-lg border-2 border-dashed border-border bg-muted/30 hover:bg-muted/50 transition-colors flex items-center justify-center p-4">
             <ImageUpload
+              key={uploadKey}
               bucket={bucket}
               folder={folder}
               onUploadComplete={handleUploadComplete}
@@ -193,6 +209,8 @@ export function ImageGallery({
                   src={images[selectedImageIndex]}
                   alt={`Imagen ${selectedImageIndex + 1}`}
                   fill
+                  quality={95}
+                  sizes="100vw"
                   className="object-contain"
                 />
               </div>

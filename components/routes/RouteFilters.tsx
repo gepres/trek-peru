@@ -10,19 +10,23 @@ import { RouteFilters as RouteFiltersType } from '@/types/route.types';
 
 interface RouteFiltersProps {
   onFilterChange: (filters: RouteFiltersType) => void;
+  // Callback opcional: se invoca tras "Aplicar Filtros" (útil para cerrar panel en mobile)
+  onApplied?: () => void;
 }
 
 type Difficulty = 'easy' | 'moderate' | 'hard' | 'extreme';
 
-// Componente de filtros para rutas - Diseño de code.html
-export function RouteFilters({ onFilterChange }: RouteFiltersProps) {
+// Componente de filtros para rutas
+export function RouteFilters({ onFilterChange, onApplied }: RouteFiltersProps) {
   const t = useTranslations('routes');
 
-  // Estados
+  // Estados locales — solo se envían al padre al pulsar "Aplicar"
   const [selectedDifficulties, setSelectedDifficulties] = useState<Difficulty[]>([]);
   const [maxAltitude, setMaxAltitude] = useState(6000);
-  const [durationRange, setDurationRange] = useState<[number, number]>([1, 15]);
-  const [distanceRange, setDistanceRange] = useState<[number, number]>([0, 100]);
+  // Duración en días (la BD almacena en horas, se convierte al aplicar)
+  const [maxDuration, setMaxDuration] = useState(15);
+  // Distancia en km
+  const [maxDistance, setMaxDistance] = useState(100);
   const [dateFrom, setDateFrom] = useState<string>('');
   const [dateTo, setDateTo] = useState<string>('');
 
@@ -34,7 +38,7 @@ export function RouteFilters({ onFilterChange }: RouteFiltersProps) {
     { value: 'extreme', label: t('difficulty.extreme') || 'Extremo' },
   ];
 
-  // Manejar cambio de dificultad
+  // Manejar selección de dificultad (multi-select tipo toggle)
   const toggleDifficulty = (difficulty: Difficulty) => {
     setSelectedDifficulties((prev) =>
       prev.includes(difficulty)
@@ -43,7 +47,7 @@ export function RouteFilters({ onFilterChange }: RouteFiltersProps) {
     );
   };
 
-  // Aplicar filtros
+  // Aplicar filtros — convierte días → horas para estimated_duration
   const handleApplyFilters = () => {
     const filters: RouteFiltersType = {};
 
@@ -51,22 +55,19 @@ export function RouteFilters({ onFilterChange }: RouteFiltersProps) {
       filters.difficulties = selectedDifficulties;
     }
 
+    // Altitud: solo filtrar si está por debajo del máximo posible
     if (maxAltitude < 6000) {
       filters.max_altitude = maxAltitude;
     }
 
-    if (durationRange[0] > 1) {
-      filters.min_duration = durationRange[0];
-    }
-    if (durationRange[1] < 15) {
-      filters.max_duration = durationRange[1];
+    // Duración: la BD almacena estimated_duration en HORAS → convertir días × 24
+    if (maxDuration < 15) {
+      filters.max_duration = maxDuration * 24;
     }
 
-    if (distanceRange[0] > 0) {
-      filters.min_distance = distanceRange[0];
-    }
-    if (distanceRange[1] < 100) {
-      filters.max_distance = distanceRange[1];
+    // Distancia: la BD almacena en km directamente
+    if (maxDistance < 100) {
+      filters.max_distance = maxDistance;
     }
 
     if (dateFrom) {
@@ -77,18 +78,41 @@ export function RouteFilters({ onFilterChange }: RouteFiltersProps) {
     }
 
     onFilterChange(filters);
+    // Notificar al padre para cerrar el panel en mobile si corresponde
+    onApplied?.();
   };
 
-  // Limpiar filtros
+  // Limpiar todos los filtros y emitir objeto vacío
   const handleReset = () => {
     setSelectedDifficulties([]);
     setMaxAltitude(6000);
-    setDurationRange([1, 15]);
-    setDistanceRange([0, 100]);
+    setMaxDuration(15);
+    setMaxDistance(100);
     setDateFrom('');
     setDateTo('');
     onFilterChange({});
   };
+
+  // Genera el estilo del slider: fill desde el inicio hasta el valor actual
+  const sliderStyle = (value: number, min: number, max: number) => ({
+    background: `linear-gradient(to right,
+      hsl(var(--primary)) 0%,
+      hsl(var(--primary)) ${((value - min) / (max - min)) * 100}%,
+      hsl(var(--muted)) ${((value - min) / (max - min)) * 100}%,
+      hsl(var(--muted)) 100%)`,
+  });
+
+  const sliderClass = `
+    w-full h-2 rounded-full appearance-none cursor-pointer
+    [&::-webkit-slider-thumb]:appearance-none
+    [&::-webkit-slider-thumb]:size-4
+    [&::-webkit-slider-thumb]:rounded-full
+    [&::-webkit-slider-thumb]:bg-white
+    [&::-webkit-slider-thumb]:border-2
+    [&::-webkit-slider-thumb]:border-primary
+    [&::-webkit-slider-thumb]:shadow
+    [&::-webkit-slider-thumb]:cursor-pointer
+  `;
 
   return (
     <div className="bg-card rounded-2xl p-6 border border-border shadow-sm space-y-8">
@@ -107,142 +131,107 @@ export function RouteFilters({ onFilterChange }: RouteFiltersProps) {
       </div>
 
       <div className="space-y-8">
-        {/* Difficulty */}
+
+        {/* ── Dificultad ── */}
         <div className="space-y-3">
           <p className="text-foreground text-sm font-semibold uppercase tracking-wider opacity-80">
             Dificultad
           </p>
           <div className="flex flex-wrap gap-2">
-            {difficulties.map((difficulty) => (
-              <label key={difficulty.value} className="cursor-pointer">
+            {difficulties.map((d) => (
+              <label key={d.value} className="cursor-pointer">
                 <input
                   type="checkbox"
                   className="peer sr-only"
-                  checked={selectedDifficulties.includes(difficulty.value)}
-                  onChange={() => toggleDifficulty(difficulty.value)}
+                  checked={selectedDifficulties.includes(d.value)}
+                  onChange={() => toggleDifficulty(d.value)}
                 />
-                <div className="px-3 py-1.5 rounded-lg border border-border bg-background text-muted-foreground text-sm font-medium peer-checked:bg-primary/20 peer-checked:border-primary peer-checked:text-primary transition-all">
-                  {difficulty.label}
+                <div className="px-3 py-1.5 rounded-lg border border-border bg-background text-muted-foreground text-sm font-medium peer-checked:bg-primary/20 peer-checked:border-primary peer-checked:text-primary transition-all select-none">
+                  {d.label}
                 </div>
               </label>
             ))}
           </div>
         </div>
 
-        {/* Altitude Slider */}
+        {/* ── Altitud Máxima ── */}
         <div className="space-y-4">
           <div className="flex justify-between items-center text-sm">
             <p className="text-foreground font-semibold uppercase tracking-wider opacity-80">
               Altitud Máxima
             </p>
-            <span className="text-primary font-bold">{maxAltitude.toLocaleString()}m</span>
+            <span className="text-primary font-bold">{maxAltitude.toLocaleString()} m</span>
           </div>
-          <div className="relative">
-            <input
-              type="range"
-              min="1000"
-              max="6000"
-              step="100"
-              value={maxAltitude}
-              onChange={(e) => setMaxAltitude(Number(e.target.value))}
-              className="w-full h-2 bg-muted rounded-full appearance-none cursor-pointer
-                [&::-webkit-slider-thumb]:appearance-none
-                [&::-webkit-slider-thumb]:size-4
-                [&::-webkit-slider-thumb]:rounded-full
-                [&::-webkit-slider-thumb]:bg-white
-                [&::-webkit-slider-thumb]:border-2
-                [&::-webkit-slider-thumb]:border-primary
-                [&::-webkit-slider-thumb]:shadow
-                [&::-webkit-slider-thumb]:cursor-pointer"
-              style={{
-                background: `linear-gradient(to right, hsl(var(--primary)) 0%, hsl(var(--primary)) ${((maxAltitude - 1000) / 5000) * 100}%, hsl(var(--muted)) ${((maxAltitude - 1000) / 5000) * 100}%, hsl(var(--muted)) 100%)`,
-              }}
-            />
-          </div>
+          <input
+            type="range"
+            min="1000"
+            max="6000"
+            step="100"
+            value={maxAltitude}
+            onChange={(e) => setMaxAltitude(Number(e.target.value))}
+            className={sliderClass}
+            style={sliderStyle(maxAltitude, 1000, 6000)}
+          />
           <div className="flex justify-between text-xs text-muted-foreground font-medium">
-            <span>1,000m</span>
-            <span>6,000m</span>
+            <span>1,000 m</span>
+            <span>6,000 m</span>
           </div>
         </div>
 
-        {/* Duration Range Slider */}
+        {/* ── Duración ──
+             estimated_duration en BD = HORAS.
+             El slider trabaja en días; al aplicar se multiplica ×24. */}
         <div className="space-y-4">
           <div className="flex justify-between items-center text-sm">
             <p className="text-foreground font-semibold uppercase tracking-wider opacity-80">
               Duración
             </p>
             <span className="text-primary font-bold">
-              {durationRange[0]}-{durationRange[1]} Días
+              Hasta {maxDuration} {maxDuration === 1 ? 'día' : 'días'}
             </span>
           </div>
-          <div className="relative">
-            <input
-              type="range"
-              min="1"
-              max="15"
-              step="1"
-              value={durationRange[1]}
-              onChange={(e) => setDurationRange([durationRange[0], Number(e.target.value)])}
-              className="w-full h-2 bg-muted rounded-full appearance-none cursor-pointer
-                [&::-webkit-slider-thumb]:appearance-none
-                [&::-webkit-slider-thumb]:size-4
-                [&::-webkit-slider-thumb]:rounded-full
-                [&::-webkit-slider-thumb]:bg-white
-                [&::-webkit-slider-thumb]:border-2
-                [&::-webkit-slider-thumb]:border-primary
-                [&::-webkit-slider-thumb]:shadow
-                [&::-webkit-slider-thumb]:cursor-pointer"
-              style={{
-                background: `linear-gradient(to right, hsl(var(--muted)) 0%, hsl(var(--muted)) ${((durationRange[0] - 1) / 14) * 100}%, hsl(var(--primary)) ${((durationRange[0] - 1) / 14) * 100}%, hsl(var(--primary)) ${((durationRange[1] - 1) / 14) * 100}%, hsl(var(--muted)) ${((durationRange[1] - 1) / 14) * 100}%, hsl(var(--muted)) 100%)`,
-              }}
-            />
-          </div>
+          <input
+            type="range"
+            min="1"
+            max="15"
+            step="1"
+            value={maxDuration}
+            onChange={(e) => setMaxDuration(Number(e.target.value))}
+            className={sliderClass}
+            style={sliderStyle(maxDuration, 1, 15)}
+          />
           <div className="flex justify-between text-xs text-muted-foreground font-medium">
-            <span>1 Día</span>
-            <span>15+ Días</span>
+            <span>1 día</span>
+            <span>15+ días</span>
           </div>
         </div>
 
-        {/* Distance Range Slider */}
+        {/* ── Distancia ── */}
         <div className="space-y-4">
           <div className="flex justify-between items-center text-sm">
             <p className="text-foreground font-semibold uppercase tracking-wider opacity-80 flex items-center gap-2">
               <RouteIcon className="h-4 w-4" />
               {t('filters.byDistance') || 'Distancia'}
             </p>
-            <span className="text-primary font-bold">
-              {distanceRange[0]}-{distanceRange[1]} km
-            </span>
+            <span className="text-primary font-bold">Hasta {maxDistance} km</span>
           </div>
-          <div className="relative">
-            <input
-              type="range"
-              min="0"
-              max="100"
-              step="5"
-              value={distanceRange[1]}
-              onChange={(e) => setDistanceRange([distanceRange[0], Number(e.target.value)])}
-              className="w-full h-2 bg-muted rounded-full appearance-none cursor-pointer
-                [&::-webkit-slider-thumb]:appearance-none
-                [&::-webkit-slider-thumb]:size-4
-                [&::-webkit-slider-thumb]:rounded-full
-                [&::-webkit-slider-thumb]:bg-white
-                [&::-webkit-slider-thumb]:border-2
-                [&::-webkit-slider-thumb]:border-primary
-                [&::-webkit-slider-thumb]:shadow
-                [&::-webkit-slider-thumb]:cursor-pointer"
-              style={{
-                background: `linear-gradient(to right, hsl(var(--muted)) 0%, hsl(var(--muted)) ${(distanceRange[0] / 100) * 100}%, hsl(var(--primary)) ${(distanceRange[0] / 100) * 100}%, hsl(var(--primary)) ${(distanceRange[1] / 100) * 100}%, hsl(var(--muted)) ${(distanceRange[1] / 100) * 100}%, hsl(var(--muted)) 100%)`,
-              }}
-            />
-          </div>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            step="5"
+            value={maxDistance}
+            onChange={(e) => setMaxDistance(Number(e.target.value))}
+            className={sliderClass}
+            style={sliderStyle(maxDistance, 0, 100)}
+          />
           <div className="flex justify-between text-xs text-muted-foreground font-medium">
             <span>0 km</span>
             <span>100+ km</span>
           </div>
         </div>
 
-        {/* Date Filter */}
+        {/* ── Fecha de Salida ── */}
         <div className="space-y-4">
           <p className="text-foreground text-sm font-semibold uppercase tracking-wider opacity-80 flex items-center gap-2">
             <Calendar className="h-4 w-4" />
@@ -277,11 +266,8 @@ export function RouteFilters({ onFilterChange }: RouteFiltersProps) {
           </div>
         </div>
 
-        {/* Apply Button */}
-        <Button
-          className="w-full font-bold"
-          onClick={handleApplyFilters}
-        >
+        {/* ── Botón Aplicar ── */}
+        <Button className="w-full font-bold" onClick={handleApplyFilters}>
           Aplicar Filtros
         </Button>
       </div>

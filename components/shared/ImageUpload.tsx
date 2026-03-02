@@ -69,12 +69,14 @@ export function ImageUpload({
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
       const filePath = folder ? `${folder}/${fileName}` : fileName;
 
-      // Subir a Supabase Storage
+      // Subir a Supabase Storage — se envía contentType explícito para que
+      // Supabase sirva el archivo con el Content-Type correcto (especialmente importante para WebP)
       const { error: uploadError, data } = await supabase.storage
         .from(bucket)
         .upload(filePath, file, {
           cacheControl: '3600',
           upsert: false,
+          contentType: file.type,
         });
 
       if (uploadError) {
@@ -149,6 +151,8 @@ export function ImageUpload({
               src={previewUrl}
               alt="Preview"
               fill
+              quality={90}
+              sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
             />
             <Button
