@@ -113,6 +113,7 @@ export function EquipmentList({ value, onChange, suggestions = defaultSuggestion
                   onClick={() => {
                     handleAddSuggestion(suggestion);
                     setNewItem('');
+                    setShowSuggestions(false);
                   }}
                   className="w-full text-left px-4 py-2 text-sm hover:bg-accent transition-colors"
                 >
@@ -134,30 +135,30 @@ export function EquipmentList({ value, onChange, suggestions = defaultSuggestion
         </Button>
       </div>
 
-      {/* Sugerencias rápidas */}
-      {value.length === 0 && (
-        <div className="space-y-2">
-          <p className="text-xs text-muted-foreground">Sugerencias:</p>
-          <div className="flex flex-wrap gap-2">
-            {suggestions.slice(0, 6).map((suggestion, index) => (
-              <button
-                key={index}
-                type="button"
-                onClick={() => handleAddSuggestion(suggestion)}
-                className="px-3 py-1 text-xs rounded-full border border-border hover:border-primary hover:bg-primary/5 transition-colors"
-              >
-                + {suggestion}
-              </button>
-            ))}
+      {/* Sugerencias rápidas — siempre visibles, oculta las ya agregadas */}
+      {(() => {
+        const available = suggestions.filter((s) => !value.includes(s));
+        if (available.length === 0) return null;
+        return (
+          <div className="space-y-2">
+            <p className="text-xs text-muted-foreground">
+              Sugerencias:{value.length > 0 && <span className="ml-1">({value.length} {value.length === 1 ? 'agregado' : 'agregados'})</span>}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {available.slice(0, 8).map((suggestion, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => handleAddSuggestion(suggestion)}
+                  className="px-3 py-1 text-xs rounded-full border border-border hover:border-primary hover:bg-primary/5 transition-colors"
+                >
+                  + {suggestion}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
-
-      {value.length > 0 && (
-        <p className="text-xs text-muted-foreground">
-          {value.length} {value.length === 1 ? 'item agregado' : 'items agregados'}
-        </p>
-      )}
+        );
+      })()}
     </div>
   );
 }

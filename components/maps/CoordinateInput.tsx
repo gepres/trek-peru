@@ -48,13 +48,8 @@ export function CoordinateInput({ onCoordinatesSubmit, className = '' }: Coordin
       return;
     }
 
-    // Enviar coordenadas
+    // Enviar coordenadas — los valores se conservan en pantalla después de navegar
     onCoordinatesSubmit(lng, lat);
-
-    // Limpiar inputs
-    setLatitude('');
-    setLongitude('');
-    setError('');
   }
 
   return (

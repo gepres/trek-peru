@@ -26,7 +26,9 @@
       "Bash(git -C /d/PROYECTOS/gepres/trek mv hooks/useComments.ts presentation/hooks/useComments.ts)",
       "Bash(git -C /d/PROYECTOS/gepres/trek mv hooks/useFavorites.ts presentation/hooks/useFavorites.ts)",
       "Bash(dir \"D:\\\\PROYECTOS\\\\gepres\\\\trek\\\\app\" /s /b)",
-      "Bash(findstr \"page.tsx\")"
+      "Bash(findstr \"page.tsx\")",
+      "Bash(node -e \"require\\(''xlsx''\\)\")",
+      "Bash(node -e \"import\\(''xlsx''\\).then\\(m => console.log\\(''default:'', typeof m.default, ''| utils:'', typeof m.utils, ''| writeFile:'', typeof m.writeFile\\)\\)\")"
     ]
   }
 }

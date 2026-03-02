@@ -1,10 +1,11 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -14,8 +15,9 @@ import {
 } from '@/components/ui/select';
 import { EquipmentList } from '../EquipmentList';
 import {
-  Mountain, Ruler, TrendingUp, TrendingDown, Link as LinkIcon, AlertCircle, Backpack,
-  Droplets, Home, Signal, Thermometer, Footprints, Gauge
+  Mountain, Ruler, TrendingUp, TrendingDown, AlertCircle, Backpack,
+  Droplets, Home, Signal, Thermometer, Footprints, Gauge,
+  Lightbulb, Copy, Check, ChevronDown, ChevronUp, ExternalLink
 } from 'lucide-react';
 import { UseFormRegister, FieldErrors, UseFormSetValue, UseFormWatch, Controller, Control } from 'react-hook-form';
 import { RouteFormInput } from '@/lib/validations/route.schema';
@@ -53,6 +55,101 @@ const TECHNICAL_LEVELS = [
   { value: 'expert', label: 'Experto - Alta montaña/técnico' },
 ];
 
+// Tip con prompt de IA para obtener datos técnicos difíciles de conocer
+function AltitudeTip({ routeTitle }: { routeTitle: string }) {
+  const [open, setOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const nombre = routeTitle?.trim() || 'nombre de la ruta';
+
+  const prompt = `Dame los datos técnicos de la ruta de trekking "${nombre}" en Perú:
+- Desnivel positivo (m)
+- Desnivel negativo (m)
+- Altitud mínima (m.s.n.m)
+- Altitud máxima (m.s.n.m)
+- Distancia total (km)`;
+
+  const googleQuery = `datos técnicos trekking "${nombre}" Perú desnivel altitud`;
+  const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(googleQuery)}`;
+
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(prompt);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* silencioso */
+    }
+  }
+
+  return (
+    <div className="rounded-lg border border-amber-200 bg-amber-50 dark:border-amber-800/40 dark:bg-amber-900/10">
+      {/* Header siempre visible */}
+      <button
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        className="w-full flex items-center justify-between px-4 py-3 text-left"
+      >
+        <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400">
+          <Lightbulb className="h-4 w-4 shrink-0" />
+          <span className="text-sm font-medium">
+            ¿No sabes el desnivel o la altitud? Obtén los datos fácilmente
+          </span>
+        </div>
+        {open
+          ? <ChevronUp className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0" />
+          : <ChevronDown className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0" />
+        }
+      </button>
+
+      {/* Contenido expandible */}
+      {open && (
+        <div className="px-4 pb-4 space-y-3 border-t border-amber-200 dark:border-amber-800/40 pt-3">
+          <p className="text-xs text-amber-700 dark:text-amber-400">
+            Copia este prompt y pégalo en <strong>ChatGPT</strong>, <strong>Gemini</strong> o cualquier IA:
+          </p>
+
+          {/* Prompt copiable */}
+          <div className="relative">
+            <pre className="text-xs bg-white dark:bg-black/20 border border-amber-200 dark:border-amber-800/40 rounded-lg p-3 pr-24 whitespace-pre-wrap text-muted-foreground font-mono leading-relaxed">
+              {prompt}
+            </pre>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="absolute top-2 right-2 h-7 gap-1 text-xs border-amber-300 hover:bg-amber-100 dark:border-amber-700 dark:hover:bg-amber-900/30"
+              onClick={handleCopy}
+            >
+              {copied
+                ? <><Check className="h-3 w-3 text-green-600" /> Copiado</>
+                : <><Copy className="h-3 w-3" /> Copiar</>
+              }
+            </Button>
+          </div>
+
+          {/* Alternativa: Google */}
+          <div className="flex items-center gap-2">
+            <div className="h-px flex-1 bg-amber-200 dark:bg-amber-800/40" />
+            <span className="text-xs text-amber-600 dark:text-amber-500">o busca en Google</span>
+            <div className="h-px flex-1 bg-amber-200 dark:bg-amber-800/40" />
+          </div>
+
+          <a
+            href={googleUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 text-xs text-amber-700 dark:text-amber-400 hover:underline"
+          >
+            <ExternalLink className="h-3 w-3" />
+            Buscar &quot;{nombre}&quot; en Google
+          </a>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function StepTechnicalDetails({
   register,
   errors,
@@ -66,6 +163,23 @@ export function StepTechnicalDetails({
   const shelters = watch('shelters');
   const mobileSignal = watch('mobile_signal');
   const terrainType = watch('terrain_type') || [];
+  // Título del Paso 1 — se usa en el tip de IA
+  const routeTitle = watch('title') || '';
+  // Tab de unidad de temperatura para el campo Clima Esperado
+  const [tempUnit, setTempUnit] = useState<'C' | 'F'>('C');
+
+  // Estado local del texto de clima sin unidad (la unidad se concatena al guardar)
+  // Al iniciar, si ya hay un valor guardado, quitar el sufijo °C/°F para mostrarlo limpio
+  const [weatherText, setWeatherText] = useState<string>(() => {
+    const stored = watch('expected_weather') || '';
+    return stored.replace(/°[CF]$/i, '').trim();
+  });
+
+  // Cada vez que cambia el texto O la unidad, actualizar el valor del formulario
+  useEffect(() => {
+    const suffix = tempUnit === 'C' ? '°C' : '°F';
+    setValue('expected_weather', weatherText ? `${weatherText}${suffix}` : '');
+  }, [weatherText, tempUnit, setValue]);
 
   const toggleTerrainType = (terrain: string) => {
     const current = terrainType || [];
@@ -75,6 +189,7 @@ export function StepTechnicalDetails({
       setValue('terrain_type', [...current, terrain]);
     }
   };
+
   return (
     <div className="space-y-6">
       <Card>
@@ -85,7 +200,7 @@ export function StepTechnicalDetails({
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Distancia y elevación */}
+          {/* Distancia y desnivel */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Distancia */}
             <div className="space-y-2">
@@ -187,26 +302,8 @@ export function StepTechnicalDetails({
             </div>
           </div>
 
-          {/* Google Maps Link */}
-          <div className="space-y-2">
-            <Label htmlFor="google_maps_link" className="flex items-center gap-2">
-              <LinkIcon className="h-4 w-4" />
-              Link de Google Maps
-            </Label>
-            <Input
-              id="google_maps_link"
-              type="url"
-              {...register('google_maps_link')}
-              placeholder="https://maps.google.com/..."
-              className={errors.google_maps_link ? 'border-destructive' : ''}
-            />
-            <p className="text-xs text-muted-foreground">
-              Link directo a Google Maps con la ubicación o ruta trazada
-            </p>
-            {errors.google_maps_link && (
-              <p className="text-sm text-destructive">{errors.google_maps_link.message}</p>
-            )}
-          </div>
+          {/* ── Tip de IA — prompt listo para copiar ── */}
+          <AltitudeTip routeTitle={routeTitle} />
 
           {/* Equipo esencial */}
           <div className="space-y-2">
@@ -332,19 +429,61 @@ export function StepTechnicalDetails({
 
           {/* Clima esperado */}
           <div className="space-y-2">
-            <Label htmlFor="expected_weather" className="flex items-center gap-2">
-              <Thermometer className="h-4 w-4" />
-              Clima Esperado
-            </Label>
-            <Input
-              id="expected_weather"
-              type="text"
-              {...register('expected_weather')}
-              placeholder="Ej: Soleado con nubes, 15-20°C"
-              className={errors.expected_weather ? 'border-destructive' : ''}
-            />
+            {/* Label + tabs °C / °F en la misma fila */}
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <Label htmlFor="expected_weather" className="flex items-center gap-2">
+                <Thermometer className="h-4 w-4" />
+                Clima Esperado
+              </Label>
+              {/* Tabs de unidad de temperatura */}
+              <div className="flex rounded-lg border overflow-hidden text-xs h-7">
+                <button
+                  type="button"
+                  onClick={() => setTempUnit('C')}
+                  className={`px-3 font-medium transition-colors ${
+                    tempUnit === 'C'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-background text-muted-foreground hover:bg-muted'
+                  }`}
+                >
+                  °C Celsius
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTempUnit('F')}
+                  className={`px-3 font-medium transition-colors border-l ${
+                    tempUnit === 'F'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-background text-muted-foreground hover:bg-muted'
+                  }`}
+                >
+                  °F Fahrenheit
+                </button>
+              </div>
+            </div>
+
+            {/* Input con sufijo de unidad concatenado visualmente */}
+            <div className="flex">
+              <Input
+                id="expected_weather"
+                type="text"
+                value={weatherText}
+                onChange={(e) => setWeatherText(e.target.value)}
+                placeholder={tempUnit === 'C' ? 'Ej: Soleado con nubes, 16-20' : 'Ej: Partly cloudy, 61-68'}
+                className={`rounded-r-none ${errors.expected_weather ? 'border-destructive' : ''}`}
+              />
+              {/* Sufijo de unidad — solo visual, la unidad se concatena al valor del form */}
+              <span className="flex items-center px-3 border border-l-0 rounded-r-md bg-muted text-sm font-semibold text-foreground select-none">
+                {tempUnit === 'C' ? '°C' : '°F'}
+              </span>
+            </div>
+
+            {/* Hint compacto */}
             <p className="text-xs text-muted-foreground">
-              Condiciones climáticas típicas durante la ruta
+              Escribe el clima y temperatura — se guardará como{' '}
+              <code className="px-1 py-0.5 rounded bg-muted font-mono">
+                {weatherText || (tempUnit === 'C' ? '16-20' : '61-68')}{tempUnit === 'C' ? '°C' : '°F'}
+              </code>
             </p>
           </div>
 

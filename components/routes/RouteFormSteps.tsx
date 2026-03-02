@@ -105,7 +105,11 @@ export function RouteFormSteps({ route, locale }: RouteFormStepsProps) {
       duration_type: route.duration_type || 'hours',
       duration_value: route.duration_value || route.estimated_duration || 1,
       daily_itinerary: route.daily_itinerary || undefined,
-      departure_date: route.departure_date || '',
+      // Truncar a YYYY-MM-DD — Supabase puede devolver timestamp completo
+      // y <input type="date"> solo acepta ese formato exacto
+      departure_date: route.departure_date
+        ? route.departure_date.substring(0, 10)
+        : '',
       meeting_time: route.meeting_time || '',
       max_capacity: route.max_capacity || undefined,
       cost: route.cost || undefined,
@@ -384,6 +388,10 @@ export function RouteFormSteps({ route, locale }: RouteFormStepsProps) {
             setMeetingPoint={setMeetingPoint}
             waypoints={waypoints}
             setWaypoints={setWaypoints}
+            register={register}
+            errors={errors}
+            setValue={setValue}
+            watch={watch}
           />
         )}
 

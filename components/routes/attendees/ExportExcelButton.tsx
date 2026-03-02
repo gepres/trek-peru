@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toast } from '@/components/ui/use-toast';
 import { AttendeeWithUser } from '@/types/route.types';
 
 interface ExportExcelButtonProps {
@@ -40,8 +41,9 @@ export function ExportExcelButton({ attendees, routeTitle }: ExportExcelButtonPr
     try {
       setIsExporting(true);
 
-      // Importar xlsx de forma dinámica para no aumentar el bundle inicial
-      const XLSX = (await import('xlsx')).default;
+      // Importar xlsx dinámicamente — compatible con CJS en Next.js/webpack
+      const XLSXModule = await import('xlsx');
+      const XLSX = XLSXModule.default ?? XLSXModule;
 
       // Construir las filas del Excel
       const rows = attendees.map((a, index) => ({
@@ -65,7 +67,7 @@ export function ExportExcelButton({ attendees, routeTitle }: ExportExcelButtonPr
           : '',
       }));
 
-      // Crear libro de Excel
+      // Crear hoja y libro de Excel
       const worksheet = XLSX.utils.json_to_sheet(rows);
 
       // Ajustar ancho de columnas automáticamente
@@ -78,13 +80,36 @@ export function ExportExcelButton({ attendees, routeTitle }: ExportExcelButtonPr
       XLSX.utils.book_append_sheet(workbook, worksheet, 'Asistentes');
 
       // Nombre del archivo: ruta_asistentes_fecha.xlsx
-      const safeTitle = routeTitle.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]/g, '').slice(0, 40).trim();
+      const safeTitle = routeTitle
+        .replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]/g, '')
+        .slice(0, 40)
+        .trim();
       const dateStr = new Date().toISOString().slice(0, 10);
       const filename = `${safeTitle}_asistentes_${dateStr}.xlsx`;
 
-      XLSX.writeFile(workbook, filename);
+      // Usar Blob + anchor para descarga — más confiable en Next.js (evita fs de Node.js)
+      const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      const blob = new Blob([wbout], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = filename;
+      anchor.click();
+      URL.revokeObjectURL(url);
+
+      toast({
+        title: '✅ Excel exportado',
+        description: `${attendees.length} asistente${attendees.length !== 1 ? 's' : ''} exportados correctamente.`,
+      });
     } catch (err) {
       console.error('Error exportando Excel:', err);
+      toast({
+        title: 'Error al exportar',
+        description: 'No se pudo generar el archivo Excel. Intenta de nuevo.',
+        variant: 'destructive',
+      });
     } finally {
       setIsExporting(false);
     }
