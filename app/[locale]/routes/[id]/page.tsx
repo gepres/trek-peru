@@ -7,12 +7,14 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RouteActions } from '@/components/routes/RouteActions';
+import { LiveCapacity } from '@/components/routes/LiveCapacity';
+import { ShareButton } from '@/components/routes/ShareButton';
 import { RouteMap } from '@/components/maps/RouteMap';
 import { ImageGallery } from '@/components/shared/ImageGallery';
 import {
   MapPin, Clock, TrendingUp, TrendingDown, Users, Calendar, DollarSign,
   Mountain, Phone, Edit, Navigation, Droplets, Home, Signal, AlertTriangle,
-  Sun, Thermometer, CheckCircle2, XCircle, ExternalLink, Play, Share2,
+  Sun, Thermometer, CheckCircle2, XCircle, ExternalLink, Play,
   Heart, Eye, Star, Route as RouteIcon, Footprints, Timer, CalendarDays
 } from 'lucide-react';
 import { format } from 'date-fns';
@@ -125,9 +127,27 @@ export default async function RouteDetailPage({
     notFound();
   }
 
-  // Verificar si el usuario actual es el creador
+  // Verificar si el usuario actual es el creador y obtener su perfil (para teléfono)
   const { data: { user } } = await supabase.auth.getUser();
   const isCreator = user?.id === route.creator_id;
+
+  // Obtener conteo real de asistentes vía función SECURITY DEFINER (bypasea RLS)
+  // — route.attendees[0].count devuelve 0 para no-creadores por la política RLS
+  const { data: attendeeCountData } = await supabase.rpc('get_route_attendee_count', {
+    p_route_id: route.id,
+  });
+  const attendeeCount = (attendeeCountData as number) ?? 0;
+
+  // Obtener perfil del usuario autenticado para pasar su teléfono al modal de inscripción
+  let currentUserProfile: { full_name?: string; phone?: string } | null = null;
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('full_name, phone')
+      .eq('id', user.id)
+      .single();
+    currentUserProfile = profile;
+  }
 
   // Obtener iniciales del creador
   const getInitials = (name: string) => {
@@ -246,9 +266,10 @@ export default async function RouteDetailPage({
                       </Link>
                     </Button>
                   )}
-                  <Button variant="secondary" size="icon" className="shadow-lg">
-                    <Share2 className="h-4 w-4" />
-                  </Button>
+                  <ShareButton
+                    title={route.title}
+                    description={route.description?.substring(0, 120)}
+                  />
                 </div>
               </div>
             </div>
@@ -748,24 +769,11 @@ export default async function RouteDetailPage({
                     )}
 
                     {route.max_capacity && (
-                      <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-                        <Users className="h-5 w-5 text-primary" />
-                        <div>
-                          <p className="text-xs text-muted-foreground">Capacidad</p>
-                          <p className="font-medium">
-                            {route.attendees?.[0]?.count || 0} / {route.max_capacity} inscritos
-                          </p>
-                        </div>
-                        {/* Barra de progreso */}
-                        <div className="flex-1">
-                          <div className="h-2 bg-muted rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-primary rounded-full transition-all"
-                              style={{ width: `${Math.min(((route.attendees?.[0]?.count || 0) / route.max_capacity) * 100, 100)}%` }}
-                            />
-                          </div>
-                        </div>
-                      </div>
+                      <LiveCapacity
+                        routeId={route.id}
+                        maxCapacity={route.max_capacity}
+                        initialCount={attendeeCount}
+                      />
                     )}
                   </div>
 
@@ -775,11 +783,28 @@ export default async function RouteDetailPage({
                     routeSlug={route.slug}
                     creatorId={route.creator_id}
                     currentUserId={user?.id}
+                    currentUserName={currentUserProfile?.full_name ?? 'Usuario'}
+                    currentUserPhone={currentUserProfile?.phone ?? undefined}
+                    creatorPhone={route.creator?.phone ?? undefined}
                     isCreator={isCreator}
                     status={route.status}
                     maxCapacity={route.max_capacity}
-                    currentAttendees={route.attendees?.[0]?.count || 0}
+                    currentAttendees={attendeeCount}
+                    routeTitle={route.title}
+                    routeDate={route.departure_date ?? undefined}
                   />
+
+                  {/* Botón para que el creador acceda al dashboard de asistentes */}
+                  {isCreator && (
+                    <div className="mt-3 pt-3 border-t">
+                      <Button asChild variant="outline" className="w-full gap-2" size="sm">
+                        <Link href={`/${locale}/my-routes/${route.id}/attendees`}>
+                          <Users className="h-4 w-4" />
+                          Gestionar Asistentes
+                        </Link>
+                      </Button>
+                    </div>
+                  )}
 
                   {/* Contacto de emergencia */}
                   {route.emergency_contact && (
@@ -801,12 +826,12 @@ export default async function RouteDetailPage({
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-4">
-                    <Avatar className="h-14 w-14 border-2 border-primary/20">
+                    {/* <Avatar className="h-14 w-14 border-2 border-primary/20">
                       <AvatarImage src={route.creator?.avatar_url} />
                       <AvatarFallback className="bg-primary/10 text-primary font-bold">
                         {getInitials(route.creator?.full_name || 'U')}
                       </AvatarFallback>
-                    </Avatar>
+                    </Avatar> */}
                     <div className="flex-1">
                       <p className="font-semibold">{route.creator?.full_name}</p>
                       <p className="text-sm text-muted-foreground">@{route.creator?.username}</p>

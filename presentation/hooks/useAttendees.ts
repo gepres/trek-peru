@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { createAttendeeRepository } from '@/infrastructure/supabase';
-import { getAttendees, getMyAttendances, getMyAttendance } from '@/application/attendees';
+import { getAttendees, getMyAttendances, getMyAttendance, updateAttendee } from '@/application/attendees';
 import { AttendeeWithUser } from '@/types/route.types';
+import { AttendeeUpdateData } from '@/infrastructure/supabase/attendee.repository';
 
 // Hook para obtener asistentes de una ruta
 export function useAttendees(routeId: string) {
@@ -34,7 +35,21 @@ export function useAttendees(routeId: string) {
     }
   }
 
-  return { attendees, loading, error, refetch: fetchAttendees };
+  // Actualizar estado, pago y/o mensaje de un asistente (solo creador)
+  async function updateAttendeeData(
+    attendeeId: string,
+    data: AttendeeUpdateData,
+    requesterId: string,
+    routeCreatorId: string,
+  ) {
+    const repository = createAttendeeRepository(createClient());
+    const updated = await updateAttendee(repository, attendeeId, data, requesterId, routeCreatorId);
+    // Refrescar la lista local
+    await fetchAttendees();
+    return updated;
+  }
+
+  return { attendees, loading, error, refetch: fetchAttendees, updateAttendeeData };
 }
 
 // Hook para obtener las rutas donde el usuario autenticado es asistente

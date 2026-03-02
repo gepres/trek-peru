@@ -1,5 +1,5 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Attendee, AttendeeWithUser } from '@/types/route.types';
+import { Attendee, AttendeeWithUser, PaymentStatus } from '@/types/route.types';
 import { AttendeeStatus, ExperienceLevel } from '@/types/database.types';
 import { IAttendeeRepository } from '@/domain/attendee/attendee.repository.interface';
 
@@ -10,6 +10,15 @@ export interface AttendeeCreateData {
   emergency_contact?: string;
   allergies?: string;
   medical_conditions?: string;
+}
+
+// Datos para actualizar un asistente (creador)
+export interface AttendeeUpdateData {
+  status?: AttendeeStatus;
+  payment_status?: PaymentStatus;
+  creator_message?: string;
+  confirmation_date?: string;
+  cancellation_date?: string;
 }
 
 // Repositorio de acceso a datos para asistentes — implementa IAttendeeRepository
@@ -91,6 +100,19 @@ export function createAttendeeRepository(supabase: SupabaseClient): IAttendeeRep
 
       if (error) throw error;
       return data;
+    },
+
+    // Actualizar datos completos de un asistente (estado, pago, mensaje)
+    async updateAttendee(attendeeId: string, data: AttendeeUpdateData): Promise<Attendee> {
+      const { data: updated, error } = await supabase
+        .from('attendees')
+        .update(data)
+        .eq('id', attendeeId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return updated;
     },
 
     // Cancelar / eliminar una asistencia

@@ -50,7 +50,25 @@ export const profileSchema = z.object({
   birth_date: z.string().optional(),
 });
 
-// Schema para registro de asistencia
+// Schema para inscripción a una ruta (formulario detallado del usuario)
+export const joinRouteSchema = z.object({
+  emergency_contact: z.string()
+    .min(1, 'El contacto de emergencia es obligatorio')
+    .max(100, 'Máximo 100 caracteres'),
+  experience_level: z.enum(['beginner', 'intermediate', 'advanced', 'expert']).optional(),
+  allergies: z.string().max(500, 'Máximo 500 caracteres').optional(),
+  medical_conditions: z.string().max(500, 'Máximo 500 caracteres').optional(),
+  notes: z.string().max(300, 'Máximo 300 caracteres').optional(),
+});
+
+// Schema para que el creador actualice estado + pago + mensaje de un asistente
+export const attendeeUpdateSchema = z.object({
+  status: z.enum(['confirmed', 'cancelled', 'pending', 'waiting_list']),
+  payment_status: z.enum(['unpaid', 'pending_payment', 'paid']),
+  creator_message: z.string().max(300, 'Máximo 300 caracteres').optional(),
+});
+
+// Schema para registro de asistencia (legado — mantener compatibilidad)
 export const attendeeRegistrationSchema = z.object({
   notes: z.string().max(500).optional(),
   experience_level: z.enum(['beginner', 'intermediate', 'advanced', 'expert']).optional(),
@@ -77,6 +95,8 @@ export const commentSchema = z.object({
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type ProfileInput = z.infer<typeof profileSchema>;
+export type JoinRouteInput = z.infer<typeof joinRouteSchema>;
+export type AttendeeUpdateInput = z.infer<typeof attendeeUpdateSchema>;
 export type AttendeeRegistrationInput = z.infer<typeof attendeeRegistrationSchema>;
 export type RatingInput = z.infer<typeof ratingSchema>;
 export type CommentInput = z.infer<typeof commentSchema>;

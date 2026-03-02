@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { AttendeesList } from './AttendeesList';
+import { JoinRouteModal } from './JoinRouteModal';
 import { useMyAttendance } from '@/presentation/hooks/useAttendees';
 import { createClient } from '@/lib/supabase/client';
 import { toast } from '@/components/ui/use-toast';
@@ -14,10 +15,15 @@ interface RouteActionsProps {
   routeSlug: string;
   creatorId: string;
   currentUserId?: string;
+  currentUserName?: string;
+  currentUserPhone?: string;
+  creatorPhone?: string;
   isCreator: boolean;
   status: string;
   maxCapacity?: number;
   currentAttendees: number;
+  routeTitle: string;
+  routeDate?: string;
 }
 
 // Componente para manejar las acciones de la ruta (inscripción, cancelación, lista de asistentes)
@@ -26,79 +32,33 @@ export function RouteActions({
   routeSlug,
   creatorId,
   currentUserId,
+  currentUserName = 'Usuario',
+  currentUserPhone,
+  creatorPhone,
   isCreator,
   status,
   maxCapacity,
   currentAttendees,
+  routeTitle,
+  routeDate,
 }: RouteActionsProps) {
   const { attendance, loading, refetch } = useMyAttendance(routeId);
-  const [isRegistering, setIsRegistering] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
   const supabase = createClient();
 
   // Verificar si la ruta está llena
   const isFull = maxCapacity ? currentAttendees >= maxCapacity : false;
 
-  // Inscribirse a la ruta
-  async function handleRegister() {
-    if (!currentUserId) {
-      toast({
-        title: 'Debes iniciar sesión',
-        description: 'Para inscribirte a una ruta debes tener una cuenta.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    try {
-      setIsRegistering(true);
-
-      // Determinar el estado inicial basado en la capacidad
-      const initialStatus = isFull ? 'waiting_list' : 'pending';
-
-      const { error } = await supabase.from('attendees').insert({
-        route_id: routeId,
-        user_id: currentUserId,
-        status: initialStatus,
-        registration_date: new Date().toISOString(),
-      });
-
-      if (error) {
-        // Si el error es por duplicado, mostrar mensaje específico
-        if (error.code === '23505') {
-          toast({
-            title: 'Ya estás inscrito',
-            description: 'Ya te has inscrito a esta ruta.',
-            variant: 'destructive',
-          });
-        } else {
-          throw error;
-        }
-      } else {
-        toast({
-          title: isFull ? 'Agregado a lista de espera' : 'Inscripción exitosa',
-          description: isFull
-            ? 'Has sido agregado a la lista de espera. El organizador te notificará si hay un lugar disponible.'
-            : 'Tu inscripción ha sido registrada. El organizador la revisará pronto.',
-        });
-        refetch();
-      }
-    } catch (err) {
-      toast({
-        title: 'Error',
-        description: err instanceof Error ? err.message : 'No se pudo completar la inscripción',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsRegistering(false);
-    }
-  }
+  // El usuario tiene una inscripción activa (cualquier estado salvo cancelado)
+  const isActiveAttendee = !!attendance && attendance.status !== 'cancelled';
 
   // Cancelar inscripción
   async function handleCancel() {
     if (!attendance) return;
 
     try {
-      setIsRegistering(true);
+      setIsCancelling(true);
 
       const { error } = await supabase
         .from('attendees')
@@ -123,7 +83,7 @@ export function RouteActions({
         variant: 'destructive',
       });
     } finally {
-      setIsRegistering(false);
+      setIsCancelling(false);
     }
   }
 
@@ -141,17 +101,31 @@ export function RouteActions({
               <div className="space-y-3">
                 <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
                   <p className="text-sm text-blue-800 dark:text-blue-300 font-medium">
-                    {attendance.status === 'confirmed' && 'Tu inscripción ha sido confirmada'}
-                    {attendance.status === 'pending' && 'Tu inscripción está pendiente de confirmación'}
-                    {attendance.status === 'waiting_list' && 'Estás en la lista de espera'}
+                    {attendance.status === 'confirmed' && '✅ Tu inscripción ha sido confirmada'}
+                    {attendance.status === 'pending' && '⏳ Tu inscripción está pendiente de confirmación'}
+                    {attendance.status === 'waiting_list' && '🕐 Estás en la lista de espera'}
                   </p>
+                  {/* Mostrar estado de pago si está confirmado */}
+                  {attendance.status === 'confirmed' && (
+                    <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                      {attendance.payment_status === 'paid' && '💚 Pago recibido'}
+                      {attendance.payment_status === 'pending_payment' && '💛 Pago pendiente'}
+                      {attendance.payment_status === 'unpaid' && '💸 Sin registro de pago aún'}
+                    </p>
+                  )}
+                  {/* Mensaje del creador */}
+                  {attendance.creator_message && (
+                    <p className="text-xs mt-2 italic text-blue-700 dark:text-blue-300">
+                      💬 &quot;{attendance.creator_message}&quot;
+                    </p>
+                  )}
                 </div>
                 <Button
                   variant="outline"
                   className="w-full"
                   size="lg"
                   onClick={handleCancel}
-                  disabled={isRegistering}
+                  disabled={isCancelling}
                 >
                   <UserMinus className="h-5 w-5 mr-2" />
                   Cancelar Inscripción
@@ -161,8 +135,18 @@ export function RouteActions({
               <Button
                 className="w-full"
                 size="lg"
-                onClick={handleRegister}
-                disabled={isRegistering || !currentUserId}
+                onClick={() => {
+                  if (!currentUserId) {
+                    toast({
+                      title: 'Debes iniciar sesión',
+                      description: 'Para inscribirte a una ruta debes tener una cuenta.',
+                      variant: 'destructive',
+                    });
+                    return;
+                  }
+                  setIsModalOpen(true);
+                }}
+                disabled={!currentUserId}
               >
                 <UserPlus className="h-5 w-5 mr-2" />
                 {isFull ? 'Unirme a Lista de Espera' : 'Inscribirse a la Ruta'}
@@ -185,9 +169,27 @@ export function RouteActions({
             routeId={routeId}
             creatorId={creatorId}
             currentUserId={currentUserId}
+            isActiveAttendee={isActiveAttendee}
           />
         </CardContent>
       </Card>
+
+      {/* Modal de inscripción detallada */}
+      {currentUserId && (
+        <JoinRouteModal
+          open={isModalOpen}
+          onOpenChange={setIsModalOpen}
+          routeId={routeId}
+          routeTitle={routeTitle}
+          routeDate={routeDate}
+          isFull={isFull}
+          currentUserId={currentUserId}
+          currentUserName={currentUserName}
+          currentUserPhone={currentUserPhone}
+          creatorPhone={creatorPhone}
+          onSuccess={refetch}
+        />
+      )}
     </div>
   );
 }

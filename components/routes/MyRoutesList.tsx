@@ -4,14 +4,16 @@ import { useMyRoutes } from '@/presentation/hooks/useRoutes';
 import { RouteCard } from './RouteCard';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { EmptyState } from '@/components/shared/EmptyState';
-import { Mountain } from 'lucide-react';
+import { Mountain, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 interface MyRoutesListProps {
   locale: string;
 }
 
-// Componente para mostrar las rutas del usuario autenticado
+// Componente para mostrar las rutas del usuario autenticado con acceso a gestión de asistentes
 export function MyRoutesList({ locale }: MyRoutesListProps) {
   const { routes, loading, error } = useMyRoutes();
   const router = useRouter();
@@ -56,7 +58,21 @@ export function MyRoutesList({ locale }: MyRoutesListProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {routes.map((route) => (
-          <RouteCard key={route.id} route={route} locale={locale} />
+          <div key={route.id} className="space-y-2">
+            <RouteCard route={route} locale={locale} />
+            {/* Botón de gestión de asistentes — solo visible para el creador en este listado */}
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="w-full gap-2"
+            >
+              <Link href={`/${locale}/my-routes/${route.id}/attendees`}>
+                <Users className="h-3.5 w-3.5" />
+                Gestionar Asistentes
+              </Link>
+            </Button>
+          </div>
         ))}
       </div>
     </div>

@@ -5,12 +5,13 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Eye, EyeOff, Phone } from 'lucide-react';
+import { Eye, EyeOff, Mail, CheckCircle2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { registerSchema, type RegisterInput } from '@/lib/validations/user.schema';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { toast } from '@/components/ui/use-toast';
 
 interface RegisterFormProps {
   locale: string;
@@ -25,6 +26,8 @@ export function RegisterForm({ locale }: RegisterFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  // Email registrado: se usa para mostrar la pantalla de confirmación
+  const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
 
   const {
     register,
@@ -59,15 +62,28 @@ export function RegisterForm({ locale }: RegisterFormProps) {
         return;
       }
 
-      // Guardar teléfono directamente en el perfil (respaldo al trigger)
-      if (authData.user) {
+      // Guardar teléfono en el perfil como respaldo al trigger.
+      // Solo cuando hay sesión activa (sin email confirmation) — el trigger
+      // migration 007 ya guarda el phone en el INSERT automáticamente.
+      if (authData.user && authData.session) {
         await supabase
           .from('profiles')
           .update({ phone: data.phone })
           .eq('id', authData.user.id);
       }
 
-      // Redirigir al dashboard después de registro exitoso
+      // Sin sesión → Supabase requiere confirmación de email
+      // Mostrar pantalla de "revisa tu correo" en lugar de redirigir
+      if (!authData.session) {
+        setRegisteredEmail(data.email);
+        return;
+      }
+
+      // Con sesión activa → registro sin confirmación, redirigir directamente
+      toast({
+        title: '¡Bienvenido a TrekPeru! 🏔️',
+        description: 'Tu cuenta ha sido creada exitosamente.',
+      });
       router.push(`/${locale}/routes`);
       router.refresh();
     } catch (err) {
@@ -75,6 +91,58 @@ export function RegisterForm({ locale }: RegisterFormProps) {
     } finally {
       setIsLoading(false);
     }
+  }
+
+  // ── Pantalla de éxito: confirmar correo ─────────────────────────────────────
+  if (registeredEmail) {
+    return (
+      <div className="text-center space-y-5 py-4">
+        {/* Ícono animado */}
+        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mx-auto">
+          <Mail className="h-8 w-8 text-primary" />
+        </div>
+
+        <div className="space-y-2">
+          <h2 className="text-xl font-bold">Revisa tu correo</h2>
+          <p className="text-muted-foreground text-sm leading-relaxed">
+            Enviamos un enlace de confirmación a
+          </p>
+          <p className="font-semibold text-primary break-all">{registeredEmail}</p>
+          <p className="text-muted-foreground text-sm leading-relaxed">
+            Haz clic en el enlace del correo para activar tu cuenta y poder ingresar.
+          </p>
+        </div>
+
+        {/* Tips */}
+        <div className="text-left space-y-2 p-4 rounded-lg bg-muted/50 border">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            ¿No ves el correo?
+          </p>
+          <ul className="text-sm text-muted-foreground space-y-1">
+            <li className="flex items-start gap-2">
+              <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+              Revisa la carpeta de <strong>spam o correo no deseado</strong>
+            </li>
+            <li className="flex items-start gap-2">
+              <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+              El enlace expira en <strong>24 horas</strong>
+            </li>
+            <li className="flex items-start gap-2">
+              <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+              Verifica que el correo <strong>{registeredEmail}</strong> sea correcto
+            </li>
+          </ul>
+        </div>
+
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={() => setRegisteredEmail(null)}
+        >
+          Volver al registro
+        </Button>
+      </div>
+    );
   }
 
   return (
@@ -112,9 +180,7 @@ export function RegisterForm({ locale }: RegisterFormProps) {
       {/* Phone — prefijo +51 fijo, el usuario escribe solo los 9 dígitos */}
       <div className="space-y-2">
         <Label htmlFor="phone" className="flex items-center gap-1.5">
-          <Phone className="h-3.5 w-3.5" />
           {t('phone')}
-          <span className="text-red-500">*</span>
         </Label>
         {/* Número completo editable — pre-relleno con +51 */}
         <Input

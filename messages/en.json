@@ -147,6 +147,43 @@
       "cancelled": "Cancelled",
       "waiting_list": "Waiting List",
       "completed": "Completed"
+    },
+    "payment": {
+      "unpaid": "No Payment",
+      "pending_payment": "Payment Pending",
+      "paid": "Paid"
+    },
+    "joinModal": {
+      "title": "Route Registration",
+      "emergencyContact": "Emergency Contact",
+      "emergencyContactHint": "Name and phone of a relative",
+      "experienceLevel": "Experience Level",
+      "allergies": "Allergies",
+      "medicalConditions": "Medical Conditions",
+      "personalNotes": "Message to Organizer",
+      "notifyCreatorBtn": "Open WhatsApp and notify",
+      "skipNotify": "Skip for now",
+      "confirm": "Confirm Registration"
+    },
+    "manageModal": {
+      "title": "Manage Attendee",
+      "decision": "Decision",
+      "paymentStatus": "Payment Status",
+      "creatorMessage": "Custom Message",
+      "creatorMessageHint": "Will be shown to the attendee when accepted",
+      "sendWhatsapp": "Send Confirmation via WhatsApp",
+      "save": "Save Changes"
+    },
+    "dashboard": {
+      "title": "Attendees Management",
+      "export": "Export Excel",
+      "totalAttendees": "Total Registered",
+      "confirmed": "Confirmed",
+      "pending": "Pending",
+      "paid": "Paid",
+      "manage": "Manage Attendees",
+      "filterStatus": "All statuses",
+      "filterPayment": "All payments"
     }
   },
   "profile": {

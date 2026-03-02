@@ -24,7 +24,9 @@
       "Bash(git -C /d/PROYECTOS/gepres/trek mv lib/hooks/useRoutes.ts presentation/hooks/useRoutes.ts)",
       "Bash(git -C /d/PROYECTOS/gepres/trek mv lib/hooks/useAttendees.ts presentation/hooks/useAttendees.ts)",
       "Bash(git -C /d/PROYECTOS/gepres/trek mv hooks/useComments.ts presentation/hooks/useComments.ts)",
-      "Bash(git -C /d/PROYECTOS/gepres/trek mv hooks/useFavorites.ts presentation/hooks/useFavorites.ts)"
+      "Bash(git -C /d/PROYECTOS/gepres/trek mv hooks/useFavorites.ts presentation/hooks/useFavorites.ts)",
+      "Bash(dir \"D:\\\\PROYECTOS\\\\gepres\\\\trek\\\\app\" /s /b)",
+      "Bash(findstr \"page.tsx\")"
     ]
   }
 }

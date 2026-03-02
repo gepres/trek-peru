@@ -148,6 +148,43 @@
       "cancelled": "Cancelado",
       "waiting_list": "Lista de Espera",
       "completed": "Completado"
+    },
+    "payment": {
+      "unpaid": "Sin Pago",
+      "pending_payment": "Pago Pendiente",
+      "paid": "Pagado"
+    },
+    "joinModal": {
+      "title": "Inscripción a la Ruta",
+      "emergencyContact": "Contacto de Emergencia",
+      "emergencyContactHint": "Nombre y teléfono de un familiar",
+      "experienceLevel": "Nivel de Experiencia",
+      "allergies": "Alergias",
+      "medicalConditions": "Condiciones Médicas",
+      "personalNotes": "Mensaje para el Organizador",
+      "notifyCreatorBtn": "Abrir WhatsApp y notificar",
+      "skipNotify": "Omitir por ahora",
+      "confirm": "Confirmar Inscripción"
+    },
+    "manageModal": {
+      "title": "Gestionar Asistente",
+      "decision": "Decisión",
+      "paymentStatus": "Estado de Pago",
+      "creatorMessage": "Mensaje Personalizado",
+      "creatorMessageHint": "Se mostrará al asistente cuando sea aceptado",
+      "sendWhatsapp": "Enviar Confirmación por WhatsApp",
+      "save": "Guardar Cambios"
+    },
+    "dashboard": {
+      "title": "Gestión de Asistentes",
+      "export": "Exportar Excel",
+      "totalAttendees": "Total Inscritos",
+      "confirmed": "Confirmados",
+      "pending": "Pendientes",
+      "paid": "Pagados",
+      "manage": "Gestionar Asistentes",
+      "filterStatus": "Todos los estados",
+      "filterPayment": "Todos los pagos"
     }
   },
   "profile": {

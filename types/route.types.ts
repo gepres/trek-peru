@@ -10,6 +10,9 @@ import {
 } from './database.types';
 import { Profile } from './user.types';
 
+// Estado de pago de un asistente
+export type PaymentStatus = 'unpaid' | 'pending_payment' | 'paid';
+
 // Ruta base
 export interface Route extends Timestamps {
   id: string;
@@ -112,6 +115,9 @@ export interface Attendee extends Timestamps {
   registration_date: string;
   confirmation_date?: string;
   cancellation_date?: string;
+  // Campos de pago y mensaje del creador (agregados en migración)
+  payment_status: PaymentStatus;
+  creator_message?: string;
 }
 
 // Asistente con información de usuario
