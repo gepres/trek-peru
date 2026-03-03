@@ -2,14 +2,44 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { FileText } from 'lucide-react';
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.vercel.app';
+
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  const isEs = locale === 'es';
+
+  const title = isEs ? 'Términos de Uso' : 'Terms of Use';
+  const description = isEs
+    ? 'Lee los términos y condiciones de uso de la plataforma TrekPeru.'
+    : 'Read the terms and conditions of use for the TrekPeru platform.';
+  const url = `${APP_URL}/${locale}/terms`;
+
   return {
-    title: locale === 'es' ? 'Términos de Uso | TrekPeru' : 'Terms of Use | TrekPeru',
-    description:
-      locale === 'es'
-        ? 'Lee los términos y condiciones de uso de la plataforma TrekPeru.'
-        : 'Read the terms and conditions of use for the TrekPeru platform.',
+    title,
+    description,
+    alternates: {
+      canonical: url,
+      languages: {
+        es: `${APP_URL}/es/terms`,
+        en: `${APP_URL}/en/terms`,
+        'x-default': `${APP_URL}/es/terms`,
+      },
+    },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: 'website' as const,
+      locale: isEs ? 'es_PE' : 'en_US',
+      alternateLocale: isEs ? 'en_US' : 'es_PE',
+      images: [{ url: '/images/logo/logo-trek.png', width: 512, height: 512, alt: 'TrekPeru' }],
+    },
+    twitter: {
+      card: 'summary' as const,
+      title,
+      description,
+      images: ['/images/logo/logo-trek.png'],
+    },
   };
 }
 

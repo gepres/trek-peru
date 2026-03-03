@@ -36,7 +36,11 @@
       "Bash(node -e \":*)",
       "Bash(dir /s /b \"D:\\\\PROYECTOS\\\\gepres\\\\trek\\\\app\\\\*route*page.tsx\")",
       "Bash(dir /s /b \"D:\\\\PROYECTOS\\\\gepres\\\\trek\\\\app\")",
-      "Bash(findstr \"edit\")"
+      "Bash(findstr \"edit\")",
+      "Bash(dir /s /b \"D:\\\\PROYECTOS\\\\gepres\\\\trek\\\\app\\\\*page.tsx\")",
+      "Bash(dir /s /b \"D:\\\\PROYECTOS\\\\gepres\\\\trek\\\\app\\\\*layout.tsx\")",
+      "Bash(dir /b \"D:\\\\PROYECTOS\\\\gepres\\\\trek\\\\public\")",
+      "Bash(dir /b \"D:\\\\PROYECTOS\\\\gepres\\\\trek\\\\public\\\\images\")"
     ]
   }
 }

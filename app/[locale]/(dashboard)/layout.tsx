@@ -1,7 +1,13 @@
+import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+
+// El dashboard es privado: nunca debe indexarse en buscadores
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 // Layout para páginas del dashboard (protegidas por autenticación)
 export default async function DashboardLayout({

@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { locales } from '@/i18n';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/providers/theme-provider';
+import { GlobalJsonLd } from '@/components/seo/GlobalJsonLd';
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -29,6 +30,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body>
+        <GlobalJsonLd locale={locale} />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

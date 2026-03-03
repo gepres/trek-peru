@@ -3,14 +3,44 @@ import { Footer } from '@/components/layout/Footer';
 import { ContactForm } from '@/components/pages/ContactForm';
 import { Mail, MapPin, Clock, MessageCircle } from 'lucide-react';
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.vercel.app';
+
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  const isEs = locale === 'es';
+
+  const title = isEs ? 'Contacto' : 'Contact';
+  const description = isEs
+    ? 'Ponte en contacto con el equipo de TrekPeru. Estamos aquí para ayudarte con cualquier consulta.'
+    : 'Get in touch with the TrekPeru team. We are here to help you with any questions.';
+  const url = `${APP_URL}/${locale}/contact`;
+
   return {
-    title: locale === 'es' ? 'Contacto | TrekPeru' : 'Contact | TrekPeru',
-    description:
-      locale === 'es'
-        ? 'Ponte en contacto con el equipo de TrekPeru. Estamos aquí para ayudarte.'
-        : 'Get in touch with the TrekPeru team. We are here to help you.',
+    title,
+    description,
+    alternates: {
+      canonical: url,
+      languages: {
+        es: `${APP_URL}/es/contact`,
+        en: `${APP_URL}/en/contact`,
+        'x-default': `${APP_URL}/es/contact`,
+      },
+    },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: 'website' as const,
+      locale: isEs ? 'es_PE' : 'en_US',
+      alternateLocale: isEs ? 'en_US' : 'es_PE',
+      images: [{ url: '/images/logo/logo-trek.png', width: 512, height: 512, alt: 'TrekPeru' }],
+    },
+    twitter: {
+      card: 'summary' as const,
+      title,
+      description,
+      images: ['/images/logo/logo-trek.png'],
+    },
   };
 }
 

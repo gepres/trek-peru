@@ -2,14 +2,44 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Mountain } from 'lucide-react';
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.vercel.app';
+
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  const isEs = locale === 'es';
+
+  const title = isEs ? 'Acerca de TrekPeru' : 'About TrekPeru';
+  const description = isEs
+    ? 'Conoce la historia y misión de TrekPeru, la plataforma colaborativa de trekking en Perú.'
+    : 'Learn about TrekPeru, the collaborative trekking platform in Peru.';
+  const url = `${APP_URL}/${locale}/about`;
+
   return {
-    title: locale === 'es' ? 'Acerca de | TrekPeru' : 'About | TrekPeru',
-    description:
-      locale === 'es'
-        ? 'Conoce la historia y misión de TrekPeru, la plataforma colaborativa de trekking en Perú.'
-        : 'Learn about TrekPeru, the collaborative trekking platform in Peru.',
+    title,
+    description,
+    alternates: {
+      canonical: url,
+      languages: {
+        es: `${APP_URL}/es/about`,
+        en: `${APP_URL}/en/about`,
+        'x-default': `${APP_URL}/es/about`,
+      },
+    },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: 'website',
+      locale: isEs ? 'es_PE' : 'en_US',
+      alternateLocale: isEs ? 'en_US' : 'es_PE',
+      images: [{ url: '/images/logo/logo-trek.png', width: 512, height: 512, alt: 'TrekPeru' }],
+    },
+    twitter: {
+      card: 'summary' as const,
+      title,
+      description,
+      images: ['/images/logo/logo-trek.png'],
+    },
   };
 }
 

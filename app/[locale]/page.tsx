@@ -1,9 +1,70 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Search, Mountain, Users, MapPin, Star } from 'lucide-react';
+
+// URL base y OG image (imagen hero reutilizada como Open Graph)
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.vercel.app';
+const HERO_OG_IMAGE =
+  'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=1200&h=630&fit=crop';
+
+// Metadata dinámica bilingüe para la homepage
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const isEs = locale === 'es';
+
+  const title = isEs ? 'TrekPeru — Descubre los Andes' : 'TrekPeru — Discover the Andes';
+  const description = isEs
+    ? 'Descubre y únete a los mejores grupos de trekking en Perú. Camino Inca, Salkantay, Ausangate y cientos de rutas verificadas con mapas interactivos.'
+    : 'Discover and join the best trekking groups in Peru. Inca Trail, Salkantay, Ausangate and hundreds of verified routes with interactive maps.';
+  const url = `${APP_URL}/${locale}`;
+
+  return {
+    title,
+    description,
+    keywords: isEs
+      ? ['trekking Perú', 'rutas trekking', 'Camino Inca', 'Salkantay', 'Ausangate', 'senderismo Perú', 'grupos trekking', 'turismo aventura Perú', 'montañismo Andes']
+      : ['trekking Peru', 'hiking routes Peru', 'Inca Trail', 'Salkantay', 'Ausangate', 'Peru adventure tourism', 'trekking groups Peru', 'Andes hiking'],
+    // hreflang: indica a Google las versiones de idioma de esta página
+    alternates: {
+      canonical: url,
+      languages: {
+        es: `${APP_URL}/es`,
+        en: `${APP_URL}/en`,
+        'x-default': `${APP_URL}/es`,
+      },
+    },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: 'website',
+      locale: isEs ? 'es_PE' : 'en_US',
+      alternateLocale: isEs ? 'en_US' : 'es_PE',
+      images: [
+        {
+          url: HERO_OG_IMAGE,
+          width: 1200,
+          height: 630,
+          alt: isEs ? 'TrekPeru — Rutas de Trekking en Perú' : 'TrekPeru — Trekking Routes in Peru',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [HERO_OG_IMAGE],
+    },
+  };
+}
 
 // Landing page principal
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
