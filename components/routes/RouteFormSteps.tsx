@@ -34,6 +34,7 @@ import { StepPublication } from './form-steps/StepPublication';
 import { StepTechnicalDetails } from './form-steps/StepTechnicalDetails';
 import { StepMap } from './form-steps/StepMap';
 import { StepImages } from './form-steps/StepImages';
+import { parseRouteCoordinates } from '@/lib/utils/geo-utils';
 
 interface RouteFormStepsProps {
   route?: Route;
@@ -59,8 +60,10 @@ export function RouteFormSteps({ route, locale }: RouteFormStepsProps) {
   const [error, setError] = useState<string | null>(null);
 
   // Estados del mapa
+  // Supabase/PostgREST devuelve columnas GEOGRAPHY como WKB hex, no como GeoJSON.
+  // parseRouteCoordinates maneja WKB hex, GeoJSON object, JSON string y EWKT.
   const [routeCoordinates, setRouteCoordinates] = useState<[number, number][]>(
-    route?.route_coordinates?.coordinates || []
+    () => parseRouteCoordinates(route?.route_coordinates)?.coordinates || []
   );
   const [meetingPoint, setMeetingPoint] = useState<MeetingPoint | null>(
     route?.meeting_point || null

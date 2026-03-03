@@ -51,6 +51,12 @@ export function RouteMapEditor({
   // Ref para que el click handler del mapa lea siempre el nombre más reciente
   // sin necesitar re-crear el listener en cada pulsación de tecla (stale closure)
   const waypointNameRef = useRef('');
+  // Refs para que map.on('load') siempre lea los datos actuales sin stale closure:
+  // el callback de 'load' es asíncrono y captura el estado del primer render,
+  // por eso necesitamos refs que se sincronizan con el estado en cada render.
+  const routePointsRef = useRef<[number, number][]>(initialRouteCoordinates || []);
+  const meetingPointRef = useRef<MeetingPoint | null>(initialMeetingPoint || null);
+  const waypointsDataRef = useRef<Waypoint[]>(initialWaypoints);
   const markers = useRef<mapboxgl.Marker[]>([]);
   const meetingMarker = useRef<mapboxgl.Marker | null>(null);
   const [gpxError, setGpxError] = useState<string | null>(null);
@@ -59,6 +65,27 @@ export function RouteMapEditor({
   useEffect(() => {
     waypointNameRef.current = waypointName;
   }, [waypointName]);
+
+  // Mantener refs sincronizadas con el estado para que map.on('load') use datos frescos
+  useEffect(() => { routePointsRef.current = routePoints; }, [routePoints]);
+  useEffect(() => { meetingPointRef.current = meetingPoint; }, [meetingPoint]);
+  useEffect(() => { waypointsDataRef.current = waypoints; }, [waypoints]);
+
+  // Observar cambios de tamaño del contenedor (cuando el paso del formulario
+  // se vuelve visible desde un estado oculto) y llamar map.resize() para que
+  // Mapbox recalcule sus dimensiones y el canvas no quede en posición 0,0.
+  useEffect(() => {
+    if (!mapContainer.current) return;
+
+    const observer = new ResizeObserver(() => {
+      if (map.current) {
+        map.current.resize();
+      }
+    });
+
+    observer.observe(mapContainer.current);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
@@ -86,10 +113,15 @@ export function RouteMapEditor({
     map.current.addControl(new mapboxgl.FullscreenControl(), 'top-right');
 
     map.current.on('load', () => {
-      setMapLoaded(true);
+      // Forzar recálculo de dimensiones para que el canvas no quede en posición 0,0
+      map.current?.resize();
 
-      // Agregar fuente y capa para la ruta
       if (map.current) {
+        // Inicializar fuente con los datos actuales leídos desde refs:
+        // esto es crítico en modo edición para que la ruta y los datos ya cargados
+        // se muestren inmediatamente al abrir el paso del mapa, sin depender de
+        // que los useEffects se re-ejecuten (evita el problema de stale closure
+        // y el ciclo doble de React StrictMode en desarrollo).
         map.current.addSource('route', {
           type: 'geojson',
           data: {
@@ -97,7 +129,7 @@ export function RouteMapEditor({
             properties: {},
             geometry: {
               type: 'LineString',
-              coordinates: [],
+              coordinates: routePointsRef.current,
             },
           },
         });
@@ -116,11 +148,34 @@ export function RouteMapEditor({
             'line-opacity': 0.8,
           },
         });
+
+        // Centrar el mapa en los datos iniciales usando refs (valores siempre frescos)
+        if (routePointsRef.current.length > 0) {
+          const bounds = new mapboxgl.LngLatBounds();
+          routePointsRef.current.forEach((coord) => bounds.extend(coord));
+          map.current.fitBounds(bounds, { padding: 50, maxZoom: 14 });
+        } else if (meetingPointRef.current?.coordinates) {
+          map.current.flyTo({
+            center: [meetingPointRef.current.coordinates.longitude, meetingPointRef.current.coordinates.latitude],
+            zoom: 12,
+          });
+        }
       }
+
+      // Marcar como cargado DESPUÉS de setup completo para que los efectos
+      // de actualización (dibujar ruta, añadir waypoints) encuentren la fuente lista
+      setMapLoaded(true);
     });
 
     return () => {
+      // Resetear mapLoaded a false para que cuando React StrictMode (desarrollo)
+      // desmonte y re-monte el componente, la transición false→true vuelva a
+      // ocurrir y todos los useEffects que dependen de mapLoaded se re-ejecuten.
+      // En producción (sin StrictMode) esto solo corre al desmontar el componente,
+      // momento en que el estado no importa porque el componente ya no existe.
       map.current?.remove();
+      map.current = null;
+      setMapLoaded(false);
     };
   }, []);
 
@@ -145,25 +200,9 @@ export function RouteMapEditor({
     };
   }, [editorMode]);
 
-  // Cuando el mapa termina de cargar, centrar la vista en las coordenadas iniciales
-  // (routePoints, meetingPoint y waypoints ya están inicializados desde props;
-  //  los useEffects de cada estado se encargan de renderizar los elementos en el mapa)
-  useEffect(() => {
-    if (!mapLoaded || !map.current) return;
-
-    // Centrar en la ruta inicial si existe
-    if (routePoints.length > 0) {
-      const bounds = new mapboxgl.LngLatBounds();
-      routePoints.forEach((coord) => bounds.extend(coord));
-      map.current.fitBounds(bounds, { padding: 50, maxZoom: 14 });
-    } else if (meetingPoint?.coordinates) {
-      // Centrar en el punto de encuentro si no hay ruta
-      map.current.flyTo({
-        center: [meetingPoint.coordinates.longitude, meetingPoint.coordinates.latitude],
-        zoom: 12,
-      });
-    }
-  }, [mapLoaded]);
+  // Nota: el centrado inicial (fitBounds / flyTo) ya se realiza dentro de
+  // map.on('load') usando refs, lo que garantiza que funciona en modo edición
+  // y en el ciclo doble de React StrictMode sin necesitar este useEffect.
 
   // Actualizar ruta en el mapa
   useEffect(() => {
@@ -241,8 +280,22 @@ export function RouteMapEditor({
       el.style.color = 'white';
       el.textContent = (index + 1).toString();
 
+      // Popup con el nombre del waypoint — usa setDOMContent para aplicar
+      // estilos propios con texto oscuro (el texto por defecto de Mapbox es suave).
+      const popupContent = document.createElement('div');
+      popupContent.style.fontSize = '13px';
+      popupContent.style.fontWeight = '600';
+      popupContent.style.color = '#111827';       // gris casi negro
+      popupContent.style.padding = '2px 2px';
+      popupContent.style.whiteSpace = 'nowrap';
+      popupContent.textContent = waypoint.name || `Waypoint ${index + 1}`;
+
+      const popup = new mapboxgl.Popup({ offset: 28, closeButton: false, maxWidth: '220px' })
+        .setDOMContent(popupContent);
+
       const marker = new mapboxgl.Marker(el)
         .setLngLat([waypoint.coordinates.longitude, waypoint.coordinates.latitude])
+        .setPopup(popup)
         .addTo(map.current!);
 
       markers.current.push(marker);
@@ -549,10 +602,63 @@ export function RouteMapEditor({
         </div>
       </Card>
 
-      {/* Mapa */}
-      <div ref={mapContainer} style={{ height }} className="rounded-lg overflow-hidden" />
-      {!mapLoaded && (
-        <div className="absolute inset-0 bg-muted animate-pulse rounded-lg" />
+      {/* Mapa — el wrapper relative + overflow-hidden + height fijo contiene el canvas
+           de Mapbox (position:absolute top:0 left:0) impidiendo el flash al inicializar.
+           El skeleton se superpone con z-10 sin tocar la opacidad del canvas WebGL,
+           lo que evita conflictos con el stacking context de WebGL, los markers DOM
+           y el cálculo de dimensiones para fitBounds/flyTo. */}
+      <div className="relative rounded-lg overflow-hidden" style={{ height }}>
+        {/* Canvas de Mapbox — sin modificar opacidad para no romper WebGL ni markers */}
+        <div
+          ref={mapContainer}
+          style={{ height }}
+          className="w-full overflow-hidden"
+        />
+        {/* Skeleton superpuesto hasta que el mapa termine de cargar */}
+        {!mapLoaded && (
+          <div className="absolute inset-0 z-10 bg-muted animate-pulse rounded-lg flex items-center justify-center">
+            <span className="text-sm text-muted-foreground">Cargando mapa...</span>
+          </div>
+        )}
+      </div>
+
+      {/* Lista de waypoints con nombres — visible debajo del mapa.
+           Complementa los círculos numerados del mapa; el nombre completo también
+           aparece al hacer clic sobre el marcador (popup). */}
+      {waypoints.length > 0 && (
+        <div className="mt-3 rounded-lg border border-border overflow-hidden">
+          {/* Cabecera */}
+          <div className="flex items-center gap-2 px-3 py-2 bg-amber-50 dark:bg-amber-900/20 border-b border-border">
+            <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
+            <p className="text-xs font-semibold text-foreground">
+              Waypoints marcados
+            </p>
+            <span className="ml-auto text-xs font-medium text-amber-700 dark:text-amber-400">
+              {waypoints.length} {waypoints.length === 1 ? 'punto' : 'puntos'}
+            </span>
+          </div>
+          {/* Filas */}
+          <ol className="divide-y divide-border">
+            {waypoints.map((wp, index) => (
+              <li key={index} className="flex items-center gap-3 px-3 py-2.5 hover:bg-muted/40 transition-colors">
+                {/* Número */}
+                <span className="w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center font-bold text-[11px] shrink-0 shadow-sm">
+                  {index + 1}
+                </span>
+                {/* Nombre */}
+                <span className="text-sm font-medium text-foreground leading-tight">
+                  {wp.name || `Waypoint ${index + 1}`}
+                </span>
+                {/* Descripción si existe */}
+                {wp.description && (
+                  <span className="ml-auto text-xs text-muted-foreground truncate max-w-[140px]">
+                    {wp.description}
+                  </span>
+                )}
+              </li>
+            ))}
+          </ol>
+        </div>
       )}
     </div>
   );

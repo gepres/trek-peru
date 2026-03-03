@@ -60,15 +60,24 @@ function AltitudeTip({
   routeTitle,
   departureDate,
   meetingTime,
+  region,
+  province,
 }: {
   routeTitle: string;
   departureDate?: string;
   meetingTime?: string;
+  region?: string;
+  province?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const nombre = routeTitle?.trim() || 'nombre de la ruta';
+
+  // Construir la línea de ubicación con región y provincia (si la hay)
+  const ubicacionLinea = region
+    ? `en la región de ${region}${province ? `, provincia de ${province}` : ''}`
+    : 'en Perú';
 
   // Formatear fecha YYYY-MM-DD → DD/MM/YYYY para el prompt
   function formatDate(raw?: string): string {
@@ -89,7 +98,7 @@ function AltitudeTip({
     climaLinea = '(agrega la fecha de salida en el Paso 2 — Logística)';
   }
 
-  const prompt = `Dame los datos técnicos de la ruta de trekking "${nombre}" en Perú:
+  const prompt = `Dame los datos técnicos de la ruta de trekking "${nombre}" ${ubicacionLinea}:
 - Distancia total (km)
 - Desnivel positivo (m)
 - Desnivel negativo (m)
@@ -97,7 +106,9 @@ function AltitudeTip({
 - Altitud máxima (m.s.n.m)
 - Clima esperado ${climaLinea}`;
 
-  const googleQuery = `datos técnicos trekking "${nombre}" Perú desnivel altitud`;
+  // Query de Google incluye región y provincia para afinar la búsqueda
+  const ubicacionQuery = [region, province].filter(Boolean).join(' ') || 'Perú';
+  const googleQuery = `datos técnicos trekking "${nombre}" ${ubicacionQuery} desnivel altitud`;
   const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(googleQuery)}`;
 
   async function handleCopy() {
@@ -191,8 +202,10 @@ export function StepTechnicalDetails({
   const shelters = watch('shelters');
   const mobileSignal = watch('mobile_signal');
   const terrainType = watch('terrain_type') || [];
-  // Título del Paso 1 — se usa en el tip de IA
+  // Título, región y provincia del Paso 1 — se usan en el tip de IA
   const routeTitle = watch('title') || '';
+  const region = watch('region') || '';
+  const province = watch('province') || '';
   // Fecha y hora del Paso 2 — se incluyen en el prompt de clima
   const departureDate = watch('departure_date') || '';
   const meetingTime = watch('meeting_time') || '';
@@ -338,6 +351,8 @@ export function StepTechnicalDetails({
             routeTitle={routeTitle}
             departureDate={departureDate}
             meetingTime={meetingTime}
+            region={region}
+            province={province}
           />
 
           {/* Equipo esencial */}
