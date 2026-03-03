@@ -132,6 +132,11 @@ export function RouteFormSteps({ route, locale }: RouteFormStepsProps) {
       terrain_type: route.terrain_type || [],
       technical_level: route.technical_level || '',
     } : {
+      // Campos con default vacío para que la validación muestre mensajes en español
+      // (undefined → "Required" en inglés; '' → mensaje personalizado del schema)
+      title: '',
+      description: '',
+      region: '',
       difficulty: 'moderate',
       currency: 'PEN',
       status: 'draft',
@@ -193,10 +198,19 @@ export function RouteFormSteps({ route, locale }: RouteFormStepsProps) {
         return ['departure_date', 'meeting_time', 'max_capacity', 'cost'];
       case 2: // Publicación
         return ['status', 'visibility'];
-      case 3: // Detalles Técnicos (todos opcionales)
-        return [];
-      case 4: // Mapa
-        return [];
+      case 3: // Detalles Técnicos — opcionales, pero si se rellenan deben ser válidos
+        return [
+          'distance',
+          'elevation_gain',
+          'elevation_loss',
+          'min_altitude',
+          'max_altitude',
+          'emergency_contact',
+          'expected_weather',
+          'technical_level',
+        ];
+      case 4: // Mapa — validar google_maps_link si se escribe algo
+        return ['google_maps_link'];
       case 5: // Imágenes
         return [];
       default:
@@ -265,18 +279,24 @@ export function RouteFormSteps({ route, locale }: RouteFormStepsProps) {
         : null;
 
       // Preparar datos para la base de datos
+      // Supabase rechaza "" en columnas timestamp/time/url → convertir a null
       const routeData = {
         ...restData,
         slug,
         creator_id: userData.user.id,
-        featured_image: featuredImage,
+        featured_image: featuredImage || null,
         images,
-        required_equipment: equipment, // Usar required_equipment en lugar de essential_equipment
+        required_equipment: equipment,
         route_coordinates: routeGeometry,
         meeting_point: meetingPoint,
         waypoints,
-        // Mantener duration_type, duration_value y daily_itinerary
-        // También calcular estimated_duration para compatibilidad con código antiguo
+        // Campos de fecha/hora: string vacío → null
+        departure_date: restData.departure_date || null,
+        meeting_time: restData.meeting_time || null,
+        // Campos de URL opcionales: string vacío → null
+        google_maps_link: restData.google_maps_link || null,
+        video_url: restData.video_url || null,
+        // Calcular estimated_duration para compatibilidad con código antiguo
         estimated_duration: data.duration_type === 'hours'
           ? data.duration_value
           : data.duration_value * 24,

@@ -32,7 +32,9 @@
       "Bash(findstr /n \"<wpt\" \"C:\\\\Users\\\\User\\\\Downloads\\\\178208.gpx\")",
       "Bash(Select-String -Path \"C:\\\\Users\\\\User\\\\Downloads\\\\178208.gpx\" -Pattern \"<wpt\")",
       "Bash(Select-Object -First 10)",
-      "Bash(powershell -command \"\\(Select-String -Path ''C:\\\\Users\\\\User\\\\Downloads\\\\178208.gpx'' -Pattern ''<trkpt''\\).Count\")"
+      "Bash(powershell -command \"\\(Select-String -Path ''C:\\\\Users\\\\User\\\\Downloads\\\\178208.gpx'' -Pattern ''<trkpt''\\).Count\")",
+      "Bash(node -e \":*)",
+      "Bash(dir /s /b \"D:\\\\PROYECTOS\\\\gepres\\\\trek\\\\app\\\\*route*page.tsx\")"
     ]
   }
 }

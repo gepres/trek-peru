@@ -207,7 +207,39 @@ export default async function RouteDetailPage({
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
             </div>
           ) : (
-            <div className="h-[30vh] min-h-[250px] bg-gradient-to-br from-primary/20 via-primary/10 to-background" />
+            /* Hero de respaldo cuando no hay imagen destacada:
+               fondo oscuro según dificultad + patrón + ícono decorativo */
+            <div className="relative h-[40vh] min-h-[320px] w-full overflow-hidden">
+              {/* Gradiente de fondo según dificultad */}
+              <div
+                className={`absolute inset-0 ${
+                  route.difficulty === 'extreme'
+                    ? 'bg-gradient-to-br from-slate-950 via-red-950 to-slate-900'
+                    : route.difficulty === 'hard'
+                    ? 'bg-gradient-to-br from-slate-950 via-orange-950 to-slate-900'
+                    : route.difficulty === 'moderate'
+                    ? 'bg-gradient-to-br from-slate-950 via-amber-950 to-slate-900'
+                    : 'bg-gradient-to-br from-slate-950 via-emerald-950 to-slate-900'
+                }`}
+              />
+
+              {/* Patrón de puntos tenue */}
+              <div
+                className="absolute inset-0 opacity-[0.06]"
+                style={{
+                  backgroundImage: 'radial-gradient(circle, white 1.5px, transparent 1.5px)',
+                  backgroundSize: '28px 28px',
+                }}
+              />
+
+              {/* Icono Mountain decorativo en el fondo */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <Mountain className="w-80 h-80 text-white/[0.05]" />
+              </div>
+
+              {/* Overlay oscuro en la parte inferior para que el texto sea legible */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+            </div>
           )}
 
           {/* Contenido sobre el hero */}
