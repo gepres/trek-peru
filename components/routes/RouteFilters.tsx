@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { SlidersHorizontal, Calendar, Route as RouteIcon } from 'lucide-react';
+import { SlidersHorizontal, Calendar, Route as RouteIcon, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,12 +16,21 @@ interface RouteFiltersProps {
 
 type Difficulty = 'easy' | 'moderate' | 'hard' | 'extreme';
 
+// Regiones del Perú disponibles para filtrar (misma lista que el formulario de creación)
+const PERU_REGIONS = [
+  'Amazonas', 'Ancash', 'Apurímac', 'Arequipa', 'Ayacucho',
+  'Cajamarca', 'Cusco', 'Huancavelica', 'Huánuco', 'Ica',
+  'Junín', 'La Libertad', 'Lima', 'Moquegua', 'Pasco',
+  'Puno', 'San Martín', 'Tacna',
+];
+
 // Componente de filtros para rutas
 export function RouteFilters({ onFilterChange, onApplied }: RouteFiltersProps) {
   const t = useTranslations('routes');
 
   // Estados locales — solo se envían al padre al pulsar "Aplicar"
   const [selectedDifficulties, setSelectedDifficulties] = useState<Difficulty[]>([]);
+  const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
   const [maxAltitude, setMaxAltitude] = useState(6000);
   // Duración en días (la BD almacena en horas, se convierte al aplicar)
   const [maxDuration, setMaxDuration] = useState(15);
@@ -47,12 +56,25 @@ export function RouteFilters({ onFilterChange, onApplied }: RouteFiltersProps) {
     );
   };
 
+  // Manejar selección de región (multi-select tipo toggle)
+  const toggleRegion = (region: string) => {
+    setSelectedRegions((prev) =>
+      prev.includes(region)
+        ? prev.filter((r) => r !== region)
+        : [...prev, region]
+    );
+  };
+
   // Aplicar filtros — convierte días → horas para estimated_duration
   const handleApplyFilters = () => {
     const filters: RouteFiltersType = {};
 
     if (selectedDifficulties.length > 0) {
       filters.difficulties = selectedDifficulties;
+    }
+
+    if (selectedRegions.length > 0) {
+      filters.regions = selectedRegions;
     }
 
     // Altitud: solo filtrar si está por debajo del máximo posible
@@ -85,6 +107,7 @@ export function RouteFilters({ onFilterChange, onApplied }: RouteFiltersProps) {
   // Limpiar todos los filtros y emitir objeto vacío
   const handleReset = () => {
     setSelectedDifficulties([]);
+    setSelectedRegions([]);
     setMaxAltitude(6000);
     setMaxDuration(15);
     setMaxDistance(100);
@@ -151,6 +174,51 @@ export function RouteFilters({ onFilterChange, onApplied }: RouteFiltersProps) {
                 </div>
               </label>
             ))}
+          </div>
+        </div>
+
+        {/* ── Región ── */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-foreground text-sm font-semibold uppercase tracking-wider opacity-80 flex items-center gap-2">
+              <MapPin className="h-4 w-4" />
+              {t('filters.byRegion') || 'Región'}
+            </p>
+            {selectedRegions.length > 0 && (
+              <button
+                onClick={() => setSelectedRegions([])}
+                className="text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Limpiar ({selectedRegions.length})
+              </button>
+            )}
+          </div>
+          {/* Grid scrollable con todas las regiones */}
+          <div className="max-h-48 overflow-y-auto pr-1 space-y-1 scrollbar-thin">
+            {PERU_REGIONS.map((region) => {
+              const active = selectedRegions.includes(region);
+              return (
+                <label key={region} className="flex items-center gap-2.5 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    className="peer sr-only"
+                    checked={active}
+                    onChange={() => toggleRegion(region)}
+                  />
+                  {/* Checkbox visual personalizado */}
+                  <span className="w-4 h-4 shrink-0 rounded border border-border bg-background flex items-center justify-center peer-checked:bg-primary peer-checked:border-primary transition-colors">
+                    {active && (
+                      <svg className="w-2.5 h-2.5 text-white" viewBox="0 0 10 10" fill="none">
+                        <path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </span>
+                  <span className={`text-sm leading-none transition-colors ${active ? 'text-primary font-medium' : 'text-muted-foreground group-hover:text-foreground'}`}>
+                    {region}
+                  </span>
+                </label>
+              );
+            })}
           </div>
         </div>
 

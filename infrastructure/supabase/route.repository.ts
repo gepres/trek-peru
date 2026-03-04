@@ -24,8 +24,8 @@ export function createRouteRepository(supabase: SupabaseClient): IRouteRepositor
       if (filters?.difficulties && filters.difficulties.length > 0) {
         query = query.in('difficulty', filters.difficulties);
       }
-      if (filters?.region) {
-        query = query.eq('region', filters.region);
+      if (filters?.regions && filters.regions.length > 0) {
+        query = query.in('region', filters.regions);
       }
       if (filters?.search) {
         query = query.textSearch('search_vector', filters.search);

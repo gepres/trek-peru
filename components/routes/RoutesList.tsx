@@ -18,6 +18,7 @@ interface RoutesListProps {
 function countActiveFilters(filters: RouteFiltersType): number {
   return [
     (filters.difficulties?.length ?? 0) > 0,
+    (filters.regions?.length ?? 0) > 0,
     filters.max_altitude != null,
     filters.max_duration != null,
     filters.max_distance != null,

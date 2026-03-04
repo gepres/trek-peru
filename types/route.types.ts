@@ -199,8 +199,8 @@ export interface RouteForm {
 
 // Filtros de rutas
 export interface RouteFilters {
-  difficulties?: Difficulty[]; // Changed from single difficulty
-  region?: string;
+  difficulties?: Difficulty[];
+  regions?: string[];   // multi-select de regiones (antes era region?: string)
   search?: string;
   min_distance?: number;
   max_distance?: number;
