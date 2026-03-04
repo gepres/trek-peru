@@ -40,7 +40,9 @@
       "Bash(dir /s /b \"D:\\\\PROYECTOS\\\\gepres\\\\trek\\\\app\\\\*page.tsx\")",
       "Bash(dir /s /b \"D:\\\\PROYECTOS\\\\gepres\\\\trek\\\\app\\\\*layout.tsx\")",
       "Bash(dir /b \"D:\\\\PROYECTOS\\\\gepres\\\\trek\\\\public\")",
-      "Bash(dir /b \"D:\\\\PROYECTOS\\\\gepres\\\\trek\\\\public\\\\images\")"
+      "Bash(dir /b \"D:\\\\PROYECTOS\\\\gepres\\\\trek\\\\public\\\\images\")",
+      "Bash(node -e \"require\\(''fflate''\\); console.log\\(''fflate ok'', require\\(''fflate/package.json''\\).version\\)\")",
+      "Bash(node -e \"const { unzip } = require\\(''fflate''\\); console.log\\(''fflate ok, unzip type:'', typeof unzip\\)\")"
     ]
   }
 }

@@ -1,10 +1,18 @@
 'use client';
 
+// Componente de carga de archivos geoespaciales para importar rutas.
+// Soporta tres formatos: GPX, KML y KMZ (Google Earth).
+// Produce el mismo formato de datos para todos los formatos.
+
 import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { parseGPX, gpxToRouteData } from '@/lib/utils/gpx-parser';
-import { Upload, FileText, X, AlertCircle } from 'lucide-react';
+import { parseKML, parseKMZ, kmlToRouteData } from '@/lib/utils/kmz-parser';
+import { Upload, FileText, X, AlertCircle, Map } from 'lucide-react';
 import { MeetingPoint, Waypoint } from '@/types/database.types';
+
+// Tipos de archivo soportados
+type GeoFileFormat = 'gpx' | 'kml' | 'kmz';
 
 interface GPXUploadProps {
   onGPXLoad?: (data: {
@@ -23,27 +31,46 @@ interface GPXUploadProps {
   className?: string;
 }
 
+// Detecta el formato del archivo por extensión
+function detectFormat(fileName: string): GeoFileFormat | null {
+  const lower = fileName.toLowerCase();
+  if (lower.endsWith('.gpx')) return 'gpx';
+  if (lower.endsWith('.kml')) return 'kml';
+  if (lower.endsWith('.kmz')) return 'kmz';
+  return null;
+}
+
+// Etiqueta de badge por formato
+const FORMAT_BADGE: Record<GeoFileFormat, { label: string; color: string }> = {
+  gpx: { label: 'GPX', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' },
+  kml: { label: 'KML', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
+  kmz: { label: 'KMZ', color: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400' },
+};
+
 export function GPXUpload({ onGPXLoad, onError, className = '' }: GPXUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [fileFormat, setFileFormat] = useState<GeoFileFormat | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Validar que sea un archivo GPX
-    if (!file.name.toLowerCase().endsWith('.gpx')) {
-      const errorMsg = 'Por favor selecciona un archivo GPX válido';
+    // Detectar formato
+    const format = detectFormat(file.name);
+    if (!format) {
+      const errorMsg = 'Formato no soportado. Usa un archivo GPX, KML o KMZ.';
       setError(errorMsg);
       onError?.(errorMsg);
       return;
     }
 
-    // Validar tamaño (máximo 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      const errorMsg = 'El archivo es muy grande. Máximo 5MB';
+    // Validar tamaño (máximo 10 MB — KMZ pueden ser más grandes que GPX)
+    const maxSize = 10 * 1024 * 1024;
+    if (file.size > maxSize) {
+      const errorMsg = 'El archivo es muy grande. Máximo 10 MB.';
       setError(errorMsg);
       onError?.(errorMsg);
       return;
@@ -52,26 +79,40 @@ export function GPXUpload({ onGPXLoad, onError, className = '' }: GPXUploadProps
     setIsLoading(true);
     setError(null);
     setFileName(file.name);
+    setFileFormat(format);
 
     try {
-      // Parsear el archivo GPX
-      const gpxData = await parseGPX(file);
+      let routeData: ReturnType<typeof gpxToRouteData>;
 
-      // Convertir a formato de la aplicación
-      const routeData = gpxToRouteData(gpxData);
+      if (format === 'gpx') {
+        // ── Parseo GPX ──
+        const gpxData = await parseGPX(file);
+        routeData = gpxToRouteData(gpxData);
+      } else if (format === 'kml') {
+        // ── Parseo KML ──
+        const kmlText = await file.text();
+        const kmlData = parseKML(kmlText);
+        routeData = kmlToRouteData(kmlData);
+      } else {
+        // ── Parseo KMZ (ZIP + KML) ──
+        const kmlData = await parseKMZ(file);
+        routeData = kmlToRouteData(kmlData);
+      }
 
-      // Notificar al padre
       onGPXLoad?.(routeData);
-
       setError(null);
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Error al procesar el archivo GPX';
+      const errorMsg =
+        err instanceof Error
+          ? err.message
+          : `Error al procesar el archivo ${format.toUpperCase()}`;
       setError(errorMsg);
       onError?.(errorMsg);
       setFileName(null);
+      setFileFormat(null);
     } finally {
       setIsLoading(false);
-      // Resetear el input para permitir subir el mismo archivo de nuevo
+      // Resetear input para permitir subir el mismo archivo de nuevo
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
@@ -80,6 +121,7 @@ export function GPXUpload({ onGPXLoad, onError, className = '' }: GPXUploadProps
 
   const handleRemoveFile = () => {
     setFileName(null);
+    setFileFormat(null);
     setError(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -92,10 +134,11 @@ export function GPXUpload({ onGPXLoad, onError, className = '' }: GPXUploadProps
 
   return (
     <div className={className}>
+      {/* Input oculto: acepta GPX, KML y KMZ */}
       <input
         ref={fileInputRef}
         type="file"
-        accept=".gpx,application/gpx+xml"
+        accept=".gpx,.kml,.kmz,application/gpx+xml,application/vnd.google-earth.kml+xml,application/vnd.google-earth.kmz"
         onChange={handleFileSelect}
         className="hidden"
       />
@@ -111,18 +154,25 @@ export function GPXUpload({ onGPXLoad, onError, className = '' }: GPXUploadProps
             className="w-full"
           >
             <Upload className="h-4 w-4 mr-2" />
-            {isLoading ? 'Procesando...' : 'Cargar archivo GPX'}
+            {isLoading ? 'Procesando…' : 'Cargar archivo de ruta'}
           </Button>
         )}
 
-        {/* Archivo cargado */}
+        {/* Archivo cargado con éxito */}
         {fileName && !error && (
           <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
             <div className="flex items-center gap-2 flex-1 min-w-0">
-              <FileText className="h-4 w-4 text-green-600 dark:text-green-400 shrink-0" />
+              <Map className="h-4 w-4 text-green-600 dark:text-green-400 shrink-0" />
               <span className="text-sm text-green-700 dark:text-green-300 truncate">
                 {fileName}
               </span>
+              {fileFormat && (
+                <span
+                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${FORMAT_BADGE[fileFormat].color}`}
+                >
+                  {FORMAT_BADGE[fileFormat].label}
+                </span>
+              )}
             </div>
             <Button
               type="button"
@@ -133,6 +183,16 @@ export function GPXUpload({ onGPXLoad, onError, className = '' }: GPXUploadProps
             >
               <X className="h-4 w-4" />
             </Button>
+          </div>
+        )}
+
+        {/* Estado de carga */}
+        {isLoading && (
+          <div className="flex items-center gap-2 p-3 bg-muted/50 border border-border rounded-lg">
+            <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin shrink-0" />
+            <span className="text-sm text-muted-foreground">
+              Procesando {fileFormat?.toUpperCase() ?? 'archivo'}…
+            </span>
           </div>
         )}
 
@@ -155,9 +215,13 @@ export function GPXUpload({ onGPXLoad, onError, className = '' }: GPXUploadProps
           </div>
         )}
 
-        {/* Ayuda */}
+        {/* Texto de ayuda con formatos soportados */}
         <p className="text-xs text-muted-foreground">
-          Sube un archivo GPX para importar la ruta automáticamente. Formatos: .gpx (máx. 5MB)
+          Formatos soportados:{' '}
+          <span className="font-medium text-foreground/70">.gpx</span>,{' '}
+          <span className="font-medium text-foreground/70">.kml</span>,{' '}
+          <span className="font-medium text-foreground/70">.kmz</span>{' '}
+          (Google Earth) · Máx. 10 MB
         </p>
       </div>
     </div>
