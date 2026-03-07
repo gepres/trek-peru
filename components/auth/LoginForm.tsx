@@ -12,6 +12,27 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
+// Traduce los errores de Supabase Auth al español
+function translateAuthError(message: string): string {
+  const msg = message.toLowerCase();
+  if (msg.includes('invalid login credentials') || msg.includes('invalid credentials')) {
+    return 'Correo o contraseña incorrectos. Verifica tus datos e intenta de nuevo.';
+  }
+  if (msg.includes('email not confirmed')) {
+    return 'Debes confirmar tu correo electrónico antes de iniciar sesión.';
+  }
+  if (msg.includes('too many requests')) {
+    return 'Demasiados intentos fallidos. Espera unos minutos antes de intentar de nuevo.';
+  }
+  if (msg.includes('user not found')) {
+    return 'No existe una cuenta con ese correo electrónico.';
+  }
+  if (msg.includes('network') || msg.includes('fetch')) {
+    return 'Error de conexión. Verifica tu internet e intenta de nuevo.';
+  }
+  return 'Ocurrió un error al iniciar sesión. Intenta de nuevo.';
+}
+
 interface LoginFormProps {
   locale: string;
 }
@@ -45,7 +66,7 @@ export function LoginForm({ locale }: LoginFormProps) {
       });
 
       if (error) {
-        setError(error.message);
+        setError(translateAuthError(error.message));
         return;
       }
 
