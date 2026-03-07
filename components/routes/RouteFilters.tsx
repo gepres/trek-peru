@@ -12,6 +12,8 @@ interface RouteFiltersProps {
   onFilterChange: (filters: RouteFiltersType) => void;
   // Callback opcional: se invoca tras "Aplicar Filtros" (útil para cerrar panel en mobile)
   onApplied?: () => void;
+  // Ocultar el filtro de fecha (útil en rutas completadas donde la fecha ya pasó)
+  hideDateFilter?: boolean;
 }
 
 type Difficulty = 'easy' | 'moderate' | 'hard' | 'extreme';
@@ -25,7 +27,7 @@ const PERU_REGIONS = [
 ];
 
 // Componente de filtros para rutas
-export function RouteFilters({ onFilterChange, onApplied }: RouteFiltersProps) {
+export function RouteFilters({ onFilterChange, onApplied, hideDateFilter = false }: RouteFiltersProps) {
   const t = useTranslations('routes');
 
   // Estados locales — solo se envían al padre al pulsar "Aplicar"
@@ -300,7 +302,7 @@ export function RouteFilters({ onFilterChange, onApplied }: RouteFiltersProps) {
         </div>
 
         {/* ── Fecha de Salida ── */}
-        <div className="space-y-4">
+        {!hideDateFilter && <div className="space-y-4">
           <p className="text-foreground text-sm font-semibold uppercase tracking-wider opacity-80 flex items-center gap-2">
             <Calendar className="h-4 w-4" />
             {t('filters.byDate') || 'Fecha de Salida'}
@@ -332,7 +334,7 @@ export function RouteFilters({ onFilterChange, onApplied }: RouteFiltersProps) {
               />
             </div>
           </div>
-        </div>
+        </div>}
 
         {/* ── Botón Aplicar ── */}
         <Button className="w-full font-bold" onClick={handleApplyFilters}>

@@ -57,6 +57,51 @@ export function createRouteRepository(supabase: SupabaseClient): IRouteRepositor
       return data || [];
     },
 
+    // Obtener rutas completadas con filtros opcionales
+    async findCompleted(filters?: RouteFilters): Promise<RouteWithCreator[]> {
+      let query = supabase
+        .from('routes')
+        .select(BASE_SELECT)
+        .eq('status', 'completed')
+        .eq('visibility', 'public')
+        .order('departure_date', { ascending: false });
+
+      if (filters?.difficulties && filters.difficulties.length > 0) {
+        query = query.in('difficulty', filters.difficulties);
+      }
+      if (filters?.regions && filters.regions.length > 0) {
+        query = query.in('region', filters.regions);
+      }
+      if (filters?.search) {
+        query = query.textSearch('search_vector', filters.search);
+      }
+      if (filters?.min_distance) {
+        query = query.gte('distance', filters.min_distance);
+      }
+      if (filters?.max_distance) {
+        query = query.lte('distance', filters.max_distance);
+      }
+      if (filters?.date_from) {
+        query = query.gte('departure_date', filters.date_from);
+      }
+      if (filters?.date_to) {
+        query = query.lte('departure_date', filters.date_to);
+      }
+      if (filters?.max_altitude) {
+        query = query.lte('max_altitude', filters.max_altitude);
+      }
+      if (filters?.min_duration) {
+        query = query.gte('estimated_duration', filters.min_duration);
+      }
+      if (filters?.max_duration) {
+        query = query.lte('estimated_duration', filters.max_duration);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      return data || [];
+    },
+
     // Obtener una ruta por ID
     async findById(id: string): Promise<RouteWithCreator | null> {
       const { data, error } = await supabase

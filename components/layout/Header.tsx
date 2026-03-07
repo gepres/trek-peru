@@ -42,13 +42,14 @@ export function Header({ locale }: HeaderProps) {
   // Home: efecto transparente → glass oscuro con scroll
   const isHomePage = pathname === `/${locale}` || pathname === `/${locale}/`;
 
-  // Páginas con glass oscuro permanente: detalle de ruta /routes/[id]
-  // Excluye /routes/new y /routes/[id]/edit (tienen formularios, no hero oscuro)
+  // Páginas con glass oscuro permanente: detalle de ruta /routes/[slug]
+  // Excluye rutas especiales: /routes/new, /routes/completed, /routes/[slug]/edit
   const pathSegments = pathname.split('/');
   const isDarkGlassPage =
     pathSegments.length === 4 &&
     pathSegments[2] === 'routes' &&
-    pathSegments[3] !== 'new';
+    pathSegments[3] !== 'new' &&
+    pathSegments[3] !== 'completed';
 
   // Texto blanco en: home (hero oscuro o glass) y páginas con glass permanente
   const useWhiteText = isHomePage || isDarkGlassPage;
@@ -56,6 +57,7 @@ export function Header({ locale }: HeaderProps) {
   // Enlaces de navegación
   const navLinks = [
     { href: `/${locale}/routes`, label: t('routes') },
+    { href: `/${locale}/routes/completed`, label: 'Completadas' },
   ];
 
   // Enlaces autenticados

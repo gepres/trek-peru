@@ -68,15 +68,24 @@ export function RouteCard({ route, locale }: RouteCardProps) {
             </div>
           )}
 
-          {/* Favorite Button */}
-          <div className="absolute top-3 right-3">
-            <FavoriteButton
-              routeId={route.id}
-              initialCount={route.favorites || 0}
-              size="sm"
-              className="bg-black/30 backdrop-blur-sm hover:bg-black/50 text-white border-0"
-            />
-          </div>
+          {/* Badge "Completada" para rutas en ese estado */}
+          {route.status === 'completed' && (
+            <div className="absolute top-3 right-3 bg-purple-600/90 backdrop-blur-sm text-white text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-lg">
+              Completada
+            </div>
+          )}
+
+          {/* Favorite Button — solo en rutas no completadas */}
+          {route.status !== 'completed' && (
+            <div className="absolute top-3 right-3">
+              <FavoriteButton
+                routeId={route.id}
+                initialCount={route.favorites || 0}
+                size="sm"
+                className="bg-black/30 backdrop-blur-sm hover:bg-black/50 text-white border-0"
+              />
+            </div>
+          )}
         </div>
 
         {/* Contenido */}

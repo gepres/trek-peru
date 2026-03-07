@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { createRouteRepository } from '@/infrastructure/supabase';
-import { getRoutes, getRoute, getMyRoutes, deleteRoute } from '@/application/routes';
+import { getRoutes, getRoute, getMyRoutes, deleteRoute, getCompletedRoutes } from '@/application/routes';
 import { RouteWithCreator, RouteFilters } from '@/types/route.types';
 
 // Hook para obtener y gestionar rutas públicas con filtros
@@ -64,6 +64,33 @@ export function useRoute(routeId: string) {
   }
 
   return { route, loading, error, refetch: fetchRoute };
+}
+
+// Hook para obtener rutas completadas con filtros
+export function useCompletedRoutes(filters?: RouteFilters) {
+  const [routes, setRoutes] = useState<RouteWithCreator[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchRoutes();
+  }, [filters]);
+
+  async function fetchRoutes() {
+    try {
+      setLoading(true);
+      setError(null);
+      const repository = createRouteRepository(createClient());
+      const data = await getCompletedRoutes(repository, filters);
+      setRoutes(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return { routes, loading, error, refetch: fetchRoutes };
 }
 
 // Hook para obtener y gestionar rutas creadas por el usuario autenticado
