@@ -776,6 +776,35 @@ export default async function RouteDetailPage({
                     </div>
                   )}
 
+                  {/* Organizador */}
+                  {route.creator && (
+                    <div className="flex items-center gap-3 p-3 bg-muted/40 rounded-lg mb-6">
+                      <Avatar className="h-10 w-10 shrink-0">
+                        <AvatarImage
+                          src={route.creator.avatar_url || undefined}
+                          alt={route.creator.full_name || ''}
+                        />
+                        <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm">
+                          {getInitials(route.creator.full_name || route.creator.username || 'O')}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[11px] text-muted-foreground leading-none mb-1">Organizado por</p>
+                        <p className="font-semibold text-sm leading-tight truncate">
+                          {route.creator.full_name || route.creator.username}
+                        </p>
+                        {route.creator.username && route.creator.full_name && (
+                          <p className="text-xs text-muted-foreground leading-none mt-0.5">
+                            @{route.creator.username}
+                          </p>
+                        )}
+                      </div>
+                      {route.verified && (
+                        <CheckCircle2 className="h-4 w-4 text-blue-500 shrink-0" />
+                      )}
+                    </div>
+                  )}
+
                   {/* Fecha y hora */}
                   <div className="space-y-3 mb-6">
                     {route.departure_date && (
