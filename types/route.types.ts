@@ -3,6 +3,7 @@ import {
   RouteStatus,
   RouteVisibility,
   AttendeeStatus,
+  AttendanceStatus,
   ExperienceLevel,
   MeetingPoint,
   Waypoint,
@@ -118,6 +119,11 @@ export interface Attendee extends Timestamps {
   // Campos de pago y mensaje del creador (agregados en migración)
   payment_status: PaymentStatus;
   creator_message?: string;
+  // Quién canceló: 'attendee' (confirmado que canceló) | 'creator' (rechazo) | null
+  cancelled_by?: 'attendee' | 'creator' | null;
+  // Registro post-trek: asistió o faltó (null = aún no registrado)
+  attendance_status?: AttendanceStatus | null;
+  attendance_recorded_at?: string | null;
 }
 
 // Asistente con información de usuario

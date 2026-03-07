@@ -143,17 +143,19 @@ export function AttendeesList({
   }
 
   // ── Rama: usuario CON acceso (creador o asistente activo) ─────────────────
-  return <FullAttendeesList routeId={routeId} isCreator={isCreator} supabase={supabase} />;
+  return <FullAttendeesList routeId={routeId} isCreator={isCreator} currentUserId={currentUserId} supabase={supabase} />;
 }
 
 // ── Lista completa para usuarios con acceso ──────────────────────────────────
 function FullAttendeesList({
   routeId,
   isCreator,
+  currentUserId,
   supabase,
 }: {
   routeId: string;
   isCreator: boolean;
+  currentUserId?: string;
   supabase: ReturnType<typeof createClient>;
 }) {
   const { attendees, loading, error, refetch } = useAttendees(routeId);
@@ -194,7 +196,7 @@ function FullAttendeesList({
     try {
       const { error } = await supabase
         .from('attendees')
-        .update({ status: 'cancelled', cancellation_date: new Date().toISOString() })
+        .update({ status: 'cancelled', cancelled_by: 'creator', cancellation_date: new Date().toISOString() })
         .eq('id', attendeeId);
       if (error) throw error;
       toast({ title: 'Asistente rechazado', description: 'El asistente ha sido rechazado.' });
@@ -233,13 +235,16 @@ function FullAttendeesList({
   const confirmedAttendees = attendees.filter((a) => a.status === 'confirmed');
   const pendingAttendees = attendees.filter((a) => a.status === 'pending');
   const waitingListAttendees = attendees.filter((a) => a.status === 'waiting_list');
+  const cancelledAttendees = attendees.filter((a) => a.status === 'cancelled');
+  // Total activo: excluye cancelados (no ocupan cupo visible)
+  const activeCount = confirmedAttendees.length + pendingAttendees.length + waitingListAttendees.length;
 
   return (
     <div className="space-y-6">
       {/* Resumen */}
       <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
         <span className="font-medium text-foreground">
-          {attendees.length} {attendees.length === 1 ? 'asistente inscrito' : 'asistentes inscritos'}
+          {activeCount} {activeCount === 1 ? 'asistente activo' : 'asistentes activos'}
         </span>
         {confirmedAttendees.length > 0 && (
           <span className="text-green-600 dark:text-green-400">
@@ -256,6 +261,11 @@ function FullAttendeesList({
             {waitingListAttendees.length} en espera
           </span>
         )}
+        {cancelledAttendees.length > 0 && (
+          <span className="text-red-500 dark:text-red-400">
+            {cancelledAttendees.length} cancelado{cancelledAttendees.length !== 1 ? 's' : ''}
+          </span>
+        )}
       </div>
 
       {/* Confirmados */}
@@ -270,6 +280,7 @@ function FullAttendeesList({
                 key={attendee.id}
                 attendee={attendee}
                 isCreator={isCreator}
+                currentUserId={currentUserId}
                 onConfirm={handleConfirm}
                 onReject={handleReject}
                 onUpdatePayment={isCreator ? handleUpdatePayment : undefined}
@@ -291,6 +302,7 @@ function FullAttendeesList({
                 key={attendee.id}
                 attendee={attendee}
                 isCreator={isCreator}
+                currentUserId={currentUserId}
                 onConfirm={handleConfirm}
                 onReject={handleReject}
                 onUpdatePayment={isCreator ? handleUpdatePayment : undefined}
@@ -312,6 +324,7 @@ function FullAttendeesList({
                 key={attendee.id}
                 attendee={attendee}
                 isCreator={isCreator}
+                currentUserId={currentUserId}
                 onConfirm={handleConfirm}
                 onReject={handleReject}
                 onUpdatePayment={isCreator ? handleUpdatePayment : undefined}

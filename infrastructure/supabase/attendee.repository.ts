@@ -1,6 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { Attendee, AttendeeWithUser, PaymentStatus } from '@/types/route.types';
-import { AttendeeStatus, ExperienceLevel } from '@/types/database.types';
+import { AttendeeStatus, AttendanceStatus, ExperienceLevel } from '@/types/database.types';
 import { IAttendeeRepository } from '@/domain/attendee/attendee.repository.interface';
 
 // Datos para registrar un asistente
@@ -19,6 +19,11 @@ export interface AttendeeUpdateData {
   creator_message?: string;
   confirmation_date?: string;
   cancellation_date?: string;
+  // Quién canceló (para distinguir rechazo del creador vs cancelación del asistente)
+  cancelled_by?: 'attendee' | 'creator' | null;
+  // Registro post-trek
+  attendance_status?: AttendanceStatus | null;
+  attendance_recorded_at?: string | null;
 }
 
 // Repositorio de acceso a datos para asistentes — implementa IAttendeeRepository

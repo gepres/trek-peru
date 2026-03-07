@@ -66,6 +66,8 @@ export const attendeeUpdateSchema = z.object({
   status: z.enum(['confirmed', 'cancelled', 'pending', 'waiting_list']),
   payment_status: z.enum(['unpaid', 'pending_payment', 'paid']),
   creator_message: z.string().max(300, 'Máximo 300 caracteres').optional(),
+  // Registro post-trek (opcional — solo aplica cuando la fecha ya pasó)
+  attendance_status: z.enum(['attended', 'absent']).nullable().optional(),
 });
 
 // Schema para registro de asistencia (legado — mantener compatibilidad)

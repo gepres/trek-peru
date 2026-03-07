@@ -4,6 +4,7 @@ export type ExperienceLevel = 'beginner' | 'intermediate' | 'advanced' | 'expert
 export type RouteStatus = 'draft' | 'published' | 'cancelled' | 'completed';
 export type RouteVisibility = 'public' | 'private' | 'link';
 export type AttendeeStatus = 'pending' | 'confirmed' | 'cancelled' | 'waiting_list' | 'completed';
+export type AttendanceStatus = 'attended' | 'absent';
 
 // Tipo para punto de encuentro
 export interface MeetingPoint {

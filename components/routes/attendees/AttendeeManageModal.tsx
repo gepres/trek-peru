@@ -36,6 +36,8 @@ interface AttendeeManageModalProps {
   requesterId: string;
   routeCreatorId: string;
   onSave: (attendeeId: string, data: AttendeeUpdateInput) => Promise<void>;
+  // Indica si la fecha del trek ya pasó (habilita el registro de asistencia)
+  isTrekPast?: boolean;
 }
 
 // Etiquetas legibles para los estados
@@ -71,6 +73,7 @@ export function AttendeeManageModal({
   requesterId,
   routeCreatorId,
   onSave,
+  isTrekPast = false,
 }: AttendeeManageModalProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [savedStatus, setSavedStatus] = useState<string | null>(null);
@@ -96,6 +99,7 @@ export function AttendeeManageModal({
     if (attendee) {
       setValue('status', attendee.status as AttendeeUpdateInput['status']);
       setValue('payment_status', attendee.payment_status as AttendeeUpdateInput['payment_status']);
+      setValue('attendance_status', (attendee.attendance_status ?? null) as AttendeeUpdateInput['attendance_status']);
       const msg = attendee.creator_message ?? '';
       setValue('creator_message', msg);
       setCreatorMsg(msg);
@@ -105,6 +109,7 @@ export function AttendeeManageModal({
 
   const watchedStatus = watch('status');
   const watchedPayment = watch('payment_status');
+  const watchedAttendance = watch('attendance_status');
 
   async function onSubmit(data: AttendeeUpdateInput) {
     if (!attendee) return;
@@ -241,6 +246,32 @@ export function AttendeeManageModal({
               </SelectContent>
             </Select>
           </div>
+
+          {/* Asistencia real al trek — solo visible cuando la fecha ya pasó y el asistente está confirmado */}
+          {isTrekPast && attendee.status === 'confirmed' && (
+            <div className="space-y-1.5">
+              <Label>Asistencia al trek</Label>
+              <Select
+                value={watchedAttendance ?? 'not_recorded'}
+                onValueChange={(val) =>
+                  setValue(
+                    'attendance_status',
+                    val === 'not_recorded' ? null : (val as AttendeeUpdateInput['attendance_status']),
+                  )
+                }
+                disabled={isSaving}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleccionar asistencia" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="not_recorded">— Sin registrar</SelectItem>
+                  <SelectItem value="attended">✅ Asistió</SelectItem>
+                  <SelectItem value="absent">❌ No se presentó</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           {/* Mensaje personalizado */}
           <div className="space-y-1.5">

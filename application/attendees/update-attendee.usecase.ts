@@ -16,13 +16,15 @@ export async function updateAttendee(
     throw new Error('Solo el creador de la ruta puede gestionar asistentes');
   }
 
-  // Si se está confirmando, agregar la fecha de confirmación automáticamente
+  // Enriquecer el payload con fechas y el origen de la cancelación
   const updatePayload: AttendeeUpdateData = { ...data };
   if (data.status === 'confirmed' && !data.confirmation_date) {
     updatePayload.confirmation_date = new Date().toISOString();
   }
-  if (data.status === 'cancelled' && !data.cancellation_date) {
-    updatePayload.cancellation_date = new Date().toISOString();
+  if (data.status === 'cancelled') {
+    if (!data.cancellation_date) updatePayload.cancellation_date = new Date().toISOString();
+    // El creador siempre es quien rechaza desde este use case
+    updatePayload.cancelled_by = 'creator';
   }
 
   return repo.updateAttendee(attendeeId, updatePayload);

@@ -19,6 +19,7 @@ import { es } from 'date-fns/locale';
 interface AttendeeCardProps {
   attendee: AttendeeWithUser;
   isCreator?: boolean;
+  currentUserId?: string;
   onConfirm?: (attendeeId: string) => void;
   onReject?: (attendeeId: string) => void;
   onUpdatePayment?: (attendeeId: string, paymentStatus: PaymentStatus) => void;
@@ -73,10 +74,13 @@ function getInitials(name: string) {
 export function AttendeeCard({
   attendee,
   isCreator = false,
+  currentUserId,
   onConfirm,
   onReject,
   onUpdatePayment,
 }: AttendeeCardProps) {
+  // Solo el propio asistente o el creador pueden ver las notas privadas
+  const canSeePrivateInfo = isCreator || currentUserId === attendee.user_id;
   return (
     <Card>
       <CardContent className="p-4 space-y-3">
@@ -131,15 +135,15 @@ export function AttendeeCard({
           </div>
         </div>
 
-        {/* Notas del asistente */}
-        {attendee.notes && (
+        {/* Notas del asistente — solo visibles para el propio asistente y el creador */}
+        {canSeePrivateInfo && attendee.notes && (
           <p className="text-xs text-muted-foreground italic line-clamp-2">
             &quot;{attendee.notes}&quot;
           </p>
         )}
 
-        {/* Mensaje del creador (si existe) */}
-        {attendee.creator_message && (
+        {/* Mensaje del creador — solo visible para el propio asistente y el creador */}
+        {canSeePrivateInfo && attendee.creator_message && (
           <p className="text-xs text-blue-700 dark:text-blue-300 italic line-clamp-2">
             💬 &quot;{attendee.creator_message}&quot;
           </p>
@@ -150,7 +154,7 @@ export function AttendeeCard({
           <div className="pt-2 border-t space-y-2">
 
             {/* Selector rápido de estado de pago */}
-            {onUpdatePayment && (
+            {/* {onUpdatePayment && (
               <div className="flex items-center gap-2">
                 <CreditCard className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                 <p className="text-xs text-muted-foreground shrink-0">Pago:</p>
@@ -176,10 +180,10 @@ export function AttendeeCard({
                   </SelectContent>
                 </Select>
               </div>
-            )}
+            )} */}
 
             {/* Botones Confirmar / Rechazar — solo si está pendiente */}
-            {attendee.status === 'pending' && onConfirm && onReject && (
+            {/* {attendee.status === 'pending' && onConfirm && onReject && (
               <div className="flex gap-2">
                 <Button
                   size="sm"
@@ -199,7 +203,7 @@ export function AttendeeCard({
                   Rechazar
                 </Button>
               </div>
-            )}
+            )} */}
 
           </div>
         )}

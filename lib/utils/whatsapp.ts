@@ -35,6 +35,29 @@ export function buildInscriptionMessage(params: {
   );
 }
 
+/** Mensaje que el asistente confirmado envía al creador para pedir reactivación tras cancelar */
+export function buildReinstatementMessage(params: {
+  userName: string;
+  routeTitle: string;
+  routeDate?: string;
+}): string {
+  const { userName, routeTitle, routeDate } = params;
+  const dateStr = routeDate
+    ? new Date(routeDate).toLocaleDateString('es-PE', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+      })
+    : 'fecha por confirmar';
+
+  return (
+    `Hola, soy *${userName}*. Anteriormente cancelé mi inscripción a tu ruta:\n\n` +
+    `🏔️ *${routeTitle}*\n` +
+    `📅 Fecha: ${dateStr}\n\n` +
+    `¿Sería posible reactivar mi inscripción? ¡Gracias!`
+  );
+}
+
 /** Mensaje que el creador envía al asistente al confirmar su inscripción */
 export function buildApprovalMessage(params: {
   attendeeName: string;
