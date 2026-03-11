@@ -20,6 +20,11 @@ const STATUS_LABELS: Record<string, string> = {
   completed: 'Completado',
 };
 
+const ATTENDANCE_LABELS: Record<string, string> = {
+  attended: 'Asistió',
+  absent: 'Faltó',
+};
+
 const PAYMENT_LABELS: Record<string, string> = {
   unpaid: 'Sin Pago',
   pending_payment: 'Pago Pendiente',
@@ -64,6 +69,12 @@ export function ExportExcelButton({ attendees, routeTitle }: ExportExcelButtonPr
           : '',
         'Fecha Confirmación': a.confirmation_date
           ? new Date(a.confirmation_date).toLocaleDateString('es-PE')
+          : '',
+        'Asistencia': a.attendance_status
+          ? ATTENDANCE_LABELS[a.attendance_status] ?? a.attendance_status
+          : 'Sin Registrar',
+        'Fecha Asistencia': a.attendance_recorded_at
+          ? new Date(a.attendance_recorded_at).toLocaleDateString('es-PE')
           : '',
       }));
 
