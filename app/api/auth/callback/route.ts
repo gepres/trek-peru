@@ -3,13 +3,13 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
 // Ruta de callback para el flujo PKCE de Supabase Auth.
-// Supabase redirige aquí tras verificar el email/magic-link con un `code` de un solo uso.
-// Esta ruta intercambia ese código por una sesión real y setea las cookies de autenticación.
+// Supabase redirige aquí tras verificar el email/magic-link o el OAuth de Google.
+// Intercambia el código por una sesión y verifica si el perfil está completo.
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
-  // `next` permite redirigir a una ruta específica tras el login (ej. /es/routes)
   const next = searchParams.get('next') ?? '/';
+  const locale = searchParams.get('locale') ?? 'es';
 
   if (code) {
     const cookieStore = await cookies();
@@ -32,10 +32,22 @@ export async function GET(request: Request) {
     );
 
     // Intercambiar el código PKCE por una sesión válida
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
-    if (!error) {
-      // Redirigir al destino solicitado (con locale ya incluido en `next`)
+    if (!error && data.user) {
+      // Verificar si el perfil tiene username y phone (requerido tras login Google)
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('username, phone')
+        .eq('id', data.user.id)
+        .single();
+
+      // Si falta username o phone → completar perfil antes de continuar
+      if (!profile?.username || !profile?.phone) {
+        return NextResponse.redirect(`${origin}/${locale}/complete-profile`);
+      }
+
+      // Perfil completo → ir al destino solicitado
       return NextResponse.redirect(`${origin}${next}`);
     }
   }

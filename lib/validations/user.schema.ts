@@ -93,8 +93,19 @@ export const commentSchema = z.object({
   parent_id: z.string().uuid().optional(),
 });
 
+// Schema para completar perfil post-Google (username + phone)
+export const completeProfileSchema = z.object({
+  username: z.string()
+    .min(3, 'El nombre de usuario debe tener al menos 3 caracteres')
+    .max(50, 'El nombre de usuario no puede exceder 50 caracteres')
+    .regex(/^[a-zA-Z0-9_-]+$/, 'Solo letras, números, guiones y guiones bajos'),
+  phone: z.string()
+    .regex(/^\+51\d{9}$/, 'Ingresa un número válido: +51 seguido de 9 dígitos'),
+});
+
 // Tipos inferidos
 export type LoginInput = z.infer<typeof loginSchema>;
+export type CompleteProfileInput = z.infer<typeof completeProfileSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type ProfileInput = z.infer<typeof profileSchema>;
 export type JoinRouteInput = z.infer<typeof joinRouteSchema>;
