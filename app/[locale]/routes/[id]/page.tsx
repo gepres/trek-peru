@@ -767,7 +767,7 @@ export default async function RouteDetailPage({
                     <div className="text-center mb-6">
                       <p className="text-sm text-muted-foreground">Precio por persona</p>
                       <p className="text-4xl font-bold">
-                        {route.currency || 'PEN'} {route.cost}
+                        {route.currency === 'USD' ? '$' : 'S/'} {route.cost}
                       </p>
                     </div>
                   ) : (

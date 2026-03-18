@@ -172,6 +172,13 @@ export function RouteMap({
     el.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
     el.style.cursor = 'pointer';
 
+
+    //  `<div style="padding:8px;font-family:sans-serif;min-width:140px;">
+    //         <p style="font-size:11px;font-weight:700;color:#059669;margin:0 0 4px 0;text-transform:uppercase;letter-spacing:0.05em;">Punto de Encuentro</p>
+    //         ${meetingPoint.name ? `<p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 2px 0;">${meetingPoint.name}</p>` : ''}
+    //         ${meetingPoint.address ? `<p style="font-size:12px;color:#374151;margin:0;">${meetingPoint.address}</p>` : ''}
+    //       </div>`
+
     const marker = new mapboxgl.Marker(el)
       .setLngLat([
         meetingPoint.coordinates.longitude,
@@ -181,7 +188,6 @@ export function RouteMap({
         new mapboxgl.Popup({ offset: 25 }).setHTML(
           `<div style="padding:8px;font-family:sans-serif;min-width:140px;">
             <p style="font-size:11px;font-weight:700;color:#059669;margin:0 0 4px 0;text-transform:uppercase;letter-spacing:0.05em;">Punto de Encuentro</p>
-            ${meetingPoint.name ? `<p style="font-size:13px;font-weight:600;color:#111827;margin:0 0 2px 0;">${meetingPoint.name}</p>` : ''}
             ${meetingPoint.address ? `<p style="font-size:12px;color:#374151;margin:0;">${meetingPoint.address}</p>` : ''}
           </div>`
         )

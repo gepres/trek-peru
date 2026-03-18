@@ -20,10 +20,10 @@ export async function generateMetadata({
   const { locale } = await params;
   const isEs = locale === 'es';
 
-  const title = isEs ? 'TrekPeru — Descubre los Andes' : 'TrekPeru — Discover the Andes';
+  const title = isEs ? 'TrekPeru — Descubre el Perú' : 'TrekPeru — Discover Peru';
   const description = isEs
-    ? 'Descubre y únete a los mejores grupos de trekking en Perú. Camino Inca, Salkantay, Ausangate y cientos de rutas verificadas con mapas interactivos.'
-    : 'Discover and join the best trekking groups in Peru. Inca Trail, Salkantay, Ausangate and hundreds of verified routes with interactive maps.';
+    ? 'Descubre y únete a los mejores grupos de trekking en todo el Perú. Costa, sierra y selva con cientos de rutas verificadas y mapas interactivos.'
+    : 'Discover and join the best trekking groups throughout Peru. Coast, mountains, and jungle with hundreds of verified routes and interactive maps.';
   const url = `${APP_URL}/${locale}`;
 
   return {
@@ -88,7 +88,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <div className="relative z-10 flex flex-col items-center max-w-4xl px-4 text-center space-y-8 py-20">
           <div className="space-y-4">
             <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight drop-shadow-md">
-              Descubre los Andes
+              Descubre el Perú
             </h1>
             <p className="text-lg md:text-xl text-white/90 font-medium max-w-2xl mx-auto drop-shadow-sm">
               Encuentra y únete a los mejores grupos de trekking en Perú. Desde el clásico Camino Inca hasta joyas escondidas.

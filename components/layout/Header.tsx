@@ -7,6 +7,7 @@ import { useAuth } from '@/presentation/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { UserMenu } from '@/components/shared/UserMenu';
+import { ThemeToggle } from '@/components/shared/ThemeToggle';
 import { Menu, X, Plus, Sun, Moon, Monitor } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
@@ -150,6 +151,12 @@ export function Header({ locale }: HeaderProps) {
           <div className="hidden sm:block">
             <LanguageSwitcher locale={locale} />
           </div>
+
+          {!user && (
+            <div className="hidden sm:block">
+              <ThemeToggle />
+            </div>
+          )}
 
           {/* Auth section */}
           {user ? (

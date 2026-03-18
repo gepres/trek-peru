@@ -219,7 +219,7 @@ export function RouteActions({
                   }
                   setIsModalOpen(true);
                 }}
-                disabled={!currentUserId}
+                // disabled={!currentUserId}
               >
                 <UserPlus className="h-5 w-5 mr-2" />
                 {isFull ? 'Unirme a Lista de Espera' : 'Inscribirse a la Ruta'}
