@@ -9,8 +9,9 @@ import { Search, Mountain, Users, MapPin, Star } from 'lucide-react';
 
 // URL base y OG image (imagen hero reutilizada como Open Graph)
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.vercel.app';
-const HERO_OG_IMAGE =
-  'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=1200&h=630&fit=crop';
+// const HERO_OG_IMAGE ='https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=1200&h=630&fit=crop';
+
+const HERO_OG_IMAGE = `${APP_URL}/images/hero/hero-seo-trek-peru.png`;
 
 // Metadata dinámica bilingüe para la homepage
 export async function generateMetadata({
@@ -81,7 +82,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <section
         className="relative w-full min-h-[500px] flex items-center justify-center bg-cover bg-center overflow-hidden pt-16"
         style={{
-          backgroundImage: `linear-gradient(rgba(6, 76, 57, 0.4) 0%, hsl(var(--background)) 100%), url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070')`,
+          backgroundImage: `linear-gradient(rgba(6, 76, 57, 0.4) 0%, hsl(var(--background)) 100%), url('/images/hero/HERO-BACKGROUND-TREK.jpg')`,
         }}
       >
         {/* Gradiente overlay adicional */}
