@@ -5,6 +5,7 @@ import { RoutesList } from '@/components/routes/RoutesList';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.vercel.app';
 
@@ -65,6 +66,7 @@ export async function generateMetadata({
 // Página de listado de rutas
 export default async function RoutesPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  const t = await getTranslations('routes');
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -75,16 +77,16 @@ export default async function RoutesPage({ params }: { params: Promise<{ locale:
           <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <h1 className="text-3xl font-bold text-foreground mb-2">
-                Rutas de Trekking
+                {t('title')}
               </h1>
               <p className="text-muted-foreground">
-                Explora rutas de trekking en todo Perú
+                {t('exploreRoutes')}
               </p>
             </div>
             <Button asChild className="shrink-0">
               <Link href={`/${locale}/routes/new`}>
                 <Plus className="h-4 w-4 mr-2" />
-                Nueva Ruta
+                {t('newRoute')}
               </Link>
             </Button>
           </div>

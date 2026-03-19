@@ -3,6 +3,7 @@ import { redirect, notFound } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { RouteFormSteps } from '@/components/routes/RouteFormSteps';
+import { getTranslations } from 'next-intl/server';
 
 // Página para editar ruta existente
 export default async function EditRoutePage({
@@ -12,6 +13,8 @@ export default async function EditRoutePage({
 }) {
   const { locale, id } = await params;
   const supabase = await createClient();
+
+  const t = await getTranslations('routes');
 
   // Verificar autenticación
   const { data: { user } } = await supabase.auth.getUser();
@@ -42,10 +45,10 @@ export default async function EditRoutePage({
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-              Editar Ruta
+              {t('editRoute')}
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Actualiza la información de tu ruta
+              {t('editRouteDesc')}
             </p>
           </div>
 

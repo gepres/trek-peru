@@ -3,6 +3,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { CompletedRoutesList } from '@/components/routes/CompletedRoutesList';
 import { History } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.vercel.app';
 
@@ -48,6 +49,7 @@ export default async function CompletedRoutesPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  const t = await getTranslations('routes');
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -61,10 +63,10 @@ export default async function CompletedRoutesPage({
               <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30">
                 <History className="h-5 w-5 text-purple-600 dark:text-purple-400" />
               </div>
-              <h1 className="text-3xl font-bold text-foreground">Rutas Completadas</h1>
+              <h1 className="text-3xl font-bold text-foreground">{t('completedRoutes')}</h1>
             </div>
             <p className="text-muted-foreground ml-[52px]">
-              Trekking ya realizados — solo lectura, sin inscripciones
+              {t('completedRoutesDesc')}
             </p>
           </div>
 

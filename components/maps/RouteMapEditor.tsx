@@ -13,6 +13,7 @@ import { MapSearch } from './MapSearch';
 import { CoordinateInput } from './CoordinateInput';
 import { exportToGPX, downloadGPX } from '@/lib/utils/gpx-parser';
 import { MapPin, Navigation, Trash2, Save, Download } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface RouteMapEditorProps {
   // Coordenadas iniciales de la ruta como array [lng, lat][]
@@ -60,6 +61,8 @@ export function RouteMapEditor({
   const markers = useRef<mapboxgl.Marker[]>([]);
   const meetingMarker = useRef<mapboxgl.Marker | null>(null);
   const [gpxError, setGpxError] = useState<string | null>(null);
+
+  const t = useTranslations('maps');
 
   // Sincronizar ref con state para que el click handler siempre lea el valor actual
   useEffect(() => {
@@ -452,14 +455,14 @@ export function RouteMapEditor({
           {/* Búsqueda y Coordenadas */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <h4 className="text-xs font-medium text-muted-foreground">Buscar lugar</h4>
+              <h4 className="text-xs font-medium text-muted-foreground">{t('searchPlace')}</h4>
               <MapSearch
                 onLocationSelect={handleLocationSelect}
-                placeholder="Buscar en Perú..."
+                placeholder={t('searchInPeru')}
               />
             </div>
             <div className="space-y-2">
-              <h4 className="text-xs font-medium text-muted-foreground">Ir a coordenadas</h4>
+              <h4 className="text-xs font-medium text-muted-foreground">{t('goToCoordinates')}</h4>
               <CoordinateInput
                 onCoordinatesSubmit={handleCoordinatesSubmit}
               />
@@ -483,7 +486,7 @@ export function RouteMapEditor({
               className="w-full"
             >
               <Download className="h-4 w-4 mr-2" />
-              Exportar a GPX
+              {t('exportToGpx')}
             </Button>
           </div>
 
@@ -505,7 +508,7 @@ export function RouteMapEditor({
               onClick={() => setEditorMode(editorMode === 'route' ? null : 'route')}
             >
               <Navigation className="h-4 w-4 mr-2" />
-              {editorMode === 'route' ? 'Dibujando ruta...' : 'Dibujar ruta'}
+              {editorMode === 'route' ? t('drawingRoute') : t('drawRoute')}
             </Button>
 
             <Button
@@ -515,7 +518,7 @@ export function RouteMapEditor({
               onClick={() => setEditorMode(editorMode === 'meeting' ? null : 'meeting')}
             >
               <MapPin className="h-4 w-4 mr-2" />
-              {editorMode === 'meeting' ? 'Click en el mapa...' : 'Punto de encuentro'}
+              {editorMode === 'meeting' ? t('clickOnMap') : t('meetingPoint')}
             </Button>
 
             <Button
@@ -525,13 +528,13 @@ export function RouteMapEditor({
               onClick={() => setEditorMode(editorMode === 'waypoint' ? null : 'waypoint')}
             >
               <Save className="h-4 w-4 mr-2" />
-              {editorMode === 'waypoint' ? 'Click en el mapa...' : 'Agregar waypoint'}
+              {editorMode === 'waypoint' ? t('clickOnMap') : t('addWaypoint')}
             </Button>
           </div>
 
           {editorMode === 'waypoint' && (
             <div className="space-y-2">
-              <Label htmlFor="waypoint-name">Nombre del waypoint</Label>
+              <Label htmlFor="waypoint-name">{t('waypointName')}</Label>
               <Input
                 id="waypoint-name"
                 value={waypointName}
@@ -541,7 +544,7 @@ export function RouteMapEditor({
                     e.preventDefault();
                   }
                 }}
-                placeholder="Ej: Mirador, Campamento, Fuente de agua"
+                placeholder={t('waypointExample')}
               />
             </div>
           )}
@@ -555,7 +558,7 @@ export function RouteMapEditor({
                   size="sm"
                   onClick={undoLastPoint}
                 >
-                  Deshacer último punto
+                  {t('undoLastPoint')}
                 </Button>
                 <Button
                   type="button"
@@ -564,7 +567,7 @@ export function RouteMapEditor({
                   onClick={clearRoute}
                 >
                   <Trash2 className="h-4 w-4 mr-2" />
-                  Limpiar ruta
+                  {t('clearRoute')}
                 </Button>
               </>
             )}
@@ -577,7 +580,7 @@ export function RouteMapEditor({
                 onClick={clearMeetingPoint}
               >
                 <Trash2 className="h-4 w-4 mr-2" />
-                Quitar punto de encuentro
+                {t('removeMeetingPoint')}
               </Button>
             )}
 
@@ -589,15 +592,15 @@ export function RouteMapEditor({
                 onClick={clearWaypoints}
               >
                 <Trash2 className="h-4 w-4 mr-2" />
-                Quitar waypoints
+                {t('removeWaypoints')}
               </Button>
             )}
           </div>
 
           <div className="text-xs text-muted-foreground">
-            <p>Puntos en ruta: {routePoints.length}</p>
-            {meetingPoint && <p>✓ Punto de encuentro marcado</p>}
-            {waypoints.length > 0 && <p>Waypoints: {waypoints.length}</p>}
+            <p>{t('pointsOnRoute')}: {routePoints.length}</p>
+            {meetingPoint && <p>✓ {t('meetingPointMarked')}</p>}
+            {waypoints.length > 0 && <p>{t('waypointsMarked')}: {waypoints.length}</p>}
           </div>
         </div>
       </Card>
@@ -617,7 +620,7 @@ export function RouteMapEditor({
         {/* Skeleton superpuesto hasta que el mapa termine de cargar */}
         {!mapLoaded && (
           <div className="absolute inset-0 z-10 bg-muted animate-pulse rounded-lg flex items-center justify-center">
-            <span className="text-sm text-muted-foreground">Cargando mapa...</span>
+            <span className="text-sm text-muted-foreground">{t('loadingMap')}</span>
           </div>
         )}
       </div>
@@ -631,7 +634,7 @@ export function RouteMapEditor({
           <div className="flex items-center gap-2 px-3 py-2 bg-amber-50 dark:bg-amber-900/20 border-b border-border">
             <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
             <p className="text-xs font-semibold text-foreground">
-              Waypoints marcados
+              {t('waypointsMarked')}
             </p>
             <span className="ml-auto text-xs font-medium text-amber-700 dark:text-amber-400">
               {waypoints.length} {waypoints.length === 1 ? 'punto' : 'puntos'}
