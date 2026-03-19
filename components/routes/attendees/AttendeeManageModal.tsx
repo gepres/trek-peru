@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { MessageCircle, Phone, User, AlertCircle, Heart, FileText, Award } from 'lucide-react';
@@ -40,27 +41,6 @@ interface AttendeeManageModalProps {
   isTrekPast?: boolean;
 }
 
-// Etiquetas legibles para los estados
-const STATUS_LABELS: Record<string, string> = {
-  pending: 'Pendiente',
-  confirmed: 'Confirmar',
-  cancelled: 'Rechazar',
-  waiting_list: 'Lista de espera',
-};
-
-const PAYMENT_LABELS: Record<string, string> = {
-  unpaid: 'Sin pago',
-  pending_payment: 'Pago pendiente',
-  paid: 'Pagado',
-};
-
-const EXPERIENCE_LABELS: Record<string, string> = {
-  beginner: 'Principiante',
-  intermediate: 'Intermedio',
-  advanced: 'Avanzado',
-  expert: 'Experto',
-};
-
 // Modal para que el creador gestione un asistente (aprobar, rechazar, pago, mensaje)
 export function AttendeeManageModal({
   open,
@@ -78,6 +58,19 @@ export function AttendeeManageModal({
   const [isSaving, setIsSaving] = useState(false);
   const [savedStatus, setSavedStatus] = useState<string | null>(null);
   const [creatorMsg, setCreatorMsg] = useState('');
+
+  const t = useTranslations('attendees.manageModal');
+  const tStatus = useTranslations('attendees.status');
+  const tPayment = useTranslations('attendees.payment');
+  const tExp = useTranslations('attendees.experience');
+  const tc = useTranslations('common');
+
+  const EXPERIENCE_LABELS: Record<string, string> = {
+    beginner: tExp('beginner'),
+    intermediate: tExp('intermediate'),
+    advanced: tExp('advanced'),
+    expert: tExp('expert'),
+  };
 
   const {
     handleSubmit,
@@ -150,7 +143,7 @@ export function AttendeeManageModal({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Gestionar Asistente</DialogTitle>
+          <DialogTitle>{t('title')}</DialogTitle>
         </DialogHeader>
 
         {/* ── Info del asistente ── */}
@@ -180,21 +173,21 @@ export function AttendeeManageModal({
           {attendee.emergency_contact && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <AlertCircle className="h-4 w-4" />
-              <span><strong>Emergencia:</strong> {attendee.emergency_contact}</span>
+              <span><strong>{t('emergency')}</strong> {attendee.emergency_contact}</span>
             </div>
           )}
 
           {attendee.allergies && (
             <div className="flex items-start gap-2 text-sm text-muted-foreground">
               <Heart className="h-4 w-4 mt-0.5" />
-              <span><strong>Alergias:</strong> {attendee.allergies}</span>
+              <span><strong>{t('allergies')}</strong> {attendee.allergies}</span>
             </div>
           )}
 
           {attendee.medical_conditions && (
             <div className="flex items-start gap-2 text-sm text-muted-foreground">
               <Heart className="h-4 w-4 mt-0.5" />
-              <span><strong>Condiciones:</strong> {attendee.medical_conditions}</span>
+              <span><strong>{t('conditions')}</strong> {attendee.medical_conditions}</span>
             </div>
           )}
 
@@ -210,39 +203,39 @@ export function AttendeeManageModal({
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Estado de inscripción */}
           <div className="space-y-1.5">
-            <Label>Decisión</Label>
+            <Label>{t('decision')}</Label>
             <Select
               value={watchedStatus}
               onValueChange={(val) => setValue('status', val as AttendeeUpdateInput['status'])}
               disabled={isSaving}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Seleccionar estado" />
+                <SelectValue placeholder={t('selectStatus')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="pending">⏳ Pendiente</SelectItem>
-                <SelectItem value="confirmed">✅ Confirmar</SelectItem>
-                <SelectItem value="cancelled">❌ Rechazar</SelectItem>
-                <SelectItem value="waiting_list">🕐 Lista de espera</SelectItem>
+                <SelectItem value="pending">⏳ {t('statusPending')}</SelectItem>
+                <SelectItem value="confirmed">✅ {t('statusConfirm')}</SelectItem>
+                <SelectItem value="cancelled">❌ {t('statusReject')}</SelectItem>
+                <SelectItem value="waiting_list">🕐 {t('statusWaitlist')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           {/* Estado de pago */}
           <div className="space-y-1.5">
-            <Label>Estado de pago</Label>
+            <Label>{t('paymentStatus')}</Label>
             <Select
               value={watchedPayment}
               onValueChange={(val) => setValue('payment_status', val as AttendeeUpdateInput['payment_status'])}
               disabled={isSaving}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Seleccionar estado de pago" />
+                <SelectValue placeholder={t('selectPayment')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="unpaid">💸 Sin pago</SelectItem>
-                <SelectItem value="pending_payment">⏳ Pago pendiente</SelectItem>
-                <SelectItem value="paid">✅ Pagado</SelectItem>
+                <SelectItem value="unpaid">💸 {t('paymentUnpaid')}</SelectItem>
+                <SelectItem value="pending_payment">⏳ {t('paymentPending')}</SelectItem>
+                <SelectItem value="paid">✅ {t('paymentPaid')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -250,7 +243,7 @@ export function AttendeeManageModal({
           {/* Asistencia real al trek — solo visible cuando la fecha ya pasó y el asistente está confirmado */}
           {isTrekPast && attendee.status === 'confirmed' && (
             <div className="space-y-1.5">
-              <Label>Asistencia al trek</Label>
+              <Label>{t('attendance')}</Label>
               <Select
                 value={watchedAttendance ?? 'not_recorded'}
                 onValueChange={(val) =>
@@ -262,12 +255,12 @@ export function AttendeeManageModal({
                 disabled={isSaving}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar asistencia" />
+                  <SelectValue placeholder={t('selectAttendance')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="not_recorded">— Sin registrar</SelectItem>
-                  <SelectItem value="attended">✅ Asistió</SelectItem>
-                  <SelectItem value="absent">❌ No se presentó</SelectItem>
+                  <SelectItem value="not_recorded">— {t('notRecorded')}</SelectItem>
+                  <SelectItem value="attended">✅ {t('attended')}</SelectItem>
+                  <SelectItem value="absent">❌ {t('absent')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -275,10 +268,10 @@ export function AttendeeManageModal({
 
           {/* Mensaje personalizado */}
           <div className="space-y-1.5">
-            <Label htmlFor="creator_message">Mensaje personalizado (opcional)</Label>
+            <Label htmlFor="creator_message">{t('creatorMessage')}</Label>
             <Textarea
               id="creator_message"
-              placeholder="Ej: Recuerda traer bastones y crema solar. Nos vemos en el paradero..."
+              placeholder={t('messagePlaceholder')}
               rows={3}
               value={creatorMsg}
               onChange={(e) => {
@@ -287,16 +280,16 @@ export function AttendeeManageModal({
               }}
               disabled={isSaving}
             />
-            <p className="text-xs text-muted-foreground">{creatorMsg.length}/300 caracteres</p>
+            <p className="text-xs text-muted-foreground">{creatorMsg.length}/300 {t('characters')}</p>
           </div>
 
           {/* Botón guardar */}
           <div className="flex gap-3">
             <Button type="button" variant="outline" className="flex-1" onClick={handleClose} disabled={isSaving}>
-              Cancelar
+              {tc('cancel')}
             </Button>
             <Button type="submit" className="flex-1" disabled={isSaving}>
-              {isSaving ? 'Guardando...' : 'Guardar Cambios'}
+              {isSaving ? t('saving') : t('save')}
             </Button>
           </div>
         </form>
@@ -305,12 +298,12 @@ export function AttendeeManageModal({
         {savedStatus === 'confirmed' && waLink && (
           <div className="mt-2 p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 space-y-3">
             <p className="text-sm text-green-800 dark:text-green-300 font-medium">
-              ✅ Asistente confirmado. ¿Deseas notificarle por WhatsApp?
+              ✅ {t('confirmedNotify')}
             </p>
             <a href={waLink} target="_blank" rel="noopener noreferrer">
               <Button className="w-full bg-[#25D366] hover:bg-[#1ebe5d] text-white gap-2">
                 <MessageCircle className="h-4 w-4" />
-                Enviar Confirmación por WhatsApp
+                {t('sendWhatsapp')}
               </Button>
             </a>
           </div>
@@ -319,7 +312,7 @@ export function AttendeeManageModal({
         {savedStatus === 'cancelled' && (
           <div className="mt-2 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
             <p className="text-sm text-red-800 dark:text-red-300 font-medium">
-              ❌ Inscripción rechazada y guardada.
+              ❌ {t('rejectedSaved')}
             </p>
           </div>
         )}

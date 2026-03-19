@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslations } from 'next-intl';
 import { MessageCircle, Phone, UserPlus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -56,6 +57,9 @@ export function JoinRouteModal({
   onSuccess,
 }: JoinRouteModalProps) {
   const supabase = createClient();
+  const t = useTranslations('attendees.joinModal');
+  const tExp = useTranslations('attendees.experience');
+  const tc = useTranslations('common');
   const [isSubmitting, setIsSubmitting] = useState(false);
   // Controla si la inscripción fue exitosa (muestra el paso 2)
   const [inscriptionDone, setInscriptionDone] = useState(false);
@@ -95,17 +99,17 @@ export function JoinRouteModal({
 
       if (error) {
         if (error.code === '23505') {
-          toast({ title: 'Ya estás inscrito', description: 'Ya te has inscrito a esta ruta.', variant: 'destructive' });
+          toast({ title: t('alreadyRegistered'), description: t('alreadyRegisteredDesc'), variant: 'destructive' });
           return;
         }
         throw error;
       }
 
       toast({
-        title: isFull ? '🕐 Agregado a lista de espera' : '✅ Inscripción registrada',
+        title: isFull ? '🕐 ' + t('addedToWaitlist') : '✅ ' + t('registrationDone'),
         description: isFull
-          ? 'El organizador te notificará si hay un lugar disponible.'
-          : 'Tu solicitud ha sido enviada. El organizador la revisará pronto.',
+          ? t('waitlistNotify')
+          : t('requestSent'),
       });
 
       // Generar enlace wa.me si el creador tiene teléfono registrado
@@ -123,7 +127,7 @@ export function JoinRouteModal({
     } catch (err) {
       toast({
         title: 'Error',
-        description: err instanceof Error ? err.message : 'No se pudo completar la inscripción',
+        description: err instanceof Error ? err.message : t('couldNotComplete'),
         variant: 'destructive',
       });
     } finally {
@@ -152,11 +156,11 @@ export function JoinRouteModal({
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <UserPlus className="h-5 w-5" />
-                {isFull ? 'Unirme a Lista de Espera' : 'Inscribirse a la Ruta'}
+                {isFull ? t('joinWaitingList') : t('joinRoute')}
               </DialogTitle>
               <DialogDescription className="text-sm text-muted-foreground">
                 <span className="font-medium">{routeTitle}</span>
-                {' — '}Completa los datos para tu inscripción
+                {' — '}{t('completeData')}
               </DialogDescription>
             </DialogHeader>
 
@@ -164,11 +168,11 @@ export function JoinRouteModal({
               {/* Contacto de emergencia — obligatorio */}
               <div className="space-y-1.5">
                 <Label htmlFor="emergency_contact">
-                  Contacto de emergencia <span className="text-red-500">*</span>
+                  {t('emergencyContact')} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="emergency_contact"
-                  placeholder="Nombre y teléfono de un familiar"
+                  placeholder={t('emergencyContactHint')}
                   {...register('emergency_contact')}
                   disabled={isSubmitting}
                 />
@@ -179,29 +183,29 @@ export function JoinRouteModal({
 
               {/* Nivel de experiencia */}
               <div className="space-y-1.5">
-                <Label>Nivel de experiencia en trekking</Label>
+                <Label>{t('experienceLevel')}</Label>
                 <Select
                   onValueChange={(val) => setValue('experience_level', val as JoinRouteInput['experience_level'])}
                   disabled={isSubmitting}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecciona tu nivel" />
+                    <SelectValue placeholder={t('selectLevel')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="beginner">Principiante</SelectItem>
-                    <SelectItem value="intermediate">Intermedio</SelectItem>
-                    <SelectItem value="advanced">Avanzado</SelectItem>
-                    <SelectItem value="expert">Experto</SelectItem>
+                    <SelectItem value="beginner">{tExp('beginner')}</SelectItem>
+                    <SelectItem value="intermediate">{tExp('intermediate')}</SelectItem>
+                    <SelectItem value="advanced">{tExp('advanced')}</SelectItem>
+                    <SelectItem value="expert">{tExp('expert')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {/* Alergias */}
               <div className="space-y-1.5">
-                <Label htmlFor="allergies">Alergias (opcional)</Label>
+                <Label htmlFor="allergies">{t('allergiesOptional')}</Label>
                 <Textarea
                   id="allergies"
-                  placeholder="Ej: Penicilina, picaduras de abeja..."
+                  placeholder={t('allergiesPlaceholder')}
                   rows={2}
                   {...register('allergies')}
                   disabled={isSubmitting}
@@ -210,10 +214,10 @@ export function JoinRouteModal({
 
               {/* Condiciones médicas */}
               <div className="space-y-1.5">
-                <Label htmlFor="medical_conditions">Condiciones médicas (opcional)</Label>
+                <Label htmlFor="medical_conditions">{t('medicalOptional')}</Label>
                 <Textarea
                   id="medical_conditions"
-                  placeholder="Ej: Asma leve, hipertensión controlada..."
+                  placeholder={t('medicalPlaceholder')}
                   rows={2}
                   {...register('medical_conditions')}
                   disabled={isSubmitting}
@@ -222,25 +226,25 @@ export function JoinRouteModal({
 
               {/* Mensaje para el organizador */}
               <div className="space-y-1.5">
-                <Label htmlFor="notes">Mensaje para el organizador (opcional)</Label>
+                <Label htmlFor="notes">{t('notesOptional')}</Label>
                 <Textarea
                   id="notes"
-                  placeholder="Preguntas, comentarios o información adicional..."
+                  placeholder={t('notesPlaceholder')}
                   rows={2}
                   {...register('notes')}
                   disabled={isSubmitting}
                 />
                 <p className="text-xs text-muted-foreground">
-                  {watch('notes')?.length ?? 0}/300 caracteres
+                  {watch('notes')?.length ?? 0}/300 {t('characters')}
                 </p>
               </div>
 
               <div className="flex gap-3 pt-2">
                 <Button type="button" variant="outline" className="flex-1" onClick={handleClose} disabled={isSubmitting}>
-                  Cancelar
+                  {tc('cancel')}
                 </Button>
                 <Button type="submit" className="flex-1" disabled={isSubmitting}>
-                  {isSubmitting ? 'Enviando...' : 'Confirmar Inscripción'}
+                  {isSubmitting ? t('sending') : t('confirm')}
                 </Button>
               </div>
             </form>
@@ -250,20 +254,19 @@ export function JoinRouteModal({
           <>
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 text-green-700 dark:text-green-400">
-                ✅ ¡Inscripción registrada!
+                ✅ {t('successTitle')}
               </DialogTitle>
               <DialogDescription>
                 {waLink
-                  ? 'Notifica al organizador por WhatsApp para que procese tu solicitud más rápido.'
-                  : 'Tu solicitud ha sido enviada. El organizador la revisará en su panel.'}
+                  ? t('notifyWhatsapp')
+                  : t('requestSentPanel')}
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4 mt-2">
               <div className="p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
                 <p className="text-sm text-green-800 dark:text-green-300">
-                  Tu inscripción está <strong>pendiente de confirmación</strong>. El organizador
-                  revisará tu solicitud y te notificará cuando sea aprobada.
+                  {t('pendingConfirmation')}
                 </p>
               </div>
 
@@ -278,7 +281,7 @@ export function JoinRouteModal({
                   >
                     <Button className="w-full bg-[#25D366] hover:bg-[#1ebe5d] text-white gap-2">
                       <MessageCircle className="h-4 w-4" />
-                      Abrir WhatsApp y notificar al organizador
+                      {t('openWhatsapp')}
                     </Button>
                   </a>
                 ) : (
@@ -286,13 +289,12 @@ export function JoinRouteModal({
                   <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 flex items-start gap-2">
                     <Phone className="h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
                     <p className="text-sm text-amber-700 dark:text-amber-300">
-                      El organizador no tiene número de WhatsApp registrado.
-                      Recibirá tu solicitud en su panel de gestión.
+                      {t('noWhatsapp')}
                     </p>
                   </div>
                 )}
                 <Button variant="outline" className="w-full" onClick={handleWaClick}>
-                  {waLink ? 'Omitir por ahora' : 'Cerrar'}
+                  {waLink ? t('skipNotify') : tc('close')}
                 </Button>
               </div>
             </div>

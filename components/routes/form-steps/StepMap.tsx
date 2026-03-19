@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -36,6 +37,8 @@ export function StepMap({
   setValue,
   watch,
 }: StepMapProps) {
+  const t = useTranslations('routeForm');
+
   // Estado local para los inputs lat/lng del generador de link
   const [geoLat, setGeoLat] = useState('');
   const [geoLng, setGeoLng] = useState('');
@@ -45,17 +48,17 @@ export function StepMap({
   function handleGenerateLink() {
     setGeoError('');
     if (!geoLat || !geoLng) {
-      setGeoError('Ingresa la latitud y longitud');
+      setGeoError(t('mapInputError'));
       return;
     }
     const lat = parseFloat(geoLat);
     const lng = parseFloat(geoLng);
     if (isNaN(lat) || isNaN(lng)) {
-      setGeoError('Valores inválidos — usa formato numérico, ej: -9.19');
+      setGeoError(t('mapInvalidValues'));
       return;
     }
     if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-      setGeoError('Coordenadas fuera de rango válido');
+      setGeoError(t('mapOutOfRange'));
       return;
     }
     setValue('google_maps_link', `https://www.google.com/maps?q=${lat},${lng}`);
@@ -88,28 +91,25 @@ export function StepMap({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Map className="h-5 w-5" />
-            5. Mapa de la Ruta
+            {t('step5Title')}
           </CardTitle>
           <CardDescription>
-            Dibuja la ruta en el mapa y marca puntos de interés (opcional)
+            {t('mapOptionalHint')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Instrucciones */}
           <div className="p-4 rounded-lg bg-muted/50 border border-border space-y-2">
-            <p className="text-sm font-medium">Instrucciones:</p>
+            <p className="text-sm font-medium">{t('instructions')}</p>
             <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
               <li>
-                <strong>Punto de encuentro:</strong> Haz clic en el botón &quot;Punto de encuentro&quot;
-                y luego clic en el mapa donde será el punto de partida
+                <strong>{t('meetingPoint')}:</strong> {t('instructionMeetingPoint')}
               </li>
               <li>
-                <strong>Dibujar ruta:</strong> Haz clic en &quot;Dibujar ruta&quot; y marca los puntos
-                del recorrido haciendo clic en el mapa
+                <strong>{t('routeDraw')}:</strong> {t('instructionDrawRoute')}
               </li>
               <li>
-                <strong>Waypoints:</strong> Agrega puntos de interés importantes durante la ruta
-                (miradores, campamentos, lagunas, etc.)
+                <strong>{t('waypoints')}:</strong> {t('instructionWaypoints')}
               </li>
             </ul>
           </div>
@@ -129,38 +129,38 @@ export function StepMap({
           {/* Resumen */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="p-3 rounded-lg bg-muted/30 border border-border">
-              <p className="text-xs text-muted-foreground mb-1">Punto de Encuentro</p>
+              <p className="text-xs text-muted-foreground mb-1">{t('meetingPoint')}</p>
               <p className="text-sm font-medium">
                 {meetingPoint ? (
-                  <span className="text-green-600 dark:text-green-400">✓ Agregado</span>
+                  <span className="text-green-600 dark:text-green-400">✓ {t('added')}</span>
                 ) : (
-                  <span className="text-muted-foreground">No agregado</span>
+                  <span className="text-muted-foreground">{t('notAdded')}</span>
                 )}
               </p>
             </div>
 
             <div className="p-3 rounded-lg bg-muted/30 border border-border">
-              <p className="text-xs text-muted-foreground mb-1">Puntos de Ruta</p>
+              <p className="text-xs text-muted-foreground mb-1">{t('routePoints')}</p>
               <p className="text-sm font-medium">
                 {routeCoordinates.length > 0 ? (
                   <span className="text-green-600 dark:text-green-400">
-                    {routeCoordinates.length} puntos
+                    {routeCoordinates.length} {routeCoordinates.length === 1 ? t('pointSingular') : t('pointPlural')}
                   </span>
                 ) : (
-                  <span className="text-muted-foreground">No dibujada</span>
+                  <span className="text-muted-foreground">{t('notDrawn')}</span>
                 )}
               </p>
             </div>
 
             <div className="p-3 rounded-lg bg-muted/30 border border-border">
-              <p className="text-xs text-muted-foreground mb-1">Waypoints</p>
+              <p className="text-xs text-muted-foreground mb-1">{t('waypoints')}</p>
               <p className="text-sm font-medium">
                 {waypoints.length > 0 ? (
                   <span className="text-green-600 dark:text-green-400">
-                    {waypoints.length} {waypoints.length === 1 ? 'punto' : 'puntos'}
+                    {waypoints.length} {waypoints.length === 1 ? t('pointSingular') : t('pointPlural')}
                   </span>
                 ) : (
-                  <span className="text-muted-foreground">Ninguno</span>
+                  <span className="text-muted-foreground">{t('noneLabel')}</span>
                 )}
               </p>
             </div>
@@ -170,13 +170,13 @@ export function StepMap({
           <div className="space-y-3 pt-2 border-t border-border">
             <Label className="flex items-center gap-2 text-sm font-medium">
               <LinkIcon className="h-4 w-4" />
-              Link de Google Maps
+              {t('googleMapsLink')}
             </Label>
 
             {/* Generador automático */}
             <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-3">
               <p className="text-xs font-medium text-muted-foreground">
-                Generar link automáticamente con coordenadas:
+                {t('generateLink')}
               </p>
 
               {/* Accesos rápidos: punto de encuentro / inicio de ruta */}
@@ -189,7 +189,7 @@ export function StepMap({
                       className="flex items-center gap-1 text-xs text-primary hover:underline"
                     >
                       <MapPin className="h-3 w-3" />
-                      Usar punto de encuentro
+                      {t('useMeetingPoint')}
                     </button>
                   )}
                   {routeCoordinates.length > 0 && (
@@ -199,7 +199,7 @@ export function StepMap({
                       className="flex items-center gap-1 text-xs text-primary hover:underline"
                     >
                       <Map className="h-3 w-3" />
-                      Usar inicio de ruta
+                      {t('useRouteStart')}
                     </button>
                   )}
                 </div>
@@ -208,25 +208,25 @@ export function StepMap({
               {/* Inputs de lat/lng */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <Label htmlFor="geo-lat" className="text-xs">Latitud</Label>
+                  <Label htmlFor="geo-lat" className="text-xs">{t('latitude')}</Label>
                   <Input
                     id="geo-lat"
                     type="text"
                     value={geoLat}
                     onChange={(e) => { setGeoLat(e.target.value); setGeoError(''); }}
-                    placeholder="Ej: -9.19"
+                    placeholder={t('latPlaceholder')}
                     className="text-sm"
                     onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleGenerateLink(); } }}
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label htmlFor="geo-lng" className="text-xs">Longitud</Label>
+                  <Label htmlFor="geo-lng" className="text-xs">{t('longitude')}</Label>
                   <Input
                     id="geo-lng"
                     type="text"
                     value={geoLng}
                     onChange={(e) => { setGeoLng(e.target.value); setGeoError(''); }}
-                    placeholder="Ej: -75.01"
+                    placeholder={t('lngPlaceholder')}
                     className="text-sm"
                     onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleGenerateLink(); } }}
                   />
@@ -246,14 +246,14 @@ export function StepMap({
                 className="w-full sm:w-auto"
               >
                 <Wand2 className="h-3.5 w-3.5 mr-1.5" />
-                Generar link de Google Maps
+                {t('generateGoogleMaps')}
               </Button>
             </div>
 
             {/* Input manual */}
             <div className="space-y-1">
               <p className="text-xs text-muted-foreground">
-                O ingresa el link manualmente:
+                {t('orManualLink')}
               </p>
               <Input
                 type="url"
@@ -281,8 +281,7 @@ export function StepMap({
           </div>
 
           <p className="text-xs text-muted-foreground">
-            Este paso es opcional, pero agregar un mapa ayuda a los participantes a
-            visualizar mejor la ruta y planificar su participación.
+            {t('mapOptionalHint')}
           </p>
         </CardContent>
       </Card>

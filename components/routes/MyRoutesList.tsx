@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useMyRoutes } from '@/presentation/hooks/useRoutes';
 import { useStorageDelete } from '@/presentation/hooks/useStorageDelete';
 import { useToast } from '@/components/ui/use-toast';
@@ -27,6 +28,7 @@ interface MyRoutesListProps {
 
 // Componente para mostrar las rutas del usuario autenticado con gestión (editar, asistentes, eliminar)
 export function MyRoutesList({ locale }: MyRoutesListProps) {
+  const t = useTranslations('myRoutes');
   const { routes, loading, error, removeRoute, deletingId } = useMyRoutes();
   const { deleteFile } = useStorageDelete();
   const { toast } = useToast();
@@ -39,7 +41,7 @@ export function MyRoutesList({ locale }: MyRoutesListProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <LoadingSpinner size="lg" text="Cargando tus rutas..." />
+        <LoadingSpinner size="lg" text={t('loading')} />
       </div>
     );
   }
@@ -48,7 +50,7 @@ export function MyRoutesList({ locale }: MyRoutesListProps) {
     return (
       <div className="p-4 rounded-lg bg-red-50 border border-red-200">
         <p className="text-sm text-red-600">
-          Error al cargar tus rutas: {error}
+          {t('errorLoading')} {error}
         </p>
       </div>
     );
@@ -58,10 +60,10 @@ export function MyRoutesList({ locale }: MyRoutesListProps) {
     return (
       <EmptyState
         icon={Mountain}
-        title="No has creado ninguna ruta"
-        description="Comienza a compartir tus aventuras creando tu primera ruta de trekking."
+        title={t('noRoutes')}
+        description={t('noRoutesDesc')}
         action={{
-          label: 'Crear Mi Primera Ruta',
+          label: t('createFirst'),
           onClick: () => router.push(`/${locale}/routes/new`),
         }}
       />
@@ -104,13 +106,13 @@ export function MyRoutesList({ locale }: MyRoutesListProps) {
       await removeRoute(routeToDelete.id);
 
       toast({
-        title: 'Ruta eliminada',
-        description: `"${routeToDelete.title}" fue eliminada correctamente.`,
+        title: t('routeDeleted'),
+        description: `"${routeToDelete.title}" ${t('routeDeletedDesc')}`,
       });
     } catch (err) {
       toast({
-        title: 'Error al eliminar',
-        description: err instanceof Error ? err.message : 'Ocurrió un error inesperado.',
+        title: t('deleteError'),
+        description: err instanceof Error ? err.message : t('deleteErrorDesc'),
         variant: 'destructive',
       });
     } finally {
@@ -123,7 +125,7 @@ export function MyRoutesList({ locale }: MyRoutesListProps) {
     <>
       <div className="space-y-6">
         <div className="text-sm text-muted-foreground">
-          {routes.length} {routes.length === 1 ? 'ruta creada' : 'rutas creadas'}
+          {routes.length} {routes.length === 1 ? t('routeCreatedSingular') : t('routeCreatedPlural')}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -146,7 +148,7 @@ export function MyRoutesList({ locale }: MyRoutesListProps) {
                 >
                   <Link href={`/${locale}/my-routes/${route.id}/attendees`}>
                     <Users className="h-3.5 w-3.5" />
-                    Asistentes
+                    {t('attendees')}
                   </Link>
                 </Button>
 
@@ -158,7 +160,7 @@ export function MyRoutesList({ locale }: MyRoutesListProps) {
                   disabled={deletingId === route.id}
                 >
                   <Trash2 className="h-3.5 w-3.5" />
-                  Eliminar
+                  {t('deleteBtn')}
                 </Button>
               </div>
             </div>
@@ -172,14 +174,10 @@ export function MyRoutesList({ locale }: MyRoutesListProps) {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-red-500" />
-              Eliminar ruta
+              {t('deleteTitle')}
             </DialogTitle>
             <DialogDescription className="pt-1">
-              ¿Estás seguro de que deseas eliminar{' '}
-              <span className="font-semibold text-foreground">
-                &ldquo;{routeToDelete?.title}&rdquo;
-              </span>
-              ? Esta acción no se puede deshacer. Se eliminarán también todas las imágenes y el archivo GPX asociados.
+              {t('deleteConfirm', { title: routeToDelete?.title })}
             </DialogDescription>
           </DialogHeader>
 
@@ -189,7 +187,7 @@ export function MyRoutesList({ locale }: MyRoutesListProps) {
               onClick={() => setRouteToDelete(null)}
               disabled={isDeleting}
             >
-              Cancelar
+              {t('cancelBtn')}
             </Button>
             <Button
               variant="destructive"
@@ -200,12 +198,12 @@ export function MyRoutesList({ locale }: MyRoutesListProps) {
               {isDeleting ? (
                 <>
                   <span className="h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" />
-                  Eliminando...
+                  {t('deleting')}
                 </>
               ) : (
                 <>
                   <Trash2 className="h-4 w-4" />
-                  Sí, eliminar
+                  {t('confirmDelete')}
                 </>
               )}
             </Button>

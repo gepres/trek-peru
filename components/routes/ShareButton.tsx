@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Share2, Check, Copy } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
@@ -12,6 +13,7 @@ interface ShareButtonProps {
 }
 
 export function ShareButton({ title, description, url }: ShareButtonProps) {
+  const t = useTranslations('share');
   const [copied, setCopied] = useState(false);
 
   async function handleShare() {
@@ -22,7 +24,7 @@ export function ShareButton({ title, description, url }: ShareButtonProps) {
       try {
         await navigator.share({
           title,
-          text: description ?? `Mira esta ruta en TrekPeru: ${title}`,
+          text: description ?? t('shareText', { title }),
           url: shareUrl,
         });
         return;
@@ -38,15 +40,15 @@ export function ShareButton({ title, description, url }: ShareButtonProps) {
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
       toast({
-        title: '¡Enlace copiado!',
-        description: 'Comparte el enlace con tus amigos.',
+        title: t('linkCopied'),
+        description: t('linkCopiedDesc'),
       });
       // Resetear icono después de 2 segundos
       setTimeout(() => setCopied(false), 2000);
     } catch {
       toast({
-        title: 'No se pudo copiar',
-        description: 'Copia el enlace manualmente desde la barra del navegador.',
+        title: t('couldNotCopy'),
+        description: t('couldNotCopyDesc'),
         variant: 'destructive',
       });
     }
@@ -58,7 +60,7 @@ export function ShareButton({ title, description, url }: ShareButtonProps) {
       size="icon"
       className="shadow-lg"
       onClick={handleShare}
-      title="Compartir ruta"
+      title={t('shareRoute')}
     >
       {copied ? (
         <Check className="h-4 w-4 text-green-600" />

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -21,6 +22,7 @@ interface DailyItineraryProps {
 }
 
 export function DailyItinerary({ totalDays, value, onChange }: DailyItineraryProps) {
+  const t = useTranslations('routeForm');
   const [expandedDay, setExpandedDay] = useState<number | null>(1);
 
   // Inicializar itinerario si está vacío
@@ -28,7 +30,7 @@ export function DailyItinerary({ totalDays, value, onChange }: DailyItineraryPro
     const existingDay = value.find((d) => d.day === i + 1);
     return existingDay || {
       day: i + 1,
-      title: `Día ${i + 1}`,
+      title: t('dayDefault', { day: i + 1 }),
       description: '',
     };
   });
@@ -48,16 +50,16 @@ export function DailyItinerary({ totalDays, value, onChange }: DailyItineraryPro
     <div className="space-y-3">
       <div className="flex items-center gap-2 mb-4">
         <Calendar className="h-5 w-5 text-primary" />
-        <h3 className="font-semibold">Itinerario por Día</h3>
+        <h3 className="font-semibold">{t('itineraryTitle')}</h3>
         <span className="text-xs text-muted-foreground">
-          ({totalDays} {totalDays === 1 ? 'día' : 'días'})
+          {t('itineraryDays', { count: totalDays })}
         </span>
       </div>
 
       <div className="space-y-2">
         {itinerary.map((day) => {
           const isExpanded = expandedDay === day.day;
-          const hasContent = day.description.trim().length > 0 || day.title !== `Día ${day.day}`;
+          const hasContent = day.description.trim().length > 0 || day.title !== t('dayDefault', { day: day.day });
 
           return (
             <Card
@@ -85,7 +87,7 @@ export function DailyItinerary({ totalDays, value, onChange }: DailyItineraryPro
                     </div>
                     <div>
                       <CardTitle className="text-base">
-                        {day.title || `Día ${day.day}`}
+                        {day.title || t('dayDefault', { day: day.day })}
                       </CardTitle>
                       {!isExpanded && day.description && (
                         <p className="text-xs text-muted-foreground line-clamp-1 mt-1">
@@ -106,27 +108,27 @@ export function DailyItinerary({ totalDays, value, onChange }: DailyItineraryPro
                 <CardContent className="p-4 pt-0 space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor={`day-${day.day}-title`}>
-                      Título del Día {day.day}
+                      {t('dayTitle', { day: day.day })}
                     </Label>
                     <input
                       id={`day-${day.day}-title`}
                       type="text"
                       value={day.title}
                       onChange={(e) => handleUpdate(day.day, 'title', e.target.value)}
-                      placeholder={`Día ${day.day}: Llegada al campamento base`}
+                      placeholder={t('dayPlaceholderTitle', { day: day.day })}
                       className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor={`day-${day.day}-description`}>
-                      Descripción
+                      {t('dayDescription')}
                     </Label>
                     <Textarea
                       id={`day-${day.day}-description`}
                       value={day.description}
                       onChange={(e) => handleUpdate(day.day, 'description', e.target.value)}
-                      placeholder="Describe las actividades, distancia, elevación, puntos de interés..."
+                      placeholder={t('dayDescPlaceholder')}
                       rows={4}
                       className="resize-none"
                     />
@@ -139,7 +141,7 @@ export function DailyItinerary({ totalDays, value, onChange }: DailyItineraryPro
       </div>
 
       <p className="text-xs text-muted-foreground">
-        Describe cada día del trekking con sus actividades, distancias y puntos destacados
+        {t('itineraryHint')}
       </p>
     </div>
   );

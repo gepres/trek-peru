@@ -87,13 +87,13 @@ export function RegisterForm({ locale }: RegisterFormProps) {
 
       // Con sesión activa → registro sin confirmación, redirigir directamente
       toast({
-        title: '¡Bienvenido a TrekPeru! 🏔️',
-        description: 'Tu cuenta ha sido creada exitosamente.',
+        title: t('welcome'),
+        description: t('accountCreated'),
       });
       router.push(`/${locale}/routes`);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error desconocido');
+      setError(err instanceof Error ? err.message : t('unknownError'));
     } finally {
       setIsLoading(false);
     }
@@ -109,33 +109,33 @@ export function RegisterForm({ locale }: RegisterFormProps) {
         </div>
 
         <div className="space-y-2">
-          <h2 className="text-xl font-bold">Revisa tu correo</h2>
+          <h2 className="text-xl font-bold">{t('checkEmail')}</h2>
           <p className="text-muted-foreground text-sm leading-relaxed">
-            Enviamos un enlace de confirmación a
+            {t('confirmationSent')}
           </p>
           <p className="font-semibold text-primary break-all">{registeredEmail}</p>
           <p className="text-muted-foreground text-sm leading-relaxed">
-            Haz clic en el enlace del correo para activar tu cuenta y poder ingresar.
+            {t('clickConfirmLink')}
           </p>
         </div>
 
         {/* Tips */}
         <div className="text-left space-y-2 p-4 rounded-lg bg-muted/50 border">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-            ¿No ves el correo?
+            {t('cantSeeEmail')}
           </p>
           <ul className="text-sm text-muted-foreground space-y-1">
             <li className="flex items-start gap-2">
               <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-              Revisa la carpeta de <strong>spam o correo no deseado</strong>
+              {t('checkSpam')}
             </li>
             <li className="flex items-start gap-2">
               <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-              El enlace expira en <strong>24 horas</strong>
+              {t('linkExpires')}
             </li>
             <li className="flex items-start gap-2">
               <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-              Verifica que el correo <strong>{registeredEmail}</strong> sea correcto
+              {t('verifyEmailCorrect')}
             </li>
           </ul>
         </div>
@@ -145,7 +145,7 @@ export function RegisterForm({ locale }: RegisterFormProps) {
           className="w-full"
           onClick={() => setRegisteredEmail(null)}
         >
-          Volver al registro
+          {t('backToRegister')}
         </Button>
       </div>
     );
@@ -159,7 +159,7 @@ export function RegisterForm({ locale }: RegisterFormProps) {
         <Input
           id="full_name"
           type="text"
-          placeholder="Nombre completo"
+          placeholder={t('fullName')}
           {...register('full_name')}
           disabled={isLoading}
         />
@@ -294,7 +294,7 @@ export function RegisterForm({ locale }: RegisterFormProps) {
 
       {/* Botón de submit */}
       <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? 'Cargando...' : t('register')}
+        {isLoading ? t('loading') : t('register')}
       </Button>
 
       {/* Divider */}
@@ -303,12 +303,12 @@ export function RegisterForm({ locale }: RegisterFormProps) {
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-card px-2 text-muted-foreground">o regístrate con</span>
+          <span className="bg-card px-2 text-muted-foreground">{t('registerWith')}</span>
         </div>
       </div>
 
       {/* Google OAuth */}
-      <GoogleButton locale={locale} label="Registrarse con Google" />
+      <GoogleButton locale={locale} label={t('registerWithGoogle')} />
     </form>
   );
 }

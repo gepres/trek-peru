@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { getTranslations } from 'next-intl/server';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -110,6 +111,8 @@ export default async function RouteDetailPage({
   params: Promise<{ locale: string; id: string }>
 }) {
   const { locale, id } = await params;
+  const t = await getTranslations('routeDetail');
+  const tCommon = await getTranslations('common');
   const supabase = await createClient();
 
   // Obtener la ruta con los datos del creador
@@ -156,10 +159,10 @@ export default async function RouteDetailPage({
 
   // Color según dificultad
   const difficultyConfig = {
-    easy: { color: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20', label: 'Fácil', icon: '🟢' },
-    moderate: { color: 'bg-amber-500/10 text-amber-600 border-amber-500/20', label: 'Moderado', icon: '🟡' },
-    hard: { color: 'bg-orange-500/10 text-orange-600 border-orange-500/20', label: 'Difícil', icon: '🟠' },
-    extreme: { color: 'bg-red-500/10 text-red-600 border-red-500/20', label: 'Extremo', icon: '🔴' },
+    easy: { color: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20', label: t('difficulty.easy'), icon: '🟢' },
+    moderate: { color: 'bg-amber-500/10 text-amber-600 border-amber-500/20', label: t('difficulty.moderate'), icon: '🟡' },
+    hard: { color: 'bg-orange-500/10 text-orange-600 border-orange-500/20', label: t('difficulty.hard'), icon: '🟠' },
+    extreme: { color: 'bg-red-500/10 text-red-600 border-red-500/20', label: t('difficulty.extreme'), icon: '🔴' },
   };
 
   const difficulty = difficultyConfig[route.difficulty as keyof typeof difficultyConfig];
@@ -167,10 +170,10 @@ export default async function RouteDetailPage({
   // Formatear duración
   const formatDuration = () => {
     if (route.duration_type === 'days' && route.duration_value) {
-      return `${route.duration_value} ${route.duration_value === 1 ? 'día' : 'días'}`;
+      return `${route.duration_value} ${route.duration_value === 1 ? t('duration.day') : t('duration.days')}`;
     }
     if (route.duration_value) {
-      return `${route.duration_value} ${route.duration_value === 1 ? 'hora' : 'horas'}`;
+      return `${route.duration_value} ${route.duration_value === 1 ? t('duration.hour') : t('duration.hours')}`;
     }
     if (route.estimated_duration) {
       return `${route.estimated_duration}h`;
@@ -180,10 +183,10 @@ export default async function RouteDetailPage({
 
   // Stats rápidas
   const quickStats = [
-    { icon: RouteIcon, label: 'Distancia', value: route.distance ? `${route.distance} km` : null },
-    { icon: Timer, label: 'Duración', value: formatDuration() },
-    { icon: TrendingUp, label: 'Desnivel +', value: route.elevation_gain ? `${route.elevation_gain}m` : null },
-    { icon: Mountain, label: 'Alt. Máx', value: route.max_altitude ? `${route.max_altitude}m` : null },
+    { icon: RouteIcon, label: t('stats.distance'), value: route.distance ? `${route.distance} km` : null },
+    { icon: Timer, label: t('stats.duration'), value: formatDuration() },
+    { icon: TrendingUp, label: t('stats.elevationGain'), value: route.elevation_gain ? `${route.elevation_gain}m` : null },
+    { icon: Mountain, label: t('stats.maxAlt'), value: route.max_altitude ? `${route.max_altitude}m` : null },
   ].filter(stat => stat.value);
 
   return (
@@ -257,7 +260,7 @@ export default async function RouteDetailPage({
                     )}
                     {route.verified && (
                       <Badge className="bg-blue-500/10 text-blue-600 border-blue-500/20 border">
-                        <CheckCircle2 className="h-3 w-3 mr-1" /> Verificada
+                        <CheckCircle2 className="h-3 w-3 mr-1" /> {t('verified')}
                       </Badge>
                     )}
                   </div>
@@ -294,7 +297,7 @@ export default async function RouteDetailPage({
                     <Button asChild variant="secondary" size="lg" className="shadow-lg">
                       <Link href={`/${locale}/routes/${id}/edit`}>
                         <Edit className="h-4 w-4 mr-2" />
-                        Editar
+                        {t('edit')}
                       </Link>
                     </Button>
                   )}
@@ -318,13 +321,13 @@ export default async function RouteDetailPage({
               {/* Tabs de contenido */}
               <Tabs defaultValue="info" className="w-full">
                 <TabsList className="w-full justify-start bg-muted/50 p-1 h-auto flex-wrap">
-                  <TabsTrigger value="info" className="flex-1 sm:flex-none">Información</TabsTrigger>
-                  <TabsTrigger value="route" className="flex-1 sm:flex-none">Ruta</TabsTrigger>
+                  <TabsTrigger value="info" className="flex-1 sm:flex-none">{t('tabs.info')}</TabsTrigger>
+                  <TabsTrigger value="route" className="flex-1 sm:flex-none">{t('tabs.route')}</TabsTrigger>
                   {route.images && route.images.length > 0 && (
-                    <TabsTrigger value="gallery" className="flex-1 sm:flex-none">Galería</TabsTrigger>
+                    <TabsTrigger value="gallery" className="flex-1 sm:flex-none">{t('tabs.gallery')}</TabsTrigger>
                   )}
                   {route.daily_itinerary && route.daily_itinerary.length > 0 && (
-                    <TabsTrigger value="itinerary" className="flex-1 sm:flex-none">Itinerario</TabsTrigger>
+                    <TabsTrigger value="itinerary" className="flex-1 sm:flex-none">{t('tabs.itinerary')}</TabsTrigger>
                   )}
                 </TabsList>
 
@@ -334,7 +337,7 @@ export default async function RouteDetailPage({
                   {route.description && (
                     <Card>
                       <CardHeader>
-                        <CardTitle className="text-lg">Descripción</CardTitle>
+                        <CardTitle className="text-lg">{t('description')}</CardTitle>
                       </CardHeader>
                       <CardContent>
                         <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
@@ -349,49 +352,49 @@ export default async function RouteDetailPage({
                     <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
                         <Footprints className="h-5 w-5 text-primary" />
-                        Detalles Técnicos
+                        {t('technicalDetails')}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                         {route.distance && (
                           <div className="space-y-1">
-                            <p className="text-xs text-muted-foreground uppercase tracking-wide">Distancia</p>
+                            <p className="text-xs text-muted-foreground uppercase tracking-wide">{t('labels.distance')}</p>
                             <p className="text-2xl font-bold">{route.distance} <span className="text-sm font-normal text-muted-foreground">km</span></p>
                           </div>
                         )}
 
                         {formatDuration() && (
                           <div className="space-y-1">
-                            <p className="text-xs text-muted-foreground uppercase tracking-wide">Duración</p>
+                            <p className="text-xs text-muted-foreground uppercase tracking-wide">{t('labels.duration')}</p>
                             <p className="text-2xl font-bold">{formatDuration()}</p>
                           </div>
                         )}
 
                         {route.elevation_gain && (
                           <div className="space-y-1">
-                            <p className="text-xs text-muted-foreground uppercase tracking-wide">Desnivel Positivo</p>
+                            <p className="text-xs text-muted-foreground uppercase tracking-wide">{t('labels.elevationGain')}</p>
                             <p className="text-2xl font-bold text-emerald-600">+{route.elevation_gain} <span className="text-sm font-normal text-muted-foreground">m</span></p>
                           </div>
                         )}
 
                         {route.elevation_loss && (
                           <div className="space-y-1">
-                            <p className="text-xs text-muted-foreground uppercase tracking-wide">Desnivel Negativo</p>
+                            <p className="text-xs text-muted-foreground uppercase tracking-wide">{t('labels.elevationLoss')}</p>
                             <p className="text-2xl font-bold text-red-600">-{route.elevation_loss} <span className="text-sm font-normal text-muted-foreground">m</span></p>
                           </div>
                         )}
 
                         {route.min_altitude && (
                           <div className="space-y-1">
-                            <p className="text-xs text-muted-foreground uppercase tracking-wide">Altitud Mínima</p>
+                            <p className="text-xs text-muted-foreground uppercase tracking-wide">{t('labels.minAltitude')}</p>
                             <p className="text-2xl font-bold">{route.min_altitude} <span className="text-sm font-normal text-muted-foreground">m</span></p>
                           </div>
                         )}
 
                         {route.max_altitude && (
                           <div className="space-y-1">
-                            <p className="text-xs text-muted-foreground uppercase tracking-wide">Altitud Máxima</p>
+                            <p className="text-xs text-muted-foreground uppercase tracking-wide">{t('labels.maxAltitude')}</p>
                             <p className="text-2xl font-bold">{route.max_altitude} <span className="text-sm font-normal text-muted-foreground">m</span></p>
                           </div>
                         )}
@@ -400,7 +403,7 @@ export default async function RouteDetailPage({
                       {/* Tipo de terreno */}
                       {route.terrain_type && route.terrain_type.length > 0 && (
                         <div className="mt-6 pt-6 border-t">
-                          <p className="text-xs text-muted-foreground uppercase tracking-wide mb-3">Tipo de Terreno</p>
+                          <p className="text-xs text-muted-foreground uppercase tracking-wide mb-3">{t('labels.terrainType')}</p>
                           <div className="flex flex-wrap gap-2">
                             {route.terrain_type.map((terrain: string, i: number) => (
                               <Badge key={i} variant="secondary">{terrain}</Badge>
@@ -412,13 +415,13 @@ export default async function RouteDetailPage({
                       {/* Nivel técnico */}
                       {route.technical_level && (
                         <div className="mt-6 pt-6 border-t">
-                          <p className="text-xs text-muted-foreground uppercase tracking-wide mb-3">Nivel Técnico</p>
+                          <p className="text-xs text-muted-foreground uppercase tracking-wide mb-3">{t('labels.technicalLevel')}</p>
                           <Badge variant="outline" className="text-sm px-3 py-1">
-                            {route.technical_level === 'none' && 'Sin requerimiento técnico'}
-                            {route.technical_level === 'basic' && 'Básico - Caminata simple'}
-                            {route.technical_level === 'intermediate' && 'Intermedio - Terreno irregular'}
-                            {route.technical_level === 'advanced' && 'Avanzado - Uso de cuerdas/equipos'}
-                            {route.technical_level === 'expert' && 'Experto - Alta montaña/técnico'}
+                            {route.technical_level === 'none' && t('technicalLevels.none')}
+                            {route.technical_level === 'basic' && t('technicalLevels.basic')}
+                            {route.technical_level === 'intermediate' && t('technicalLevels.intermediate')}
+                            {route.technical_level === 'advanced' && t('technicalLevels.advanced')}
+                            {route.technical_level === 'expert' && t('technicalLevels.expert')}
                           </Badge>
                         </div>
                       )}
@@ -430,33 +433,33 @@ export default async function RouteDetailPage({
                     <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
                         <Sun className="h-5 w-5 text-amber-500" />
-                        Condiciones y Servicios
+                        {t('conditionsAndServices')}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div className={`p-4 rounded-xl border-2 text-center ${route.water_available ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-muted bg-muted/30'}`}>
                           <Droplets className={`h-6 w-6 mx-auto mb-2 ${route.water_available ? 'text-emerald-500' : 'text-muted-foreground'}`} />
-                          <p className="text-sm font-medium">Agua</p>
-                          <p className="text-xs text-muted-foreground">{route.water_available ? 'Disponible' : 'No disponible'}</p>
+                          <p className="text-sm font-medium">{t('services.water')}</p>
+                          <p className="text-xs text-muted-foreground">{route.water_available ? t('services.available') : t('services.notAvailable')}</p>
                         </div>
 
                         <div className={`p-4 rounded-xl border-2 text-center ${route.shelters ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-muted bg-muted/30'}`}>
                           <Home className={`h-6 w-6 mx-auto mb-2 ${route.shelters ? 'text-emerald-500' : 'text-muted-foreground'}`} />
-                          <p className="text-sm font-medium">Refugios</p>
-                          <p className="text-xs text-muted-foreground">{route.shelters ? 'Disponible' : 'No disponible'}</p>
+                          <p className="text-sm font-medium">{t('services.shelters')}</p>
+                          <p className="text-xs text-muted-foreground">{route.shelters ? t('services.available') : t('services.notAvailable')}</p>
                         </div>
 
                         <div className={`p-4 rounded-xl border-2 text-center ${route.mobile_signal ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-muted bg-muted/30'}`}>
                           <Signal className={`h-6 w-6 mx-auto mb-2 ${route.mobile_signal ? 'text-emerald-500' : 'text-muted-foreground'}`} />
-                          <p className="text-sm font-medium">Señal Móvil</p>
-                          <p className="text-xs text-muted-foreground">{route.mobile_signal ? 'Disponible' : 'Sin cobertura'}</p>
+                          <p className="text-sm font-medium">{t('services.mobileSignal')}</p>
+                          <p className="text-xs text-muted-foreground">{route.mobile_signal ? t('services.available') : t('services.noCoverage')}</p>
                         </div>
 
                         {route.expected_weather && (
                           <div className="p-4 rounded-xl border-2 border-amber-500/30 bg-amber-500/5 text-center">
                             <Thermometer className="h-6 w-6 mx-auto mb-2 text-amber-500" />
-                            <p className="text-sm font-medium">Clima</p>
+                            <p className="text-sm font-medium">{t('services.weather')}</p>
                             <p className="text-xs text-muted-foreground">{route.expected_weather}</p>
                           </div>
                         )}
@@ -465,7 +468,7 @@ export default async function RouteDetailPage({
                       {/* Mejor temporada */}
                       {route.best_season && route.best_season.length > 0 && (
                         <div className="mt-6 pt-6 border-t">
-                          <p className="text-xs text-muted-foreground uppercase tracking-wide mb-3">Mejor Temporada</p>
+                          <p className="text-xs text-muted-foreground uppercase tracking-wide mb-3">{t('bestSeason')}</p>
                           <div className="flex flex-wrap gap-2">
                             {route.best_season.map((season: string, i: number) => (
                               <Badge key={i} variant="outline" className="border-amber-500/30 text-amber-600">
@@ -483,14 +486,14 @@ export default async function RouteDetailPage({
                   {(route.required_equipment?.length > 0 || route.optional_equipment?.length > 0) && (
                     <Card>
                       <CardHeader>
-                        <CardTitle className="text-lg">Equipamiento</CardTitle>
+                        <CardTitle className="text-lg">{t('equipment')}</CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-6">
                         {route.required_equipment && route.required_equipment.length > 0 && (
                           <div>
                             <div className="flex items-center gap-2 mb-3">
                               <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                              <p className="font-medium">Equipo Requerido</p>
+                              <p className="font-medium">{t('requiredEquipment')}</p>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                               {route.required_equipment.map((item: string, i: number) => (
@@ -506,7 +509,7 @@ export default async function RouteDetailPage({
                         {route.optional_equipment && route.optional_equipment.length > 0 && (
                           <div>
                             <div className="flex items-center gap-2 mb-3">
-                              <span className="text-muted-foreground">Equipo Opcional</span>
+                              <span className="text-muted-foreground">{t('optionalEquipment')}</span>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                               {route.optional_equipment.map((item: string, i: number) => (
@@ -528,7 +531,7 @@ export default async function RouteDetailPage({
                       <CardHeader>
                         <CardTitle className="text-lg flex items-center gap-2 text-amber-600">
                           <AlertTriangle className="h-5 w-5" />
-                          Riesgos y Precauciones
+                          {t('risksAndPrecautions')}
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
@@ -552,7 +555,7 @@ export default async function RouteDetailPage({
                           <CardHeader className="pb-3">
                             <CardTitle className="text-base flex items-center gap-2 text-emerald-600">
                               <CheckCircle2 className="h-4 w-4" />
-                              Incluye
+                              {t('includes')}
                             </CardTitle>
                           </CardHeader>
                           <CardContent className="pt-0">
@@ -573,7 +576,7 @@ export default async function RouteDetailPage({
                           <CardHeader className="pb-3">
                             <CardTitle className="text-base flex items-center gap-2 text-red-600">
                               <XCircle className="h-4 w-4" />
-                              No Incluye
+                              {t('notIncludes')}
                             </CardTitle>
                           </CardHeader>
                           <CardContent className="pt-0">
@@ -599,7 +602,7 @@ export default async function RouteDetailPage({
                       <CardHeader>
                         <CardTitle className="text-lg flex items-center gap-2">
                           <Navigation className="h-5 w-5 text-primary" />
-                          Mapa de la Ruta
+                          {t('routeMap')}
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
@@ -615,10 +618,10 @@ export default async function RouteDetailPage({
                           <div className="mt-4 p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-lg">
                             <div className="flex items-center gap-2 text-emerald-600 font-medium mb-1">
                               <MapPin className="h-4 w-4" />
-                              Punto de Encuentro
+                              {t('meetingPoint')}
                             </div>
                             <p className="text-sm text-muted-foreground">
-                              {route.meeting_point.name || 'Marcado en el mapa'}
+                              {route.meeting_point.name || t('markedOnMap')}
                             </p>
                           </div>
                         )}
@@ -626,7 +629,7 @@ export default async function RouteDetailPage({
                         {/* Waypoints */}
                         {route.waypoints && route.waypoints.length > 0 && (
                           <div className="mt-4 space-y-2">
-                            <p className="text-sm font-medium text-muted-foreground">Puntos de Interés</p>
+                            <p className="text-sm font-medium text-muted-foreground">{t('pointsOfInterest')}</p>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                               {route.waypoints.map((wp: any, i: number) => (
                                 <div key={i} className="flex items-center gap-2 p-2 bg-muted/50 rounded-lg">
@@ -645,7 +648,7 @@ export default async function RouteDetailPage({
                     <Card>
                       <CardContent className="py-12 text-center">
                         <Navigation className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-                        <p className="text-muted-foreground">No hay mapa disponible para esta ruta</p>
+                        <p className="text-muted-foreground">{t('noMapAvailable')}</p>
                       </CardContent>
                     </Card>
                   )}
@@ -657,7 +660,7 @@ export default async function RouteDetailPage({
                         <Button asChild variant="outline" className="w-full">
                           <a href={route.google_maps_link} target="_blank" rel="noopener noreferrer">
                             <ExternalLink className="h-4 w-4 mr-2" />
-                            Ver en Google Maps
+                            {t('viewOnGoogleMaps')}
                           </a>
                         </Button>
                       </CardContent>
@@ -670,7 +673,7 @@ export default async function RouteDetailPage({
                   <TabsContent value="gallery" className="mt-6">
                     <Card>
                       <CardHeader>
-                        <CardTitle className="text-lg">Galería de Imágenes</CardTitle>
+                        <CardTitle className="text-lg">{t('imageGallery')}</CardTitle>
                       </CardHeader>
                       <CardContent>
                         <ImageGallery
@@ -687,14 +690,14 @@ export default async function RouteDetailPage({
                         <CardHeader>
                           <CardTitle className="text-lg flex items-center gap-2">
                             <Play className="h-5 w-5" />
-                            Video
+                            {t('video')}
                           </CardTitle>
                         </CardHeader>
                         <CardContent>
                           <Button asChild variant="outline" className="w-full">
                             <a href={route.video_url} target="_blank" rel="noopener noreferrer">
                               <Play className="h-4 w-4 mr-2" />
-                              Ver Video
+                              {t('watchVideo')}
                             </a>
                           </Button>
                         </CardContent>
@@ -710,7 +713,7 @@ export default async function RouteDetailPage({
                       <CardHeader>
                         <CardTitle className="text-lg flex items-center gap-2">
                           <CalendarDays className="h-5 w-5 text-primary" />
-                          Itinerario Día a Día
+                          {t('itineraryDayByDay')}
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
@@ -765,14 +768,14 @@ export default async function RouteDetailPage({
                   {/* Precio */}
                   {route.cost ? (
                     <div className="text-center mb-6">
-                      <p className="text-sm text-muted-foreground">Precio por persona</p>
+                      <p className="text-sm text-muted-foreground">{t('pricePerPerson')}</p>
                       <p className="text-4xl font-bold">
                         {route.currency === 'USD' ? '$' : 'S/'} {route.cost}
                       </p>
                     </div>
                   ) : (
                     <div className="text-center mb-6">
-                      <Badge variant="secondary" className="text-lg px-4 py-1">Gratuito</Badge>
+                      <Badge variant="secondary" className="text-lg px-4 py-1">{t('free')}</Badge>
                     </div>
                   )}
 
@@ -789,7 +792,7 @@ export default async function RouteDetailPage({
                         </AvatarFallback>
                       </Avatar>
                       <div className="min-w-0 flex-1">
-                        <p className="text-[11px] text-muted-foreground leading-none mb-1">Organizado por</p>
+                        <p className="text-[11px] text-muted-foreground leading-none mb-1">{t('organizedBy')}</p>
                         <p className="font-semibold text-sm leading-tight truncate">
                           {route.creator.full_name || route.creator.username}
                         </p>
@@ -811,7 +814,7 @@ export default async function RouteDetailPage({
                       <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
                         <Calendar className="h-5 w-5 text-primary" />
                         <div>
-                          <p className="text-xs text-muted-foreground">Fecha de salida</p>
+                          <p className="text-xs text-muted-foreground">{t('departureDate')}</p>
                           <p className="font-medium">
                             {format(new Date(route.departure_date), "EEEE d 'de' MMMM, yyyy", { locale: es })}
                           </p>
@@ -823,7 +826,7 @@ export default async function RouteDetailPage({
                       <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
                         <Clock className="h-5 w-5 text-primary" />
                         <div>
-                          <p className="text-xs text-muted-foreground">Hora de encuentro</p>
+                          <p className="text-xs text-muted-foreground">{t('meetingTime')}</p>
                           <p className="font-medium">{route.meeting_time}</p>
                         </div>
                       </div>
@@ -844,7 +847,7 @@ export default async function RouteDetailPage({
                     routeSlug={route.slug}
                     creatorId={route.creator_id}
                     currentUserId={user?.id}
-                    currentUserName={currentUserProfile?.full_name ?? 'Usuario'}
+                    currentUserName={currentUserProfile?.full_name ?? tCommon('user')}
                     currentUserPhone={currentUserProfile?.phone ?? undefined}
                     creatorPhone={route.creator?.phone ?? undefined}
                     isCreator={isCreator}
@@ -861,7 +864,7 @@ export default async function RouteDetailPage({
                       <Button asChild variant="outline" className="w-full gap-2" size="sm">
                         <Link href={`/${locale}/my-routes/${route.id}/attendees`}>
                           <Users className="h-4 w-4" />
-                          Gestionar Asistentes
+                          {t('manageAttendees')}
                         </Link>
                       </Button>
                     </div>
@@ -872,7 +875,7 @@ export default async function RouteDetailPage({
                     <div className="mt-4 pt-4 border-t">
                       <div className="flex items-center gap-2 text-sm">
                         <Phone className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Emergencias:</span>
+                        <span className="text-muted-foreground">{t('emergencies')}</span>
                         <span className="font-medium">{route.emergency_contact}</span>
                       </div>
                     </div>
@@ -883,7 +886,7 @@ export default async function RouteDetailPage({
               {/* Organizador */}
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-base">Organizador</CardTitle>
+                  <CardTitle className="text-base">{t('organizer')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-4">
@@ -916,21 +919,21 @@ export default async function RouteDetailPage({
                         <div>
                           <Eye className="h-5 w-5 mx-auto mb-1 text-muted-foreground" />
                           <p className="text-lg font-bold">{route.views}</p>
-                          <p className="text-xs text-muted-foreground">Vistas</p>
+                          <p className="text-xs text-muted-foreground">{t('views')}</p>
                         </div>
                       )}
                       {route.favorites !== undefined && (
                         <div>
                           <Heart className="h-5 w-5 mx-auto mb-1 text-red-500" />
                           <p className="text-lg font-bold">{route.favorites}</p>
-                          <p className="text-xs text-muted-foreground">Favoritos</p>
+                          <p className="text-xs text-muted-foreground">{t('favorites')}</p>
                         </div>
                       )}
                       {route.average_rating !== undefined && (
                         <div>
                           <Star className="h-5 w-5 mx-auto mb-1 text-amber-500" />
                           <p className="text-lg font-bold">{route.average_rating.toFixed(1)}</p>
-                          <p className="text-xs text-muted-foreground">Rating</p>
+                          <p className="text-xs text-muted-foreground">{t('rating')}</p>
                         </div>
                       )}
                     </div>

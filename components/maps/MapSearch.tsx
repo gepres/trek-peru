@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, Loader2, MapPin, X } from 'lucide-react';
@@ -18,7 +19,9 @@ interface SearchResult {
   place_type: string[];
 }
 
-export function MapSearch({ onLocationSelect, placeholder = 'Buscar lugar...', className = '' }: MapSearchProps) {
+export function MapSearch({ onLocationSelect, placeholder, className = '' }: MapSearchProps) {
+  const t = useTranslations('maps');
+  const resolvedPlaceholder = placeholder ?? t('searchPlaceholder');
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -126,7 +129,7 @@ export function MapSearch({ onLocationSelect, placeholder = 'Buscar lugar...', c
               e.preventDefault();
             }
           }}
-          placeholder={placeholder}
+          placeholder={resolvedPlaceholder}
           className="pl-9 pr-9"
         />
         {query && (
@@ -172,7 +175,7 @@ export function MapSearch({ onLocationSelect, placeholder = 'Buscar lugar...', c
       {/* No hay resultados */}
       {showResults && results.length === 0 && !isSearching && query.length >= 3 && (
         <div className="absolute z-50 w-full mt-1 bg-popover border border-border rounded-lg shadow-lg p-4 text-center">
-          <p className="text-sm text-muted-foreground">No se encontraron lugares</p>
+          <p className="text-sm text-muted-foreground">{t('noPlacesFound')}</p>
         </div>
       )}
     </div>

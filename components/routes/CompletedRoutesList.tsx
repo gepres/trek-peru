@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useCompletedRoutes } from '@/presentation/hooks/useRoutes';
 import { RouteCard } from './RouteCard';
 import { RouteFilters } from './RouteFilters';
@@ -28,6 +29,7 @@ function countActiveFilters(filters: RouteFiltersType): number {
 
 // Listado de rutas completadas con filtros — sin opción de inscripción
 export function CompletedRoutesList({ locale }: CompletedRoutesListProps) {
+  const t = useTranslations('completedRoutes');
   const [filters, setFilters] = useState<RouteFiltersType>({});
   const [filtersOpen, setFiltersOpen] = useState(false);
   const { routes, loading, error } = useCompletedRoutes(filters);
@@ -37,7 +39,7 @@ export function CompletedRoutesList({ locale }: CompletedRoutesListProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <LoadingSpinner size="lg" text="Cargando rutas completadas..." />
+        <LoadingSpinner size="lg" text={t('loading')} />
       </div>
     );
   }
@@ -45,7 +47,7 @@ export function CompletedRoutesList({ locale }: CompletedRoutesListProps) {
   if (error) {
     return (
       <div className="p-4 rounded-lg bg-red-50 border border-red-200">
-        <p className="text-sm text-red-600">Error al cargar las rutas: {error}</p>
+        <p className="text-sm text-red-600">{t('errorLoading')} {error}</p>
       </div>
     );
   }
@@ -64,7 +66,7 @@ export function CompletedRoutesList({ locale }: CompletedRoutesListProps) {
           )}
         >
           <SlidersHorizontal className="h-4 w-4" />
-          Filtros
+          {t('filters')}
           {activeFiltersCount > 0 && (
             <span className="bg-primary text-primary-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center leading-none">
               {activeFiltersCount}
@@ -84,7 +86,7 @@ export function CompletedRoutesList({ locale }: CompletedRoutesListProps) {
             className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors font-medium"
           >
             <X className="h-3.5 w-3.5" />
-            Limpiar
+            {t('clear')}
           </button>
         )}
       </div>
@@ -108,17 +110,17 @@ export function CompletedRoutesList({ locale }: CompletedRoutesListProps) {
           {routes.length === 0 ? (
             <EmptyState
               icon={History}
-              title="No hay rutas completadas"
-              description="Aún no hay rutas completadas que coincidan con tus filtros."
+              title={t('noRoutes')}
+              description={t('noRoutesDesc')}
             />
           ) : (
             <>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-foreground">
-                  Rutas Completadas
+                  {t('title')}
                 </h2>
                 <span className="text-sm text-muted-foreground">
-                  {routes.length} {routes.length === 1 ? 'ruta' : 'rutas'}
+                  {routes.length} {routes.length === 1 ? t('routeSingular') : t('routePlural')}
                 </span>
               </div>
 

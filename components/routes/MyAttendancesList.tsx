@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useMyAttendances } from '@/presentation/hooks/useAttendees';
 import { RouteCard } from './RouteCard';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
@@ -14,12 +15,14 @@ interface MyAttendancesListProps {
 
 // Componente para mostrar las asistencias del usuario agrupadas por estado
 export function MyAttendancesList({ locale }: MyAttendancesListProps) {
+  const t = useTranslations('myAttendances');
+  const tStatus = useTranslations('attendees.status');
   const { attendances, loading, error } = useMyAttendances();
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <LoadingSpinner size="lg" text="Cargando tus asistencias..." />
+        <LoadingSpinner size="lg" text={t('loading')} />
       </div>
     );
   }
@@ -28,7 +31,7 @@ export function MyAttendancesList({ locale }: MyAttendancesListProps) {
     return (
       <div className="p-4 rounded-lg bg-red-50 border border-red-200 dark:bg-red-900/20 dark:border-red-800">
         <p className="text-sm text-red-600 dark:text-red-400">
-          Error al cargar tus asistencias: {error}
+          {t('errorLoading')} {error}
         </p>
       </div>
     );
@@ -38,8 +41,8 @@ export function MyAttendancesList({ locale }: MyAttendancesListProps) {
     return (
       <EmptyState
         icon={Calendar}
-        title="No estás inscrito en ninguna ruta"
-        description="Explora las rutas disponibles y únete a una aventura."
+        title={t('noAttendances')}
+        description={t('noAttendancesDesc')}
       />
     );
   }
@@ -61,11 +64,11 @@ export function MyAttendancesList({ locale }: MyAttendancesListProps) {
   };
 
   const statusLabels: Record<string, string> = {
-    confirmed: 'Confirmado',
-    pending: 'Pendiente',
-    waiting_list: 'Lista de Espera',
-    completed: 'Completado',
-    cancelled: 'Cancelado',
+    confirmed: tStatus('confirmed'),
+    pending: tStatus('pending'),
+    waiting_list: tStatus('waiting_list'),
+    completed: tStatus('completed'),
+    cancelled: tStatus('cancelled'),
   };
 
   return (
@@ -80,7 +83,7 @@ export function MyAttendancesList({ locale }: MyAttendancesListProps) {
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {confirmedAttendances.length}
                 </p>
-                <p className="text-xs text-muted-foreground">Confirmadas</p>
+                <p className="text-xs text-muted-foreground">{t('confirmed')}</p>
               </div>
             </div>
           </CardContent>
@@ -94,7 +97,7 @@ export function MyAttendancesList({ locale }: MyAttendancesListProps) {
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {pendingAttendances.length}
                 </p>
-                <p className="text-xs text-muted-foreground">Pendientes</p>
+                <p className="text-xs text-muted-foreground">{t('pending')}</p>
               </div>
             </div>
           </CardContent>
@@ -108,7 +111,7 @@ export function MyAttendancesList({ locale }: MyAttendancesListProps) {
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {waitingListAttendances.length}
                 </p>
-                <p className="text-xs text-muted-foreground">En Espera</p>
+                <p className="text-xs text-muted-foreground">{t('waiting')}</p>
               </div>
             </div>
           </CardContent>
@@ -122,7 +125,7 @@ export function MyAttendancesList({ locale }: MyAttendancesListProps) {
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {completedAttendances.length}
                 </p>
-                <p className="text-xs text-muted-foreground">Completadas</p>
+                <p className="text-xs text-muted-foreground">{t('completed')}</p>
               </div>
             </div>
           </CardContent>
@@ -135,10 +138,10 @@ export function MyAttendancesList({ locale }: MyAttendancesListProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5 text-green-600" />
-              Rutas Confirmadas ({confirmedAttendances.length})
+              {t('confirmedRoutes', { count: confirmedAttendances.length })}
             </CardTitle>
             <CardDescription>
-              Rutas en las que tu participación ha sido confirmada
+              {t('confirmedRoutesDesc')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -164,10 +167,10 @@ export function MyAttendancesList({ locale }: MyAttendancesListProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Clock className="h-5 w-5 text-yellow-600" />
-              Rutas Pendientes ({pendingAttendances.length})
+              {t('pendingRoutes', { count: pendingAttendances.length })}
             </CardTitle>
             <CardDescription>
-              Rutas donde tu participación está pendiente de confirmación
+              {t('pendingRoutesDesc')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -193,10 +196,10 @@ export function MyAttendancesList({ locale }: MyAttendancesListProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Calendar className="h-5 w-5 text-blue-600" />
-              Lista de Espera ({waitingListAttendances.length})
+              {t('waitingRoutes', { count: waitingListAttendances.length })}
             </CardTitle>
             <CardDescription>
-              Rutas en las que estás en lista de espera
+              {t('waitingRoutesDesc')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -222,10 +225,10 @@ export function MyAttendancesList({ locale }: MyAttendancesListProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5 text-purple-600" />
-              Rutas Completadas ({completedAttendances.length})
+              {t('completedRoutes', { count: completedAttendances.length })}
             </CardTitle>
             <CardDescription>
-              Historial de rutas que has completado
+              {t('completedRoutesDesc')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -251,10 +254,10 @@ export function MyAttendancesList({ locale }: MyAttendancesListProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <XCircle className="h-5 w-5 text-red-600" />
-              Rutas Canceladas ({cancelledAttendances.length})
+              {t('cancelledRoutes', { count: cancelledAttendances.length })}
             </CardTitle>
             <CardDescription>
-              Inscripciones que has cancelado
+              {t('cancelledRoutesDesc')}
             </CardDescription>
           </CardHeader>
           <CardContent>

@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
+
 // Componente de carga de archivos geoespaciales para importar rutas.
 // Soporta tres formatos: GPX, KML y KMZ (Google Earth).
 // Produce el mismo formato de datos para todos los formatos.
@@ -48,6 +50,7 @@ const FORMAT_BADGE: Record<GeoFileFormat, { label: string; color: string }> = {
 };
 
 export function GPXUpload({ onGPXLoad, onError, className = '' }: GPXUploadProps) {
+  const t = useTranslations('gpx');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -61,7 +64,7 @@ export function GPXUpload({ onGPXLoad, onError, className = '' }: GPXUploadProps
     // Detectar formato
     const format = detectFormat(file.name);
     if (!format) {
-      const errorMsg = 'Formato no soportado. Usa un archivo GPX, KML o KMZ.';
+      const errorMsg = t('unsupportedFormat');
       setError(errorMsg);
       onError?.(errorMsg);
       return;
@@ -70,7 +73,7 @@ export function GPXUpload({ onGPXLoad, onError, className = '' }: GPXUploadProps
     // Validar tamaño (máximo 10 MB — KMZ pueden ser más grandes que GPX)
     const maxSize = 10 * 1024 * 1024;
     if (file.size > maxSize) {
-      const errorMsg = 'El archivo es muy grande. Máximo 10 MB.';
+      const errorMsg = t('fileTooLarge');
       setError(errorMsg);
       onError?.(errorMsg);
       return;
@@ -105,7 +108,7 @@ export function GPXUpload({ onGPXLoad, onError, className = '' }: GPXUploadProps
       const errorMsg =
         err instanceof Error
           ? err.message
-          : `Error al procesar el archivo ${format.toUpperCase()}`;
+          : t('processingError', { format: format.toUpperCase() });
       setError(errorMsg);
       onError?.(errorMsg);
       setFileName(null);
@@ -154,7 +157,7 @@ export function GPXUpload({ onGPXLoad, onError, className = '' }: GPXUploadProps
             className="w-full"
           >
             <Upload className="h-4 w-4 mr-2" />
-            {isLoading ? 'Procesando…' : 'Cargar archivo de ruta'}
+            {isLoading ? t('processing') : t('uploadFile')}
           </Button>
         )}
 
@@ -191,7 +194,7 @@ export function GPXUpload({ onGPXLoad, onError, className = '' }: GPXUploadProps
           <div className="flex items-center gap-2 p-3 bg-muted/50 border border-border rounded-lg">
             <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin shrink-0" />
             <span className="text-sm text-muted-foreground">
-              Procesando {fileFormat?.toUpperCase() ?? 'archivo'}…
+              {t('processing')}
             </span>
           </div>
         )}
@@ -209,7 +212,7 @@ export function GPXUpload({ onGPXLoad, onError, className = '' }: GPXUploadProps
                 onClick={handleButtonClick}
                 className="h-auto p-0 text-red-600 dark:text-red-400"
               >
-                Intentar de nuevo
+                {t('tryAgain')}
               </Button>
             </div>
           </div>
@@ -217,11 +220,9 @@ export function GPXUpload({ onGPXLoad, onError, className = '' }: GPXUploadProps
 
         {/* Texto de ayuda con formatos soportados */}
         <p className="text-xs text-muted-foreground">
-          Formatos soportados:{' '}
-          <span className="font-medium text-foreground/70">.gpx</span>,{' '}
-          <span className="font-medium text-foreground/70">.kml</span>,{' '}
-          <span className="font-medium text-foreground/70">.kmz</span>{' '}
-          (Google Earth) · Máx. 10 MB
+          {t('formatsHelp_1')}{' '}
+          <span className='text-foreground font-medium'>{t('formatsHelp_2')}</span>{' '}
+          {t('formatsHelp_3')}
         </p>
       </div>
     </div>

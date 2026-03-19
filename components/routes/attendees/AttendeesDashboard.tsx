@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { Users, CheckCircle2, Clock, DollarSign, Settings2, UserCheck, UserX, ChevronDown, ChevronUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -43,24 +44,10 @@ const STATUS_COLORS: Record<string, string> = {
   completed: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
 };
 
-const STATUS_LABELS: Record<string, string> = {
-  pending: 'Pendiente',
-  confirmed: 'Confirmado',
-  cancelled: 'Cancelado',
-  waiting_list: 'En Espera',
-  completed: 'Completado',
-};
-
 const PAYMENT_COLORS: Record<string, string> = {
   unpaid: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
   pending_payment: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400',
   paid: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400',
-};
-
-const PAYMENT_LABELS: Record<string, string> = {
-  unpaid: 'Sin Pago',
-  pending_payment: 'Pago Pendiente',
-  paid: 'Pagado',
 };
 
 // Dashboard completo de gestión de asistentes para el creador de una ruta
@@ -74,6 +61,23 @@ export function AttendeesDashboard({
   routeCreatorId,
   initialAttendees,
 }: AttendeesDashboardProps) {
+  const t = useTranslations('attendees.dashboard');
+  const tStatus = useTranslations('attendees.status');
+  const tPayment = useTranslations('attendees.payment');
+
+  const STATUS_LABELS: Record<string, string> = {
+    pending: tStatus('pending'),
+    confirmed: tStatus('confirmed'),
+    cancelled: tStatus('cancelled'),
+    waiting_list: tStatus('waiting_list'),
+    completed: tStatus('completed'),
+  };
+  const PAYMENT_LABELS: Record<string, string> = {
+    unpaid: tPayment('unpaid'),
+    pending_payment: tPayment('pending_payment'),
+    paid: tPayment('paid'),
+  };
+
   const { attendees, refetch, updateAttendeeData } = useAttendees(routeId);
   const [selectedAttendee, setSelectedAttendee] = useState<AttendeeWithUser | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -188,7 +192,7 @@ export function AttendeesDashboard({
               <Users className="h-8 w-8 text-blue-500" />
               <div>
                 <p className="text-2xl font-bold">{stats.total}</p>
-                <p className="text-xs text-muted-foreground">Total Inscritos</p>
+                <p className="text-xs text-muted-foreground">{t('totalAttendees')}</p>
               </div>
             </div>
           </CardContent>
@@ -199,7 +203,7 @@ export function AttendeesDashboard({
               <CheckCircle2 className="h-8 w-8 text-green-500" />
               <div>
                 <p className="text-2xl font-bold">{stats.confirmed}</p>
-                <p className="text-xs text-muted-foreground">Confirmados</p>
+                <p className="text-xs text-muted-foreground">{t('confirmed')}</p>
               </div>
             </div>
           </CardContent>
@@ -210,7 +214,7 @@ export function AttendeesDashboard({
               <Clock className="h-8 w-8 text-yellow-500" />
               <div>
                 <p className="text-2xl font-bold">{stats.pending}</p>
-                <p className="text-xs text-muted-foreground">Pendientes</p>
+                <p className="text-xs text-muted-foreground">{t('pending')}</p>
               </div>
             </div>
           </CardContent>
@@ -221,7 +225,7 @@ export function AttendeesDashboard({
               <DollarSign className="h-8 w-8 text-emerald-500" />
               <div>
                 <p className="text-2xl font-bold">{stats.paid}</p>
-                <p className="text-xs text-muted-foreground">Pagados</p>
+                <p className="text-xs text-muted-foreground">{t('paid')}</p>
               </div>
             </div>
           </CardContent>
@@ -235,12 +239,12 @@ export function AttendeesDashboard({
             <SelectValue placeholder="Filtrar por estado" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos los estados</SelectItem>
-            <SelectItem value="pending">⏳ Pendientes</SelectItem>
-            <SelectItem value="confirmed">✅ Confirmados</SelectItem>
-            <SelectItem value="waiting_list">🕐 En Espera</SelectItem>
-            <SelectItem value="cancelled">❌ Cancelados</SelectItem>
-            <SelectItem value="completed">🏆 Completados</SelectItem>
+            <SelectItem value="all">{t('allStatuses')}</SelectItem>
+            <SelectItem value="pending">⏳ {t('pendingFilter')}</SelectItem>
+            <SelectItem value="confirmed">✅ {t('confirmedFilter')}</SelectItem>
+            <SelectItem value="waiting_list">🕐 {t('waitingFilter')}</SelectItem>
+            <SelectItem value="cancelled">❌ {t('cancelledFilter')}</SelectItem>
+            <SelectItem value="completed">🏆 {t('completedFilter')}</SelectItem>
           </SelectContent>
         </Select>
 
@@ -249,10 +253,10 @@ export function AttendeesDashboard({
             <SelectValue placeholder="Filtrar por pago" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos los pagos</SelectItem>
-            <SelectItem value="unpaid">💸 Sin Pago</SelectItem>
-            <SelectItem value="pending_payment">⏳ Pago Pendiente</SelectItem>
-            <SelectItem value="paid">✅ Pagado</SelectItem>
+            <SelectItem value="all">{t('allPayments')}</SelectItem>
+            <SelectItem value="unpaid">💸 {t('unpaidFilter')}</SelectItem>
+            <SelectItem value="pending_payment">⏳ {t('pendingPaymentFilter')}</SelectItem>
+            <SelectItem value="paid">✅ {t('paidFilter')}</SelectItem>
           </SelectContent>
         </Select>
 
@@ -274,10 +278,10 @@ export function AttendeesDashboard({
               <UserCheck className="h-5 w-5 text-blue-600 dark:text-blue-400 shrink-0" />
               <div>
                 <p className="font-semibold text-blue-900 dark:text-blue-100">
-                  Registro de Asistencia
+                  {t('attendanceRecord')}
                 </p>
                 <p className="text-xs text-blue-600 dark:text-blue-400">
-                  {stats.attended} asistieron · {stats.absent} faltaron · {stats.notRecorded} sin registrar
+                  {stats.attended} {t('attended')} · {stats.absent} {t('absent')} · {stats.notRecorded} {t('notRecorded')}
                 </p>
               </div>
             </div>
@@ -316,7 +320,7 @@ export function AttendeesDashboard({
                   onClick={() => handleBulkAttendance('attended')}
                 >
                   <UserCheck className="h-3.5 w-3.5" />
-                  Todos asistieron
+                  {t('allAttended')}
                 </Button>
                 <Button
                   size="sm"
@@ -325,7 +329,7 @@ export function AttendeesDashboard({
                   onClick={() => handleBulkAttendance('absent')}
                 >
                   <UserX className="h-3.5 w-3.5" />
-                  Todos faltaron
+                  {t('allAbsent')}
                 </Button>
               </div>
 
@@ -374,7 +378,7 @@ export function AttendeesDashboard({
                           disabled={isSaving}
                         >
                           <UserCheck className="h-3.5 w-3.5" />
-                          <span className="hidden sm:inline text-xs">Asistió</span>
+                          <span className="hidden sm:inline text-xs">{t('attendedBtn')}</span>
                         </Button>
                         <Button
                           size="sm"
@@ -390,7 +394,7 @@ export function AttendeesDashboard({
                           disabled={isSaving}
                         >
                           <UserX className="h-3.5 w-3.5" />
-                          <span className="hidden sm:inline text-xs">Faltó</span>
+                          <span className="hidden sm:inline text-xs">{t('absentBtn')}</span>
                         </Button>
                       </div>
                     </div>
@@ -406,7 +410,7 @@ export function AttendeesDashboard({
       {filtered.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">
           <Users className="h-12 w-12 mx-auto mb-3 opacity-30" />
-          <p className="font-medium">No hay asistentes con estos filtros</p>
+          <p className="font-medium">{t('noAttendeesFilter')}</p>
         </div>
       ) : (
         <div className="grid gap-3">
@@ -448,15 +452,15 @@ export function AttendeesDashboard({
                         {isTrekPast && attendee.status === 'confirmed' && (
                           attendee.attendance_status === 'attended' ? (
                             <Badge className="text-xs bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-                              ✅ Asistió
+                              ✅ {t('attendedBadge')}
                             </Badge>
                           ) : attendee.attendance_status === 'absent' ? (
                             <Badge className="text-xs bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
-                              ❌ Faltó
+                              ❌ {t('absentBadge')}
                             </Badge>
                           ) : (
                             <Badge className="text-xs bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
-                              Sin registro
+                              {t('noRecord')}
                             </Badge>
                           )
                         )}
@@ -501,7 +505,7 @@ export function AttendeesDashboard({
                     onClick={() => handleOpenManage(attendee)}
                   >
                     <Settings2 className="h-3.5 w-3.5" />
-                    <span className="hidden sm:inline">Gestionar</span>
+                    <span className="hidden sm:inline">{t('manageBtn')}</span>
                   </Button>
                 </div>
               </CardContent>

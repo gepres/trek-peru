@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 
@@ -10,7 +11,9 @@ interface GoogleButtonProps {
 }
 
 // Botón para iniciar sesión con Google via OAuth
-export function GoogleButton({ locale, label = 'Continuar con Google' }: GoogleButtonProps) {
+export function GoogleButton({ locale, label }: GoogleButtonProps) {
+  const t = useTranslations('auth');
+  const resolvedLabel = label ?? t('continueWithGoogle');
   const supabase = createClient();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -57,7 +60,7 @@ export function GoogleButton({ locale, label = 'Continuar con Google' }: GoogleB
           d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.43L4.5 7.5a4.77 4.77 0 0 1 4.48-3.32z"
         />
       </svg>
-      {isLoading ? 'Redirigiendo...' : label}
+      {isLoading ? t('redirecting') : resolvedLabel}
     </Button>
   );
 }

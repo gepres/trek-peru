@@ -30,6 +30,7 @@ interface UserMenuProps {
 
 export function UserMenu({ user, profile, locale, onSignOut }: UserMenuProps) {
   const t = useTranslations('navigation');
+  const tTheme = useTranslations('theme');
   const { setTheme, theme } = useTheme();
 
   const getInitials = (name: string) => {
@@ -96,22 +97,22 @@ export function UserMenu({ user, profile, locale, onSignOut }: UserMenuProps) {
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
             <Monitor className="mr-2 h-4 w-4" />
-            <span>Tema</span>
+            <span>{tTheme('theme')}</span>
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
             <DropdownMenuItem onClick={() => setTheme('light')}>
               <Sun className="mr-2 h-4 w-4" />
-              <span>Claro</span>
+              <span>{tTheme('light')}</span>
               {theme === 'light' && <span className="ml-auto">✓</span>}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setTheme('dark')}>
               <Moon className="mr-2 h-4 w-4" />
-              <span>Oscuro</span>
+              <span>{tTheme('dark')}</span>
               {theme === 'dark' && <span className="ml-auto">✓</span>}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setTheme('system')}>
               <Monitor className="mr-2 h-4 w-4" />
-              <span>Sistema</span>
+              <span>{tTheme('system')}</span>
               {theme === 'system' && <span className="ml-auto">✓</span>}
             </DropdownMenuItem>
           </DropdownMenuSubContent>

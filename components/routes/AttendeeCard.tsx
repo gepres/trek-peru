@@ -15,6 +15,7 @@ import {
 import { Check, X, Calendar, Award, CreditCard } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { useTranslations } from 'next-intl';
 
 interface AttendeeCardProps {
   attendee: AttendeeWithUser;
@@ -41,29 +42,6 @@ const paymentColors: Record<string, string> = {
   paid: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400',
 };
 
-// Etiquetas de estado de inscripción
-const statusLabels: Record<string, string> = {
-  pending: 'Pendiente',
-  confirmed: 'Confirmado',
-  cancelled: 'Cancelado',
-  waiting_list: 'Lista de Espera',
-  completed: 'Completado',
-};
-
-// Etiquetas de estado de pago
-const paymentLabels: Record<string, string> = {
-  unpaid: 'Sin Pago',
-  pending_payment: 'Pago Pendiente',
-  paid: 'Pagado',
-};
-
-// Etiquetas de nivel de experiencia
-const experienceLevels: Record<string, string> = {
-  beginner: 'Principiante',
-  intermediate: 'Intermedio',
-  advanced: 'Avanzado',
-  expert: 'Experto',
-};
 
 // Obtener iniciales del nombre para el avatar
 function getInitials(name: string) {
@@ -79,6 +57,29 @@ export function AttendeeCard({
   onReject,
   onUpdatePayment,
 }: AttendeeCardProps) {
+  const t = useTranslations('attendees');
+
+  const statusLabels: Record<string, string> = {
+    pending: t('status.pending'),
+    confirmed: t('status.confirmed'),
+    cancelled: t('status.cancelled'),
+    waiting_list: t('status.waiting_list'),
+    completed: t('status.completed'),
+  };
+
+  const paymentLabels: Record<string, string> = {
+    unpaid: t('payment.unpaid'),
+    pending_payment: t('payment.pending_payment'),
+    paid: t('payment.paid'),
+  };
+
+  const experienceLevels: Record<string, string> = {
+    beginner: t('experience.beginner'),
+    intermediate: t('experience.intermediate'),
+    advanced: t('experience.advanced'),
+    expert: t('experience.expert'),
+  };
+
   // Solo el propio asistente o el creador pueden ver las notas privadas
   const canSeePrivateInfo = isCreator || currentUserId === attendee.user_id;
   return (

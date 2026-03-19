@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -12,6 +13,7 @@ interface CoordinateInputProps {
 }
 
 export function CoordinateInput({ onCoordinatesSubmit, className = '' }: CoordinateInputProps) {
+  const t = useTranslations('maps');
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   const [error, setError] = useState('');
@@ -24,7 +26,7 @@ export function CoordinateInput({ onCoordinatesSubmit, className = '' }: Coordin
 
     // Validar que hay valores
     if (!latitude || !longitude) {
-      setError('Ingresa latitud y longitud');
+      setError(t('enterCoordinates'));
       return;
     }
 
@@ -34,17 +36,17 @@ export function CoordinateInput({ onCoordinatesSubmit, className = '' }: Coordin
 
     // Validar rangos
     if (isNaN(lat) || isNaN(lng)) {
-      setError('Coordenadas inválidas');
+      setError(t('invalidCoordinates'));
       return;
     }
 
     if (lat < -90 || lat > 90) {
-      setError('Latitud debe estar entre -90 y 90');
+      setError(t('latRange'));
       return;
     }
 
     if (lng < -180 || lng > 180) {
-      setError('Longitud debe estar entre -180 y 180');
+      setError(t('lngRange'));
       return;
     }
 
@@ -57,7 +59,7 @@ export function CoordinateInput({ onCoordinatesSubmit, className = '' }: Coordin
       <div className="space-y-3">
         <div className="grid grid-cols-2 gap-2">
           <div className="space-y-1">
-            <Label htmlFor="latitude" className="text-xs">Latitud</Label>
+            <Label htmlFor="latitude" className="text-xs">{t('latitude')}</Label>
             <Input
               id="latitude"
               type="text"
@@ -74,7 +76,7 @@ export function CoordinateInput({ onCoordinatesSubmit, className = '' }: Coordin
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="longitude" className="text-xs">Longitud</Label>
+            <Label htmlFor="longitude" className="text-xs">{t('longitude')}</Label>
             <Input
               id="longitude"
               type="text"
@@ -104,11 +106,11 @@ export function CoordinateInput({ onCoordinatesSubmit, className = '' }: Coordin
           onClick={handleSubmit}
         >
           <Navigation className="h-4 w-4 mr-2" />
-          Ir a coordenadas
+          {t('goToCoordinates')}
         </Button>
 
         <p className="text-xs text-muted-foreground">
-          Ejemplo: Lat -9.19, Lng -75.01 (Lima, Perú)
+          {t('example')}
         </p>
       </div>
     </div>

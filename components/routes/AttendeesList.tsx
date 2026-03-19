@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAttendees } from '@/presentation/hooks/useAttendees';
 import { AttendeeCard } from './AttendeeCard';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
@@ -50,6 +51,7 @@ function FakeAttendeeCard({ index }: { index: number }) {
 
 // ── Vista borrosa con skeletons falsos + overlay ─────────────────────────────
 function BlurredAttendeesView({ count }: { count: number }) {
+  const t = useTranslations('attendeesList');
   const previewCount = Math.min(count, MAX_BLURRED_CARDS);
   const hiddenCount = count - previewCount;
 
@@ -73,15 +75,15 @@ function BlurredAttendeesView({ count }: { count: number }) {
             <Lock className="h-5 w-5 text-primary" />
           </div>
           <p className="text-sm font-semibold">
-            {count} {count === 1 ? 'persona inscrita' : 'personas inscritas'}
+            {count} {count === 1 ? t('personRegistered') : t('peopleRegistered')}
           </p>
           {hiddenCount > 0 && (
             <p className="text-xs text-muted-foreground mt-0.5">
-              +{hiddenCount} más
+              {t('moreCount', { count: hiddenCount })}
             </p>
           )}
           <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
-            Inscríbete para ver quién asiste
+            {t('registerToSee')}
           </p>
         </div>
       </div>
@@ -96,6 +98,7 @@ export function AttendeesList({
   currentUserId,
   isActiveAttendee = false,
 }: AttendeesListProps) {
+  const t = useTranslations('attendeesList');
   const supabase = createClient();
   const isCreator = currentUserId === creatorId;
 
@@ -122,7 +125,7 @@ export function AttendeesList({
     if (publicCount === null) {
       return (
         <div className="flex items-center justify-center py-8">
-          <LoadingSpinner size="lg" text="Cargando asistentes..." />
+          <LoadingSpinner size="lg" text={t('loadingAttendees')} />
         </div>
       );
     }
@@ -132,8 +135,8 @@ export function AttendeesList({
       return (
         <EmptyState
           icon={Users}
-          title="Aún no hay asistentes"
-          description="Sé el primero en inscribirte a esta aventura."
+          title={t('noAttendeesYet')}
+          description={t('beFirstToJoin')}
         />
       );
     }
@@ -158,6 +161,8 @@ function FullAttendeesList({
   currentUserId?: string;
   supabase: ReturnType<typeof createClient>;
 }) {
+  const t = useTranslations('attendeesList');
+  const tPayment = useTranslations('attendees.payment');
   const { attendees, loading, error, refetch } = useAttendees(routeId);
 
   // Confirmar asistente
@@ -168,10 +173,10 @@ function FullAttendeesList({
         .update({ status: 'confirmed', confirmation_date: new Date().toISOString() })
         .eq('id', attendeeId);
       if (error) throw error;
-      toast({ title: 'Asistente confirmado', description: 'El asistente ha sido confirmado exitosamente.' });
+      toast({ title: t('attendeeConfirmed'), description: t('attendeeConfirmedDesc') });
       refetch();
     } catch (err) {
-      toast({ title: 'Error', description: err instanceof Error ? err.message : 'No se pudo confirmar el asistente', variant: 'destructive' });
+      toast({ title: 'Error', description: err instanceof Error ? err.message : t('couldNotConfirm'), variant: 'destructive' });
     }
   }
 
@@ -183,11 +188,11 @@ function FullAttendeesList({
         .update({ payment_status: paymentStatus })
         .eq('id', attendeeId);
       if (error) throw error;
-      const labels: Record<PaymentStatus, string> = { unpaid: 'Sin Pago', pending_payment: 'Pago Pendiente', paid: 'Pagado' };
-      toast({ title: 'Pago actualizado', description: `Estado de pago cambiado a "${labels[paymentStatus]}".` });
+      const labels: Record<PaymentStatus, string> = { unpaid: tPayment('unpaid'), pending_payment: tPayment('pending_payment'), paid: tPayment('paid') };
+      toast({ title: t('paymentUpdated'), description: t('paymentChangedTo', { status: labels[paymentStatus] }) });
       refetch();
     } catch (err) {
-      toast({ title: 'Error', description: err instanceof Error ? err.message : 'No se pudo actualizar el pago', variant: 'destructive' });
+      toast({ title: 'Error', description: err instanceof Error ? err.message : t('couldNotUpdatePayment'), variant: 'destructive' });
     }
   }
 
@@ -199,17 +204,17 @@ function FullAttendeesList({
         .update({ status: 'cancelled', cancelled_by: 'creator', cancellation_date: new Date().toISOString() })
         .eq('id', attendeeId);
       if (error) throw error;
-      toast({ title: 'Asistente rechazado', description: 'El asistente ha sido rechazado.' });
+      toast({ title: t('attendeeRejected'), description: t('attendeeRejectedDesc') });
       refetch();
     } catch (err) {
-      toast({ title: 'Error', description: err instanceof Error ? err.message : 'No se pudo rechazar el asistente', variant: 'destructive' });
+      toast({ title: 'Error', description: err instanceof Error ? err.message : t('couldNotReject'), variant: 'destructive' });
     }
   }
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
-        <LoadingSpinner size="lg" text="Cargando asistentes..." />
+        <LoadingSpinner size="lg" text={t('loadingAttendees')} />
       </div>
     );
   }
@@ -217,7 +222,7 @@ function FullAttendeesList({
   if (error) {
     return (
       <div className="p-4 rounded-lg bg-red-50 border border-red-200 dark:bg-red-900/20 dark:border-red-800">
-        <p className="text-sm text-red-600 dark:text-red-400">Error al cargar asistentes: {error}</p>
+        <p className="text-sm text-red-600 dark:text-red-400">{t('errorLoadingAttendees')} {error}</p>
       </div>
     );
   }
@@ -226,8 +231,8 @@ function FullAttendeesList({
     return (
       <EmptyState
         icon={Users}
-        title="Aún no hay asistentes"
-        description="Sé el primero en inscribirte a esta aventura."
+        title={t('noAttendeesYet')}
+        description={t('beFirstToJoin')}
       />
     );
   }
@@ -244,26 +249,26 @@ function FullAttendeesList({
       {/* Resumen */}
       <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
         <span className="font-medium text-foreground">
-          {activeCount} {activeCount === 1 ? 'asistente activo' : 'asistentes activos'}
+          {activeCount} {activeCount === 1 ? t('activeAttendee') : t('activeAttendees')}
         </span>
         {confirmedAttendees.length > 0 && (
           <span className="text-green-600 dark:text-green-400">
-            {confirmedAttendees.length} confirmado{confirmedAttendees.length !== 1 ? 's' : ''}
+            {confirmedAttendees.length} {t('confirmedCount')}{confirmedAttendees.length !== 1 ? 's' : ''}
           </span>
         )}
         {pendingAttendees.length > 0 && (
           <span className="text-yellow-600 dark:text-yellow-400">
-            {pendingAttendees.length} pendiente{pendingAttendees.length !== 1 ? 's' : ''}
+            {pendingAttendees.length} {t('pendingCount')}{pendingAttendees.length !== 1 ? 's' : ''}
           </span>
         )}
         {waitingListAttendees.length > 0 && (
           <span className="text-blue-600 dark:text-blue-400">
-            {waitingListAttendees.length} en espera
+            {waitingListAttendees.length} {t('waitingCount')}
           </span>
         )}
         {cancelledAttendees.length > 0 && (
           <span className="text-red-500 dark:text-red-400">
-            {cancelledAttendees.length} cancelado{cancelledAttendees.length !== 1 ? 's' : ''}
+            {cancelledAttendees.length} {t('cancelledCount')}{cancelledAttendees.length !== 1 ? 's' : ''}
           </span>
         )}
       </div>
@@ -272,7 +277,7 @@ function FullAttendeesList({
       {confirmedAttendees.length > 0 && (
         <div>
           <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-            Confirmados ({confirmedAttendees.length})
+            {t('confirmedSection', { count: confirmedAttendees.length })}
           </h3>
           <div className="space-y-3">
             {confirmedAttendees.map((attendee) => (
@@ -294,7 +299,7 @@ function FullAttendeesList({
       {pendingAttendees.length > 0 && (
         <div>
           <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-            Pendientes ({pendingAttendees.length})
+            {t('pendingSection', { count: pendingAttendees.length })}
           </h3>
           <div className="space-y-3">
             {pendingAttendees.map((attendee) => (
@@ -316,7 +321,7 @@ function FullAttendeesList({
       {waitingListAttendees.length > 0 && (
         <div>
           <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-            Lista de Espera ({waitingListAttendees.length})
+            {t('waitingListSection', { count: waitingListAttendees.length })}
           </h3>
           <div className="space-y-3">
             {waitingListAttendees.map((attendee) => (

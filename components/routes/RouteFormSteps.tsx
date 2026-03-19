@@ -41,17 +41,18 @@ interface RouteFormStepsProps {
   locale: string;
 }
 
-const steps: Step[] = [
-  { id: '1', title: 'Información Básica', description: 'Datos esenciales' },
-  { id: '2', title: 'Logística', description: 'Fechas y capacidad' },
-  { id: '3', title: 'Publicación', description: 'Estado y visibilidad' },
-  { id: '4', title: 'Detalles Técnicos', description: 'Opcional' },
-  { id: '5', title: 'Mapa', description: 'Ruta y ubicación' },
-  { id: '6', title: 'Imágenes', description: 'Fotos de la ruta' },
-];
-
 export function RouteFormSteps({ route, locale }: RouteFormStepsProps) {
   const t = useTranslations('routes');
+  const tForm = useTranslations('routeForm');
+
+  const steps: Step[] = [
+    { id: '1', title: tForm('step1Nav'), description: tForm('step1NavDesc') },
+    { id: '2', title: tForm('step2Nav'), description: tForm('step2NavDesc') },
+    { id: '3', title: tForm('step3Nav'), description: tForm('step3NavDesc') },
+    { id: '4', title: tForm('step4Nav'), description: tForm('step4NavDesc') },
+    { id: '5', title: tForm('step5Nav'), description: tForm('step5NavDesc') },
+    { id: '6', title: tForm('step6Nav'), description: tForm('step6NavDesc') },
+  ];
   const router = useRouter();
   const supabase = createClient();
 
@@ -245,7 +246,7 @@ export function RouteFormSteps({ route, locale }: RouteFormStepsProps) {
 
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) {
-        setError('Debes iniciar sesión para crear una ruta');
+        setError(tForm('mustLogin'));
         return;
       }
 
@@ -340,7 +341,7 @@ export function RouteFormSteps({ route, locale }: RouteFormStepsProps) {
       router.push(`/${locale}/routes/${result.slug}`);
     } catch (err: any) {
       console.error('Error al guardar ruta:', err);
-      setError(err.message || 'Error al guardar la ruta');
+      setError(err.message || tForm('unknownError'));
     } finally {
       setIsLoading(false);
     }
@@ -349,7 +350,7 @@ export function RouteFormSteps({ route, locale }: RouteFormStepsProps) {
   // Manejar errores de validación
   const onError = (errors: any) => {
     console.log('Errores de validación:', errors);
-    setError('Por favor completa todos los campos requeridos antes de continuar');
+    setError(tForm('completeRequired'));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -460,11 +461,11 @@ export function RouteFormSteps({ route, locale }: RouteFormStepsProps) {
               disabled={currentStep === 0 || isLoading}
             >
               <ChevronLeft className="h-4 w-4 mr-2" />
-              Anterior
+              {tForm('previous')}
             </Button>
 
             <span className="text-sm text-muted-foreground">
-              Paso {currentStep + 1} de {steps.length}
+              {tForm('stepOf', { current: currentStep + 1, total: steps.length })}
             </span>
 
             {currentStep === steps.length - 1 ? (
@@ -476,18 +477,18 @@ export function RouteFormSteps({ route, locale }: RouteFormStepsProps) {
                 {isLoading ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Guardando...
+                    {tForm('saving')}
                   </>
                 ) : (
                   <>
                     <Check className="h-4 w-4 mr-2" />
-                    {route ? 'Actualizar Ruta' : 'Crear Ruta'}
+                    {route ? tForm('updateRoute') : tForm('createRoute')}
                   </>
                 )}
               </Button>
             ) : (
               <Button type="button" onClick={goToNextStep} disabled={isLoading}>
-                Siguiente
+                {tForm('next')}
                 <ChevronRight className="h-4 w-4 ml-2" />
               </Button>
             )}

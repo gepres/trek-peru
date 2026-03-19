@@ -14,24 +14,24 @@ import { Label } from '@/components/ui/label';
 import { GoogleButton } from './GoogleButton';
 
 // Traduce los errores de Supabase Auth al español
-function translateAuthError(message: string): string {
+function translateAuthError(message: string, t: (key: string) => string): string {
   const msg = message.toLowerCase();
   if (msg.includes('invalid login credentials') || msg.includes('invalid credentials')) {
-    return 'Correo o contraseña incorrectos. Verifica tus datos e intenta de nuevo.';
+    return t('errors.invalidCredentials');
   }
   if (msg.includes('email not confirmed')) {
-    return 'Debes confirmar tu correo electrónico antes de iniciar sesión.';
+    return t('errors.emailNotConfirmed');
   }
   if (msg.includes('too many requests')) {
-    return 'Demasiados intentos fallidos. Espera unos minutos antes de intentar de nuevo.';
+    return t('errors.tooManyRequests');
   }
   if (msg.includes('user not found')) {
-    return 'No existe una cuenta con ese correo electrónico.';
+    return t('errors.userNotFound');
   }
   if (msg.includes('network') || msg.includes('fetch')) {
-    return 'Error de conexión. Verifica tu internet e intenta de nuevo.';
+    return t('errors.networkError');
   }
-  return 'Ocurrió un error al iniciar sesión. Intenta de nuevo.';
+  return t('errors.genericLogin');
 }
 
 interface LoginFormProps {
@@ -67,7 +67,7 @@ export function LoginForm({ locale }: LoginFormProps) {
       });
 
       if (error) {
-        setError(translateAuthError(error.message));
+        setError(translateAuthError(error.message, t));
         return;
       }
 
@@ -75,7 +75,7 @@ export function LoginForm({ locale }: LoginFormProps) {
       router.push(`/${locale}/routes`);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error desconocido');
+      setError(err instanceof Error ? err.message : t('unknownError'));
     } finally {
       setIsLoading(false);
     }
@@ -149,12 +149,12 @@ export function LoginForm({ locale }: LoginFormProps) {
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-card px-2 text-muted-foreground">o continúa con</span>
+          <span className="bg-card px-2 text-muted-foreground">{t('continueWith')}</span>
         </div>
       </div>
 
       {/* Google OAuth */}
-      <GoogleButton locale={locale} label="Iniciar sesión con Google" />
+      <GoogleButton locale={locale} label={t('loginWithGoogle')} />
     </form>
   );
 }

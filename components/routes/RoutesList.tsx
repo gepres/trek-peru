@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useRoutes } from '@/presentation/hooks/useRoutes';
 import { RouteCard } from './RouteCard';
 import { RouteFilters } from './RouteFilters';
@@ -31,6 +32,7 @@ export function RoutesList({ locale }: RoutesListProps) {
   const [filters, setFilters] = useState<RouteFiltersType>({});
   // Panel de filtros: colapsado por defecto en mobile/tablet
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const t = useTranslations('routes');
   const { routes, loading, error } = useRoutes(filters);
 
   const activeFiltersCount = countActiveFilters(filters);
@@ -38,7 +40,7 @@ export function RoutesList({ locale }: RoutesListProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <LoadingSpinner size="lg" text="Cargando rutas..." />
+        <LoadingSpinner size="lg" text={t('loadingRoutes')} />
       </div>
     );
   }
@@ -47,7 +49,7 @@ export function RoutesList({ locale }: RoutesListProps) {
     return (
       <div className="p-4 rounded-lg bg-red-50 border border-red-200">
         <p className="text-sm text-red-600">
-          Error al cargar las rutas: {error}
+          {t('errorLoadingRoutes')} {error}
         </p>
       </div>
     );
@@ -67,7 +69,7 @@ export function RoutesList({ locale }: RoutesListProps) {
           )}
         >
           <SlidersHorizontal className="h-4 w-4" />
-          Filtros
+          {t('filtersLabel')}
           {/* Badge con número de filtros activos */}
           {activeFiltersCount > 0 && (
             <span className="bg-primary text-primary-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center leading-none">
@@ -92,7 +94,7 @@ export function RoutesList({ locale }: RoutesListProps) {
             className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors font-medium"
           >
             <X className="h-3.5 w-3.5" />
-            Limpiar
+            {t('clear')}
           </button>
         )}
       </div>
@@ -123,18 +125,18 @@ export function RoutesList({ locale }: RoutesListProps) {
           {routes.length === 0 ? (
             <EmptyState
               icon={Mountain}
-              title="No se encontraron rutas"
-              description="No hay rutas que coincidan con tus criterios de búsqueda. Intenta con otros filtros o crea la primera ruta."
+              title={t('noRoutesFound')}
+              description={t('noRoutesFoundDesc')}
             />
           ) : (
             <>
               {/* Contador de resultados */}
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-foreground">
-                  Rutas Recomendadas
+                  {t('recommendedRoutes')}
                 </h2>
                 <span className="text-sm text-muted-foreground">
-                  {routes.length} {routes.length === 1 ? 'ruta' : 'rutas'}
+                  {routes.length} {routes.length === 1 ? t('routeSingular') : t('routePlural')}
                 </span>
               </div>
 

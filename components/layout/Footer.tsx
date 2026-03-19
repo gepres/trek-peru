@@ -1,6 +1,9 @@
+'use client';
+
 import Link from 'next/link';
 import { Mountain } from 'lucide-react';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 
 interface FooterProps {
   locale: string;
@@ -8,6 +11,7 @@ interface FooterProps {
 
 // Componente de pie de página
 export function Footer({ locale }: FooterProps) {
+  const t = useTranslations('footer');
   const currentYear = new Date().getFullYear();
 
   return (
@@ -29,28 +33,27 @@ export function Footer({ locale }: FooterProps) {
               <span className="font-bold text-xl">TrekPeru</span>
             </Link>
             <p className="text-sm text-primary-foreground/80 max-w-md">
-              Plataforma colaborativa para compartir y organizar rutas de trekking en Perú.
-              Descubre nuevas aventuras y conecta con otros apasionados del trekking.
+              {t('description')}
             </p>
           </div>
 
           {/* Enlaces rápidos */}
           <div>
-            <h3 className="font-semibold mb-4 text-white">Enlaces Rápidos</h3>
+            <h3 className="font-semibold mb-4 text-white">{t('quickLinks')}</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href={`/${locale}/routes`} className="text-primary-foreground/70 hover:text-white transition-colors">
-                  Explorar Rutas
+                  {t('exploreRoutes')}
                 </Link>
               </li>
               <li>
                 <Link href={`/${locale}/my-routes`} className="text-primary-foreground/70 hover:text-white transition-colors">
-                  Mis Rutas
+                  {t('myRoutes')}
                 </Link>
               </li>
               <li>
                 <Link href={`/${locale}/profile`} className="text-primary-foreground/70 hover:text-white transition-colors">
-                  Mi Perfil
+                  {t('myProfile')}
                 </Link>
               </li>
             </ul>
@@ -58,26 +61,26 @@ export function Footer({ locale }: FooterProps) {
 
           {/* Información */}
           <div>
-            <h3 className="font-semibold mb-4 text-white">Información</h3>
+            <h3 className="font-semibold mb-4 text-white">{t('information')}</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href={`/${locale}/about`} className="text-primary-foreground/70 hover:text-white transition-colors">
-                  Acerca de
+                  {t('about')}
                 </Link>
               </li>
               <li>
                 <Link href={`/${locale}/terms`} className="text-primary-foreground/70 hover:text-white transition-colors">
-                  Términos de Uso
+                  {t('terms')}
                 </Link>
               </li>
               <li>
                 <Link href={`/${locale}/privacy`} className="text-primary-foreground/70 hover:text-white transition-colors">
-                  Política de Privacidad
+                  {t('privacy')}
                 </Link>
               </li>
               <li>
                 <Link href={`/${locale}/contact`} className="text-primary-foreground/70 hover:text-white transition-colors">
-                  Contacto
+                  {t('contact')}
                 </Link>
               </li>
             </ul>
@@ -86,7 +89,7 @@ export function Footer({ locale }: FooterProps) {
 
         {/* Copyright */}
         <div className="mt-8 pt-8 border-t border-primary-foreground/10 text-center text-sm text-primary-foreground/60">
-          <p>© {currentYear} TrekPeru. Todos los derechos reservados.</p>
+          <p>© {currentYear} TrekPeru. {t('allRightsReserved')}</p>
         </div>
       </div>
     </footer>

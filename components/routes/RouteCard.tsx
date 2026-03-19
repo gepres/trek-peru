@@ -71,7 +71,7 @@ export function RouteCard({ route, locale }: RouteCardProps) {
           {/* Badge "Completada" para rutas en ese estado */}
           {route.status === 'completed' && (
             <div className="absolute top-3 right-3 bg-purple-600/90 backdrop-blur-sm text-white text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-lg">
-              Completada
+              {t('status.completed')}
             </div>
           )}
 
@@ -99,9 +99,9 @@ export function RouteCard({ route, locale }: RouteCardProps) {
             <span className="text-muted-foreground text-xs font-medium">
               {route.estimated_duration
                 ? route.estimated_duration >= 24
-                  ? `${Math.floor(route.estimated_duration / 24)} ${Math.floor(route.estimated_duration / 24) === 1 ? 'Día' : 'Días'}`
+                  ? `${Math.floor(route.estimated_duration / 24)} ${Math.floor(route.estimated_duration / 24) === 1 ? t('day') : t('days')}`
                   : `${route.estimated_duration}h`
-                : '1 Día'}
+                : `1 ${t('day')}`}
             </span>
           </div>
 
@@ -112,7 +112,7 @@ export function RouteCard({ route, locale }: RouteCardProps) {
 
           {/* Descripción */}
           <p className="text-muted-foreground text-sm line-clamp-2 mb-4">
-            {route.description || 'Descubre esta increíble ruta de trekking.'}
+            {route.description || t('defaultDescription')}
           </p>
 
           {/* Footer */}
@@ -134,7 +134,7 @@ export function RouteCard({ route, locale }: RouteCardProps) {
                 window.location.href = `/${locale}/routes/${route.slug}`;
               }}
             >
-              Ver Ruta
+              {t('viewRoute')}
             </Button>
           </div>
         </div>

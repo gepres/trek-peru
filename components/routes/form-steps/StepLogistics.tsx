@@ -13,6 +13,7 @@ import {
 import { Calendar, Clock, Users, DollarSign } from 'lucide-react';
 import { UseFormRegister, FieldErrors, UseFormWatch } from 'react-hook-form';
 import { RouteFormInput } from '@/lib/validations/route.schema';
+import { useTranslations } from 'next-intl';
 
 interface StepLogisticsProps {
   register: UseFormRegister<RouteFormInput>;
@@ -21,13 +22,15 @@ interface StepLogisticsProps {
 }
 
 export function StepLogistics({ register, errors, watch }: StepLogisticsProps) {
+  const t = useTranslations('routeForm');
+
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>2. Logística y Capacidad</CardTitle>
+          <CardTitle>{t('step2Title')}</CardTitle>
           <CardDescription>
-            Define las fechas, capacidad y costos del trekking
+            {t('step2Desc')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -36,7 +39,7 @@ export function StepLogistics({ register, errors, watch }: StepLogisticsProps) {
             <div className="space-y-2">
               <Label htmlFor="departure_date" className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
-                Fecha de Salida
+                {t('departureDate')}
               </Label>
               <Input
                 id="departure_date"
@@ -53,7 +56,7 @@ export function StepLogistics({ register, errors, watch }: StepLogisticsProps) {
             <div className="space-y-2">
               <Label htmlFor="meeting_time" className="flex items-center gap-2">
                 <Clock className="h-4 w-4" />
-                Hora de Encuentro
+                {t('meetingTime')}
               </Label>
               <Input
                 id="meeting_time"
@@ -72,18 +75,18 @@ export function StepLogistics({ register, errors, watch }: StepLogisticsProps) {
             <div className="space-y-2">
               <Label htmlFor="max_capacity" className="flex items-center gap-2">
                 <Users className="h-4 w-4" />
-                Capacidad Máxima
+                {t('maxCapacity')}
               </Label>
               <Input
                 id="max_capacity"
                 type="number"
                 min="1"
                 {...register('max_capacity', { valueAsNumber: true })}
-                placeholder="Ej: 15"
+                placeholder={t('maxCapacityPlaceholder')}
                 className={errors.max_capacity ? 'border-destructive' : ''}
               />
               <p className="text-xs text-muted-foreground">
-                Número máximo de participantes permitidos
+                {t('maxCapacityHint')}
               </p>
               {errors.max_capacity && (
                 <p className="text-sm text-destructive">{errors.max_capacity.message}</p>
@@ -94,7 +97,7 @@ export function StepLogistics({ register, errors, watch }: StepLogisticsProps) {
             <div className="space-y-2">
               <Label htmlFor="cost" className="flex items-center gap-2">
                 <DollarSign className="h-4 w-4" />
-                Costo por Persona
+                {t('costPerPerson')}
               </Label>
               <div className="flex gap-2">
                 <Input
@@ -103,7 +106,7 @@ export function StepLogistics({ register, errors, watch }: StepLogisticsProps) {
                   min="0"
                   step="0.01"
                   {...register('cost', { valueAsNumber: true })}
-                  placeholder="Ej: 150.00"
+                  placeholder={t('costPlaceholder')}
                   className={errors.cost ? 'border-destructive' : ''}
                 />
                 <Select
@@ -123,7 +126,7 @@ export function StepLogistics({ register, errors, watch }: StepLogisticsProps) {
                 </Select>
               </div>
               <p className="text-xs text-muted-foreground">
-                Deja en 0 si el trekking es gratuito
+                {t('costFreeHint')}
               </p>
               {errors.cost && (
                 <p className="text-sm text-destructive">{errors.cost.message}</p>

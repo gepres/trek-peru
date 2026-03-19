@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -28,7 +29,7 @@ interface ContactFormProps {
 
 // Formulario de contacto — envía correo vía EmailJS
 export function ContactForm({ locale }: ContactFormProps) {
-  const es = locale === 'es';
+  const t = useTranslations('contact');
   const { toast } = useToast();
   const [sent, setSent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -66,10 +67,8 @@ export function ContactForm({ locale }: ContactFormProps) {
     } catch (err) {
       console.error('Error al enviar formulario de contacto:', err);
       toast({
-        title: es ? 'Error al enviar' : 'Error sending',
-        description: es
-          ? 'Ocurrió un error al enviar tu mensaje. Intenta de nuevo más tarde.'
-          : 'An error occurred while sending your message. Please try again later.',
+        title: t('sendError'),
+        description: t('sendErrorDesc'),
         variant: 'destructive',
       });
     } finally {
@@ -85,15 +84,13 @@ export function ContactForm({ locale }: ContactFormProps) {
           <CheckCircle2 className="h-8 w-8 text-primary" />
         </div>
         <h3 className="text-xl font-bold text-foreground">
-          {es ? '¡Mensaje enviado!' : 'Message sent!'}
+          {t('messageSent')}
         </h3>
         <p className="text-muted-foreground max-w-sm">
-          {es
-            ? 'Gracias por contactarnos. Te responderemos a la brevedad posible.'
-            : 'Thank you for reaching out. We will get back to you as soon as possible.'}
+          {t('messageSentDesc')}
         </p>
         <Button variant="outline" onClick={() => setSent(false)} className="mt-2">
-          {es ? 'Enviar otro mensaje' : 'Send another message'}
+          {t('sendAnother')}
         </Button>
       </div>
     );
@@ -103,10 +100,10 @@ export function ContactForm({ locale }: ContactFormProps) {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       {/* Nombre */}
       <div className="space-y-2">
-        <Label htmlFor="name">{es ? 'Nombre completo' : 'Full name'}</Label>
+        <Label htmlFor="name">{t('nameLabel')}</Label>
         <Input
           id="name"
-          placeholder={es ? 'Tu nombre' : 'Your name'}
+          placeholder={t('namePlaceholder')}
           {...register('name')}
           disabled={isLoading}
         />
@@ -117,11 +114,11 @@ export function ContactForm({ locale }: ContactFormProps) {
 
       {/* Email */}
       <div className="space-y-2">
-        <Label htmlFor="email">{es ? 'Correo electrónico' : 'Email address'}</Label>
+        <Label htmlFor="email">{t('emailLabel')}</Label>
         <Input
           id="email"
           type="email"
-          placeholder={es ? 'tu@correo.com' : 'your@email.com'}
+          placeholder={t('emailPlaceholder')}
           {...register('email')}
           disabled={isLoading}
         />
@@ -132,10 +129,10 @@ export function ContactForm({ locale }: ContactFormProps) {
 
       {/* Asunto */}
       <div className="space-y-2">
-        <Label htmlFor="subject">{es ? 'Asunto' : 'Subject'}</Label>
+        <Label htmlFor="subject">{t('subjectLabel')}</Label>
         <Input
           id="subject"
-          placeholder={es ? '¿En qué podemos ayudarte?' : 'How can we help you?'}
+          placeholder={t('subjectPlaceholder')}
           {...register('subject')}
           disabled={isLoading}
         />
@@ -146,15 +143,11 @@ export function ContactForm({ locale }: ContactFormProps) {
 
       {/* Mensaje */}
       <div className="space-y-2">
-        <Label htmlFor="message">{es ? 'Mensaje' : 'Message'}</Label>
+        <Label htmlFor="message">{t('messageLabel')}</Label>
         <Textarea
           id="message"
           rows={6}
-          placeholder={
-            es
-              ? 'Escribe tu mensaje aquí...'
-              : 'Write your message here...'
-          }
+          placeholder={t('messagePlaceholder')}
           {...register('message')}
           disabled={isLoading}
           className="resize-none"
@@ -169,12 +162,12 @@ export function ContactForm({ locale }: ContactFormProps) {
         {isLoading ? (
           <>
             <span className="h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" />
-            {es ? 'Enviando...' : 'Sending...'}
+            {t('sending')}
           </>
         ) : (
           <>
             <Send className="h-4 w-4" />
-            {es ? 'Enviar mensaje' : 'Send message'}
+            {t('sendMessage')}
           </>
         )}
       </Button>

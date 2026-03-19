@@ -34,6 +34,7 @@ interface RouteFormProps {
 // Formulario completo para crear/editar rutas
 export function RouteForm({ route, locale }: RouteFormProps) {
   const t = useTranslations('routes');
+  const tForm = useTranslations('routeForm');
   const router = useRouter();
   const supabase = createClient();
   const [isLoading, setIsLoading] = useState(false);
@@ -100,7 +101,7 @@ export function RouteForm({ route, locale }: RouteFormProps) {
 
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        setError('Debes iniciar sesión para crear una ruta');
+        setError(tForm('mustLogin'));
         return;
       }
 
@@ -151,7 +152,7 @@ export function RouteForm({ route, locale }: RouteFormProps) {
 
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error desconocido');
+      setError(err instanceof Error ? err.message : tForm('unknownError'));
     } finally {
       setIsLoading(false);
     }
@@ -165,7 +166,7 @@ export function RouteForm({ route, locale }: RouteFormProps) {
       {/* Información Básica */}
       <Card>
         <CardHeader>
-          <CardTitle>Información Básica</CardTitle>
+          <CardTitle>{tForm('basicInfo')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Título */}
@@ -174,7 +175,7 @@ export function RouteForm({ route, locale }: RouteFormProps) {
             <Input
               id="title"
               {...register('title')}
-              placeholder="Ej: Trekking al Nevado Huascarán"
+              placeholder={tForm('titlePlaceholder')}
               disabled={isLoading}
             />
             {errors.title && (
@@ -188,7 +189,7 @@ export function RouteForm({ route, locale }: RouteFormProps) {
             <Textarea
               id="description"
               {...register('description')}
-              placeholder="Describe la ruta, qué verán, qué esperar..."
+              placeholder={tForm('descriptionPlaceholder')}
               rows={4}
               disabled={isLoading}
             />
@@ -227,7 +228,7 @@ export function RouteForm({ route, locale }: RouteFormProps) {
               <Input
                 id="region"
                 {...register('region')}
-                placeholder="Ej: Ancash"
+                placeholder={tForm('region')}
                 disabled={isLoading}
               />
             </div>
@@ -236,7 +237,7 @@ export function RouteForm({ route, locale }: RouteFormProps) {
               <Input
                 id="province"
                 {...register('province')}
-                placeholder="Ej: Huaraz"
+                placeholder={tForm('provincePlaceholder')}
                 disabled={isLoading}
               />
             </div>
@@ -247,7 +248,7 @@ export function RouteForm({ route, locale }: RouteFormProps) {
       {/* Detalles Técnicos */}
       <Card>
         <CardHeader>
-          <CardTitle>Detalles Técnicos</CardTitle>
+          <CardTitle>{tForm('technicalDetails')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -334,7 +335,7 @@ export function RouteForm({ route, locale }: RouteFormProps) {
       {/* Mapa de la Ruta */}
       <Card>
         <CardHeader>
-          <CardTitle>Mapa de la Ruta</CardTitle>
+          <CardTitle>{tForm('step5Nav')}</CardTitle>
         </CardHeader>
         <CardContent>
           <RouteMapEditor
@@ -354,16 +355,16 @@ export function RouteForm({ route, locale }: RouteFormProps) {
       {/* Imágenes de la Ruta */}
       <Card>
         <CardHeader>
-          <CardTitle>Imágenes</CardTitle>
+          <CardTitle>{tForm('step6Nav')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Imagen destacada */}
             <div className="space-y-3">
               <div>
-                <h4 className="font-medium text-sm mb-1">Imagen Destacada</h4>
+                <h4 className="font-medium text-sm mb-1">{tForm('featuredImage')}</h4>
                 <p className="text-xs text-muted-foreground">
-                  Esta imagen se mostrará como portada de la ruta
+                  {tForm('featuredImageDesc')}
                 </p>
               </div>
               <ImageUpload
@@ -380,9 +381,9 @@ export function RouteForm({ route, locale }: RouteFormProps) {
             {/* Galería de imágenes */}
             <div className="space-y-3 lg:col-span-2">
               <div className="border-t border-border pt-6">
-                <h4 className="font-medium text-sm mb-1">Galería de Imágenes</h4>
+                <h4 className="font-medium text-sm mb-1">{tForm('imageGallery')}</h4>
                 <p className="text-xs text-muted-foreground mb-4">
-                  Sube hasta 10 imágenes adicionales de la ruta
+                  {tForm('imageGalleryDesc')}
                 </p>
                 <ImageGallery
                   images={images}
@@ -401,7 +402,7 @@ export function RouteForm({ route, locale }: RouteFormProps) {
       {/* Logística */}
       <Card>
         <CardHeader>
-          <CardTitle>Logística y Capacidad</CardTitle>
+          <CardTitle>{tForm('logistics')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -447,13 +448,13 @@ export function RouteForm({ route, locale }: RouteFormProps) {
       {/* Estado y Visibilidad */}
       <Card>
         <CardHeader>
-          <CardTitle>Publicación</CardTitle>
+          <CardTitle>{tForm('publication')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Estado */}
             <div className="space-y-2">
-              <Label htmlFor="status">Estado</Label>
+              <Label htmlFor="status">{tForm('routeStatus')}</Label>
               <Select
                 value={status}
                 onValueChange={(value) => setValue('status', value as any)}
@@ -471,7 +472,7 @@ export function RouteForm({ route, locale }: RouteFormProps) {
 
             {/* Visibilidad */}
             <div className="space-y-2">
-              <Label htmlFor="visibility">Visibilidad</Label>
+              <Label htmlFor="visibility">{tForm('visibility')}</Label>
               <Select
                 value={watch('visibility')}
                 onValueChange={(value) => setValue('visibility', value as any)}
@@ -506,11 +507,11 @@ export function RouteForm({ route, locale }: RouteFormProps) {
           onClick={() => router.back()}
           disabled={isLoading}
         >
-          Cancelar
+          {tForm('cancel')}
         </Button>
         <Button type="submit" disabled={isLoading}>
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {route ? 'Actualizar Ruta' : 'Crear Ruta'}
+          {route ? tForm('updateRoute') : tForm('createRoute')}
         </Button>
       </div>
     </form>

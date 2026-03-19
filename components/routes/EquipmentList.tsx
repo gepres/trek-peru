@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { X, Plus, Check } from 'lucide-react';
@@ -28,6 +29,7 @@ const defaultSuggestions = [
 ];
 
 export function EquipmentList({ value, onChange, suggestions = defaultSuggestions }: EquipmentListProps) {
+  const t = useTranslations('routeForm');
   const [newItem, setNewItem] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
 
@@ -98,7 +100,7 @@ export function EquipmentList({ value, onChange, suggestions = defaultSuggestion
                 handleAdd();
               }
             }}
-            placeholder="Agregar equipo (ej: Zapatos de trekking)"
+            placeholder={t('addEquipmentPlaceholder')}
             onFocus={() => setShowSuggestions(newItem.length > 0)}
             onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
           />
@@ -131,7 +133,7 @@ export function EquipmentList({ value, onChange, suggestions = defaultSuggestion
           size="sm"
         >
           <Plus className="h-4 w-4 mr-1" />
-          Agregar
+          {t('addBtn')}
         </Button>
       </div>
 
@@ -142,7 +144,7 @@ export function EquipmentList({ value, onChange, suggestions = defaultSuggestion
         return (
           <div className="space-y-2">
             <p className="text-xs text-muted-foreground">
-              Sugerencias:{value.length > 0 && <span className="ml-1">({value.length} {value.length === 1 ? 'agregado' : 'agregados'})</span>}
+              {t('suggestionsLabel')}{value.length > 0 && <span className="ml-1">({t('addedCount', { count: value.length })})</span>}
             </p>
             <div className="flex flex-wrap gap-2">
               {available.slice(0, 8).map((suggestion, index) => (

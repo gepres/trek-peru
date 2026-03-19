@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Download } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { AttendeeWithUser } from '@/types/route.types';
@@ -11,36 +12,14 @@ interface ExportExcelButtonProps {
   routeTitle: string;
 }
 
-// Etiquetas para los estados
-const STATUS_LABELS: Record<string, string> = {
-  pending: 'Pendiente',
-  confirmed: 'Confirmado',
-  cancelled: 'Cancelado',
-  waiting_list: 'Lista de Espera',
-  completed: 'Completado',
-};
-
-const ATTENDANCE_LABELS: Record<string, string> = {
-  attended: 'Asistió',
-  absent: 'Faltó',
-};
-
-const PAYMENT_LABELS: Record<string, string> = {
-  unpaid: 'Sin Pago',
-  pending_payment: 'Pago Pendiente',
-  paid: 'Pagado',
-};
-
-const EXPERIENCE_LABELS: Record<string, string> = {
-  beginner: 'Principiante',
-  intermediate: 'Intermedio',
-  advanced: 'Avanzado',
-  expert: 'Experto',
-};
-
 // Botón que exporta la lista de asistentes a un archivo Excel (.xlsx)
 export function ExportExcelButton({ attendees, routeTitle }: ExportExcelButtonProps) {
   const [isExporting, setIsExporting] = useState(false);
+  const t = useTranslations('excel');
+  const tStatus = useTranslations('attendees.status');
+  const tPayment = useTranslations('attendees.payment');
+  const tExp = useTranslations('attendees.experience');
+  const tDash = useTranslations('attendees.dashboard');
 
   async function handleExport() {
     try {
@@ -50,30 +29,48 @@ export function ExportExcelButton({ attendees, routeTitle }: ExportExcelButtonPr
       const XLSXModule = await import('xlsx');
       const XLSX = XLSXModule.default ?? XLSXModule;
 
+      // Etiquetas traducidas
+      const STATUS_LABELS: Record<string, string> = {
+        pending: tStatus('pending'), confirmed: tStatus('confirmed'),
+        cancelled: tStatus('cancelled'), waiting_list: tStatus('waiting_list'),
+        completed: tStatus('completed'),
+      };
+      const ATTENDANCE_LABELS: Record<string, string> = {
+        attended: t('attended'), absent: t('absent'),
+      };
+      const PAYMENT_LABELS: Record<string, string> = {
+        unpaid: tPayment('unpaid'), pending_payment: tPayment('pending_payment'),
+        paid: tPayment('paid'),
+      };
+      const EXPERIENCE_LABELS: Record<string, string> = {
+        beginner: tExp('beginner'), intermediate: tExp('intermediate'),
+        advanced: tExp('advanced'), expert: tExp('expert'),
+      };
+
       // Construir las filas del Excel
       const rows = attendees.map((a, index) => ({
         '#': index + 1,
-        'Nombre': a.user.full_name || '',
-        'Usuario': a.user.username ? `@${a.user.username}` : '',
-        'Teléfono': a.user.phone || '',
-        'Nivel': EXPERIENCE_LABELS[a.experience_level ?? ''] ?? '',
-        'Estado': STATUS_LABELS[a.status] ?? a.status,
-        'Pago': PAYMENT_LABELS[a.payment_status] ?? a.payment_status,
-        'Contacto Emergencia': a.emergency_contact || '',
-        'Alergias': a.allergies || '',
-        'Condiciones Médicas': a.medical_conditions || '',
-        'Notas': a.notes || '',
-        'Mensaje Organizador': a.creator_message || '',
-        'Fecha Inscripción': a.registration_date
+        [t('name')]: a.user.full_name || '',
+        [t('user')]: a.user.username ? `@${a.user.username}` : '',
+        [t('phone')]: a.user.phone || '',
+        [t('level')]: EXPERIENCE_LABELS[a.experience_level ?? ''] ?? '',
+        [t('status')]: STATUS_LABELS[a.status] ?? a.status,
+        [t('payment')]: PAYMENT_LABELS[a.payment_status] ?? a.payment_status,
+        [t('emergencyContact')]: a.emergency_contact || '',
+        [t('allergies')]: a.allergies || '',
+        [t('medicalConditions')]: a.medical_conditions || '',
+        [t('notes')]: a.notes || '',
+        [t('organizerMessage')]: a.creator_message || '',
+        [t('registrationDate')]: a.registration_date
           ? new Date(a.registration_date).toLocaleDateString('es-PE')
           : '',
-        'Fecha Confirmación': a.confirmation_date
+        [t('confirmationDate')]: a.confirmation_date
           ? new Date(a.confirmation_date).toLocaleDateString('es-PE')
           : '',
         'Asistencia': a.attendance_status
           ? ATTENDANCE_LABELS[a.attendance_status] ?? a.attendance_status
-          : 'Sin Registrar',
-        'Fecha Asistencia': a.attendance_recorded_at
+          : t('notRecorded'),
+        [t('attendanceDate')]: a.attendance_recorded_at
           ? new Date(a.attendance_recorded_at).toLocaleDateString('es-PE')
           : '',
       }));
@@ -111,14 +108,14 @@ export function ExportExcelButton({ attendees, routeTitle }: ExportExcelButtonPr
       URL.revokeObjectURL(url);
 
       toast({
-        title: '✅ Excel exportado',
-        description: `${attendees.length} asistente${attendees.length !== 1 ? 's' : ''} exportados correctamente.`,
+        title: '✅ ' + t('exported'),
+        description: t('exportedDesc', { count: attendees.length }),
       });
     } catch (err) {
       console.error('Error exportando Excel:', err);
       toast({
-        title: 'Error al exportar',
-        description: 'No se pudo generar el archivo Excel. Intenta de nuevo.',
+        title: t('exportError'),
+        description: t('exportErrorDesc'),
         variant: 'destructive',
       });
     } finally {
@@ -135,7 +132,7 @@ export function ExportExcelButton({ attendees, routeTitle }: ExportExcelButtonPr
       className="gap-2"
     >
       <Download className="h-4 w-4" />
-      {isExporting ? 'Exportando...' : 'Exportar Excel'}
+      {isExporting ? tDash('exporting') : tDash('export')}
     </Button>
   );
 }

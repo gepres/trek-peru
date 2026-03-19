@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { profileSchema, ProfileInput } from '@/lib/validations/user.schema';
@@ -32,6 +33,7 @@ export function ProfileForm({ profile, onSuccess }: ProfileFormProps) {
   const [avatarPreview, setAvatarPreview] = useState<string | null>(profile.avatar_url || null);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const supabase = createClient();
+  const t = useTranslations('profile');
 
   const {
     register,
@@ -63,7 +65,7 @@ export function ProfileForm({ profile, onSuccess }: ProfileFormProps) {
     if (!file.type.startsWith('image/')) {
       toast({
         title: 'Error',
-        description: 'Por favor selecciona un archivo de imagen',
+        description: t('selectImageFile'),
         variant: 'destructive',
       });
       return;
@@ -73,7 +75,7 @@ export function ProfileForm({ profile, onSuccess }: ProfileFormProps) {
     if (file.size > 2 * 1024 * 1024) {
       toast({
         title: 'Error',
-        description: 'La imagen no debe superar los 2MB',
+        description: t('imageTooLarge'),
         variant: 'destructive',
       });
       return;
@@ -111,8 +113,8 @@ export function ProfileForm({ profile, onSuccess }: ProfileFormProps) {
         // Si el bucket no existe, mostrar mensaje informativo
         if (uploadError.message.includes('not found')) {
           toast({
-            title: 'Configuración pendiente',
-            description: 'El almacenamiento de imágenes aún no está configurado. Continúa con los otros cambios.',
+            title: t('storagePending'),
+            description: t('storagePendingDesc'),
           });
           return null;
         }
@@ -166,7 +168,7 @@ export function ProfileForm({ profile, onSuccess }: ProfileFormProps) {
         if (error.code === '23505') {
           toast({
             title: 'Error',
-            description: 'Este nombre de usuario ya está en uso',
+            description: t('duplicateUsername'),
             variant: 'destructive',
           });
           return;
@@ -175,8 +177,8 @@ export function ProfileForm({ profile, onSuccess }: ProfileFormProps) {
       }
 
       toast({
-        title: 'Perfil actualizado',
-        description: 'Tus cambios han sido guardados exitosamente',
+        title: t('profileUpdated'),
+        description: t('changesSaved'),
       });
 
       if (onSuccess) {
@@ -186,7 +188,7 @@ export function ProfileForm({ profile, onSuccess }: ProfileFormProps) {
       console.error('Error updating profile:', error);
       toast({
         title: 'Error',
-        description: error instanceof Error ? error.message : 'No se pudo actualizar el perfil',
+        description: error instanceof Error ? error.message : t('updateFailed'),
         variant: 'destructive',
       });
     } finally {
@@ -217,8 +219,8 @@ export function ProfileForm({ profile, onSuccess }: ProfileFormProps) {
 
         <div className="flex flex-col gap-3 text-center md:text-left">
           <div>
-            <h3 className="font-semibold text-lg text-gray-900 dark:text-white">Foto de perfil</h3>
-            <p className="text-sm text-muted-foreground">Actualiza tu foto de perfil</p>
+            <h3 className="font-semibold text-lg text-gray-900 dark:text-white">{t('profilePhoto')}</h3>
+            <p className="text-sm text-muted-foreground">{t('updatePhoto')}</p>
           </div>
           <div className="flex flex-col items-center md:items-start gap-2">
             <Label
@@ -226,7 +228,7 @@ export function ProfileForm({ profile, onSuccess }: ProfileFormProps) {
               className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-md text-sm font-medium transition-colors"
             >
               <Upload className="h-4 w-4" />
-              Cambiar foto
+              {t('changePhoto')}
             </Label>
             <Input
               id="avatar"
@@ -235,20 +237,20 @@ export function ProfileForm({ profile, onSuccess }: ProfileFormProps) {
               className="hidden"
               onChange={handleAvatarChange}
             />
-            <p className="text-xs text-muted-foreground">JPG, PNG o GIF (máx. 2MB)</p>
+            <p className="text-xs text-muted-foreground">{t('photoHint')}</p>
           </div>
         </div>
       </div>
 
       {/* Información personal */}
       <div className="space-y-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Información Personal</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('personalInfo')}</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Nombre completo */}
           <div className="space-y-2">
             <Label htmlFor="full_name">
-              Nombre completo <span className="text-destructive">*</span>
+              {t('fullName')} <span className="text-destructive">*</span>
             </Label>
             <Input
               id="full_name"
@@ -264,7 +266,7 @@ export function ProfileForm({ profile, onSuccess }: ProfileFormProps) {
           {/* Nombre de usuario */}
           <div className="space-y-2">
             <Label htmlFor="username">
-              Nombre de usuario <span className="text-destructive">*</span>
+              {t('username')} <span className="text-destructive">*</span>
             </Label>
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground text-sm">@</span>
@@ -284,34 +286,34 @@ export function ProfileForm({ profile, onSuccess }: ProfileFormProps) {
 
         {/* Biografía */}
         <div className="space-y-2">
-          <Label htmlFor="bio">Biografía</Label>
+          <Label htmlFor="bio">{t('bio')}</Label>
           <Textarea
             id="bio"
             {...register('bio')}
-            placeholder="Cuéntanos sobre ti, tu experiencia en trekking..."
+            placeholder={t('bioPlaceholder')}
             rows={4}
             disabled={isLoading}
           />
           {errors.bio && <p className="text-sm text-destructive">{errors.bio.message}</p>}
-          <p className="text-xs text-muted-foreground">Máximo 500 caracteres</p>
+          <p className="text-xs text-muted-foreground">{t('maxChars')}</p>
         </div>
 
         {/* Nivel de experiencia */}
         <div className="space-y-2">
-          <Label htmlFor="experience_level">Nivel de experiencia en trekking</Label>
+          <Label htmlFor="experience_level">{t('experienceLevelLabel')}</Label>
           <Select
             value={experienceLevel || 'beginner'}
             onValueChange={(value) => setValue('experience_level', value as any)}
             disabled={isLoading}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Selecciona tu nivel" />
+              <SelectValue placeholder={t('selectLevel')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="beginner">Principiante</SelectItem>
-              <SelectItem value="intermediate">Intermedio</SelectItem>
-              <SelectItem value="advanced">Avanzado</SelectItem>
-              <SelectItem value="expert">Experto</SelectItem>
+              <SelectItem value="beginner">{t('experienceLevels.beginner')}</SelectItem>
+              <SelectItem value="intermediate">{t('experienceLevels.intermediate')}</SelectItem>
+              <SelectItem value="advanced">{t('experienceLevels.advanced')}</SelectItem>
+              <SelectItem value="expert">{t('experienceLevels.expert')}</SelectItem>
             </SelectContent>
           </Select>
           {errors.experience_level && (
@@ -322,12 +324,12 @@ export function ProfileForm({ profile, onSuccess }: ProfileFormProps) {
 
       {/* Información de contacto */}
       <div className="space-y-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Información de Contacto</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('contactInfo')}</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Ubicación */}
           <div className="space-y-2">
-            <Label htmlFor="location">Ubicación</Label>
+            <Label htmlFor="location">{t('location')}</Label>
             <Input
               id="location"
               {...register('location')}
@@ -341,7 +343,7 @@ export function ProfileForm({ profile, onSuccess }: ProfileFormProps) {
 
           {/* Teléfono */}
           <div className="space-y-2">
-            <Label htmlFor="phone">Teléfono</Label>
+            <Label htmlFor="phone">{t('phone')}</Label>
             <Input
               id="phone"
               type="tel"
@@ -354,7 +356,7 @@ export function ProfileForm({ profile, onSuccess }: ProfileFormProps) {
 
           {/* Fecha de nacimiento */}
           <div className="space-y-2">
-            <Label htmlFor="birth_date">Fecha de nacimiento</Label>
+            <Label htmlFor="birth_date">{t('birthDate')}</Label>
             <Input
               id="birth_date"
               type="date"
@@ -374,10 +376,10 @@ export function ProfileForm({ profile, onSuccess }: ProfileFormProps) {
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Guardando cambios...
+              {t('savingChanges')}
             </>
           ) : (
-            'Guardar cambios'
+            t('saveChanges')
           )}
         </Button>
       </div>

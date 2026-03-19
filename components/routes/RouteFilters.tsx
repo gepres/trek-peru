@@ -29,6 +29,8 @@ const PERU_REGIONS = [
 // Componente de filtros para rutas
 export function RouteFilters({ onFilterChange, onApplied, hideDateFilter = false }: RouteFiltersProps) {
   const t = useTranslations('routes');
+  const tF = useTranslations('routeFilters');
+  const tDiff = useTranslations('routes.difficulty');
 
   // Estados locales — solo se envían al padre al pulsar "Aplicar"
   const [selectedDifficulties, setSelectedDifficulties] = useState<Difficulty[]>([]);
@@ -145,13 +147,13 @@ export function RouteFilters({ onFilterChange, onApplied, hideDateFilter = false
       <div className="flex items-center justify-between">
         <h3 className="text-foreground text-xl font-bold flex items-center gap-2">
           <SlidersHorizontal className="h-5 w-5 text-primary" />
-          Filtros
+          {tF('title')}
         </h3>
         <button
           onClick={handleReset}
           className="text-xs text-muted-foreground hover:text-foreground uppercase font-semibold transition-colors"
         >
-          Reset
+          {tF('reset')}
         </button>
       </div>
 
@@ -160,7 +162,7 @@ export function RouteFilters({ onFilterChange, onApplied, hideDateFilter = false
         {/* ── Dificultad ── */}
         <div className="space-y-3">
           <p className="text-foreground text-sm font-semibold uppercase tracking-wider opacity-80">
-            Dificultad
+            {tF('difficulty')}
           </p>
           <div className="flex flex-wrap gap-2">
             {difficulties.map((d) => (
@@ -191,7 +193,7 @@ export function RouteFilters({ onFilterChange, onApplied, hideDateFilter = false
                 onClick={() => setSelectedRegions([])}
                 className="text-[11px] text-muted-foreground hover:text-foreground transition-colors"
               >
-                Limpiar ({selectedRegions.length})
+                {tF('clearRegions', { count: selectedRegions.length })}
               </button>
             )}
           </div>
@@ -228,7 +230,7 @@ export function RouteFilters({ onFilterChange, onApplied, hideDateFilter = false
         <div className="space-y-4">
           <div className="flex justify-between items-center text-sm">
             <p className="text-foreground font-semibold uppercase tracking-wider opacity-80">
-              Altitud Máxima
+              {tF('maxAltitude')}
             </p>
             <span className="text-primary font-bold">{maxAltitude.toLocaleString()} m</span>
           </div>
@@ -254,10 +256,10 @@ export function RouteFilters({ onFilterChange, onApplied, hideDateFilter = false
         <div className="space-y-4">
           <div className="flex justify-between items-center text-sm">
             <p className="text-foreground font-semibold uppercase tracking-wider opacity-80">
-              Duración
+              {tF('duration')}
             </p>
             <span className="text-primary font-bold">
-              Hasta {maxDuration} {maxDuration === 1 ? 'día' : 'días'}
+              {tF('upTo')} {maxDuration} {maxDuration === 1 ? tF('dayUnit') : tF('daysUnit')}
             </span>
           </div>
           <input
@@ -271,8 +273,8 @@ export function RouteFilters({ onFilterChange, onApplied, hideDateFilter = false
             style={sliderStyle(maxDuration, 1, 15)}
           />
           <div className="flex justify-between text-xs text-muted-foreground font-medium">
-            <span>1 día</span>
-            <span>15+ días</span>
+            <span>1 {tF('dayUnit')}</span>
+            <span>15+ {tF('daysUnit')}</span>
           </div>
         </div>
 
@@ -283,7 +285,7 @@ export function RouteFilters({ onFilterChange, onApplied, hideDateFilter = false
               <RouteIcon className="h-4 w-4" />
               {t('filters.byDistance') || 'Distancia'}
             </p>
-            <span className="text-primary font-bold">Hasta {maxDistance} km</span>
+            <span className="text-primary font-bold">{tF('upTo')} {maxDistance} km</span>
           </div>
           <input
             type="range"
@@ -310,7 +312,7 @@ export function RouteFilters({ onFilterChange, onApplied, hideDateFilter = false
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label htmlFor="date-from" className="text-xs text-muted-foreground">
-                Desde
+                {tF('from')}
               </Label>
               <Input
                 id="date-from"
@@ -322,7 +324,7 @@ export function RouteFilters({ onFilterChange, onApplied, hideDateFilter = false
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="date-to" className="text-xs text-muted-foreground">
-                Hasta
+                {tF('to')}
               </Label>
               <Input
                 id="date-to"
@@ -338,7 +340,7 @@ export function RouteFilters({ onFilterChange, onApplied, hideDateFilter = false
 
         {/* ── Botón Aplicar ── */}
         <Button className="w-full font-bold" onClick={handleApplyFilters}>
-          Aplicar Filtros
+          {tF('applyFilters')}
         </Button>
       </div>
     </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { Users } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
@@ -18,6 +19,7 @@ const POLL_INTERVAL_MS = 15_000;
 // que bypasea RLS, actualizable para cualquier tipo de usuario
 export function LiveCapacity({ routeId, maxCapacity, initialCount }: LiveCapacityProps) {
   const [count, setCount] = useState(initialCount);
+  const t = useTranslations('liveCapacity');
   const supabase = createClient();
 
   // Llama a la función get_route_attendee_count (SECURITY DEFINER → sin RLS)
@@ -56,17 +58,17 @@ export function LiveCapacity({ routeId, maxCapacity, initialCount }: LiveCapacit
     <div className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
       <Users className="h-5 w-5 text-primary mt-0.5 shrink-0" />
       <div className="flex-1 min-w-0">
-        <p className="text-xs text-muted-foreground">Capacidad</p>
+        <p className="text-xs text-muted-foreground">{t('capacity')}</p>
         <div className="flex items-center gap-2">
           <p className="font-medium">
             <span className={isFull ? 'text-red-500 font-bold' : ''}>{count}</span>
             {' / '}
             {maxCapacity}
-            <span className="text-sm font-normal text-muted-foreground"> inscritos</span>
+            <span className="text-sm font-normal text-muted-foreground"> {t('registered')}</span>
           </p>
           {isFull && (
             <span className="text-xs font-semibold text-white bg-red-500 px-1.5 py-0.5 rounded">
-              LLENO
+              {t('full')}
             </span>
           )}
         </div>

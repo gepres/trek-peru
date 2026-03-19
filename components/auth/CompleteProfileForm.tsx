@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { createClient } from '@/lib/supabase/client';
 import { completeProfileSchema, type CompleteProfileInput } from '@/lib/validations/user.schema';
 import { Button } from '@/components/ui/button';
@@ -19,6 +20,7 @@ interface CompleteProfileFormProps {
 // Formulario post-Google para capturar username y teléfono
 export function CompleteProfileForm({ locale, userId, defaultUsername = '' }: CompleteProfileFormProps) {
   const router = useRouter();
+  const t = useTranslations('auth');
   const supabase = createClient();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -51,9 +53,9 @@ export function CompleteProfileForm({ locale, userId, defaultUsername = '' }: Co
       if (updateError) {
         // Detectar username duplicado
         if (updateError.message.includes('duplicate') || updateError.message.includes('unique')) {
-          setError('Ese nombre de usuario ya está en uso. Elige otro.');
+          setError(t('usernameTaken'));
         } else {
-          setError('Error al guardar el perfil. Intenta de nuevo.');
+          setError(t('profileSaveError'));
         }
         return;
       }
@@ -62,7 +64,7 @@ export function CompleteProfileForm({ locale, userId, defaultUsername = '' }: Co
       router.push(`/${locale}/routes`);
       router.refresh();
     } catch {
-      setError('Error inesperado. Intenta de nuevo.');
+      setError(t('unexpectedError'));
     } finally {
       setIsLoading(false);
     }
@@ -72,7 +74,7 @@ export function CompleteProfileForm({ locale, userId, defaultUsername = '' }: Co
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       {/* Username */}
       <div className="space-y-2">
-        <Label htmlFor="username">Nombre de usuario</Label>
+        <Label htmlFor="username">{t('usernameLabel')}</Label>
         <Input
           id="username"
           type="text"
@@ -81,7 +83,7 @@ export function CompleteProfileForm({ locale, userId, defaultUsername = '' }: Co
           disabled={isLoading}
         />
         <p className="text-xs text-muted-foreground">
-          Letras, números, guiones y guiones bajos. Mínimo 3 caracteres.
+          {t('usernameHint')}
         </p>
         {errors.username && (
           <p className="text-sm text-red-600">{errors.username.message}</p>
@@ -90,7 +92,7 @@ export function CompleteProfileForm({ locale, userId, defaultUsername = '' }: Co
 
       {/* Phone */}
       <div className="space-y-2">
-        <Label htmlFor="phone">Teléfono de contacto</Label>
+        <Label htmlFor="phone">{t('contactPhone')}</Label>
         <Input
           id="phone"
           type="tel"
@@ -100,7 +102,7 @@ export function CompleteProfileForm({ locale, userId, defaultUsername = '' }: Co
           disabled={isLoading}
         />
         <p className="text-xs text-muted-foreground">
-          Formato: +51 seguido de 9 dígitos. Lo usará el organizador para coordinar la ruta.
+          {t('contactPhoneHint')}
         </p>
         {errors.phone && (
           <p className="text-sm text-red-600">{errors.phone.message}</p>
@@ -115,7 +117,7 @@ export function CompleteProfileForm({ locale, userId, defaultUsername = '' }: Co
       )}
 
       <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? 'Guardando...' : 'Completar perfil'}
+        {isLoading ? t('loading') : t('completeProfile')}
       </Button>
     </form>
   );

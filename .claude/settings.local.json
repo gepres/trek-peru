@@ -42,7 +42,18 @@
       "Bash(dir /b \"D:\\\\PROYECTOS\\\\gepres\\\\trek\\\\public\")",
       "Bash(dir /b \"D:\\\\PROYECTOS\\\\gepres\\\\trek\\\\public\\\\images\")",
       "Bash(node -e \"require\\(''fflate''\\); console.log\\(''fflate ok'', require\\(''fflate/package.json''\\).version\\)\")",
-      "Bash(node -e \"const { unzip } = require\\(''fflate''\\); console.log\\(''fflate ok, unzip type:'', typeof unzip\\)\")"
+      "Bash(node -e \"const { unzip } = require\\(''fflate''\\); console.log\\(''fflate ok, unzip type:'', typeof unzip\\)\")",
+      "Bash(npx next:*)",
+      "Bash(node -e \"const m = require\\(''./messages/es.json''\\); console.log\\(Object.keys\\(m\\).join\\(''\\\\n''\\)\\);\")",
+      "Bash(node -e \"const m = require\\(''./messages/es.json''\\); console.log\\(JSON.stringify\\(m.myAttendances, null, 2\\)\\);\")",
+      "Bash(node -e \"const m = require\\(''''./messages/es.json''''\\); console.log\\(JSON.stringify\\(m.routeForm, null, 2\\)\\);\")",
+      "Bash(node -e \"const m = require\\(''./messages/es.json''\\); console.log\\(JSON.stringify\\(m.attendees?.status, null, 2\\)\\); console.log\\(JSON.stringify\\(m.attendees?.payment, null, 2\\)\\);\")",
+      "Bash(node -e \"const m = require\\(''./messages/es.json''\\); console.log\\(JSON.stringify\\(m.routes.difficulty, null, 2\\)\\);\")",
+      "Bash(node -e \"const m = require\\(''./messages/en.json''\\); console.log\\(JSON.stringify\\(m.routeFilters, null, 2\\)\\);\")",
+      "Bash(node -e \"const m = require\\(''./messages/es.json''\\); console.log\\(JSON.stringify\\(m.routeFilters, null, 2\\)\\);\")",
+      "Bash(node -e \"const m = require\\(''''./messages/es.json''''\\); console.log\\(JSON.stringify\\(m.routes, null, 2\\)\\);\")",
+      "Bash(node -e \"JSON.parse\\(require\\(''fs''\\).readFileSync\\(''D:/PROYECTOS/gepres/trek/messages/es.json'',''utf8''\\)\\); console.log\\(''es.json: valid''\\)\")",
+      "Bash(node -e \"JSON.parse\\(require\\(''fs''\\).readFileSync\\(''D:/PROYECTOS/gepres/trek/messages/en.json'',''utf8''\\)\\); console.log\\(''en.json: valid''\\)\")"
     ]
   }
 }

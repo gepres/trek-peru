@@ -21,6 +21,8 @@ interface HeaderProps {
 // Componente de encabezado con navegación
 export function Header({ locale }: HeaderProps) {
   const t = useTranslations('navigation');
+  const tTheme = useTranslations('theme');
+  const tAuth = useTranslations('auth');
   const pathname = usePathname();
   const { user, profile, signOut } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -58,7 +60,7 @@ export function Header({ locale }: HeaderProps) {
   // Enlaces de navegación
   const navLinks = [
     { href: `/${locale}/routes`, label: t('routes') },
-    { href: `/${locale}/routes/completed`, label: 'Completadas' },
+    { href: `/${locale}/routes/completed`, label: t('completed') },
   ];
 
   // Enlaces autenticados
@@ -169,7 +171,7 @@ export function Header({ locale }: HeaderProps) {
               >
                 <Link href={`/${locale}/routes/new`}>
                   <Plus className="h-4 w-4 mr-1" />
-                  Crear Ruta
+                  {t('createRoute')}
                 </Link>
               </Button>
 
@@ -196,14 +198,14 @@ export function Header({ locale }: HeaderProps) {
                     : "text-foreground dark:text-white hover:bg-accent/10"
                 )}
               >
-                <Link href={`/${locale}/login`}>Iniciar Sesión</Link>
+                <Link href={`/${locale}/login`}>{tAuth('login')}</Link>
               </Button>
               <Button
                 asChild
                 size="sm"
                 className="h-9 px-4 rounded-xl bg-accent hover:bg-accent/90 text-white font-bold shadow-lg shadow-accent/20 transition-all"
               >
-                <Link href={`/${locale}/register`}>Registrarse</Link>
+                <Link href={`/${locale}/register`}>{tAuth('register')}</Link>
               </Button>
             </div>
           )}
@@ -284,7 +286,7 @@ export function Header({ locale }: HeaderProps) {
                   useWhiteText ? "text-white/50" : "text-muted-foreground"
                 )}
               >
-                Tema
+                {tTheme('theme')}
               </p>
               <div className="flex gap-2">
                 {/* Claro */}
@@ -302,7 +304,7 @@ export function Header({ locale }: HeaderProps) {
                   )}
                 >
                   <Sun className="h-4 w-4" />
-                  Claro
+                  {tTheme('light')}
                 </button>
                 {/* Oscuro */}
                 <button
@@ -319,7 +321,7 @@ export function Header({ locale }: HeaderProps) {
                   )}
                 >
                   <Moon className="h-4 w-4" />
-                  Oscuro
+                  {tTheme('dark')}
                 </button>
                 {/* Sistema */}
                 <button
@@ -336,7 +338,7 @@ export function Header({ locale }: HeaderProps) {
                   )}
                 >
                   <Monitor className="h-4 w-4" />
-                  Sistema
+                  {tTheme('system')}
                 </button>
               </div>
             </div>
@@ -394,7 +396,7 @@ export function Header({ locale }: HeaderProps) {
                   >
                     <Link href={`/${locale}/routes/new`} onClick={() => setMobileMenuOpen(false)}>
                       <Plus className="h-4 w-4 mr-2" />
-                      Crear Ruta
+                      {t('createRoute')}
                     </Link>
                   </Button>
 
@@ -428,7 +430,7 @@ export function Header({ locale }: HeaderProps) {
                     )}
                   >
                     <Link href={`/${locale}/login`} onClick={() => setMobileMenuOpen(false)}>
-                      Iniciar Sesión
+                      {tAuth('login')}
                     </Link>
                   </Button>
                   <Button
@@ -436,7 +438,7 @@ export function Header({ locale }: HeaderProps) {
                     className="w-full bg-accent hover:bg-accent/90 text-white font-bold"
                   >
                     <Link href={`/${locale}/register`} onClick={() => setMobileMenuOpen(false)}>
-                      Registrarse
+                      {tAuth('register')}
                     </Link>
                   </Button>
                 </>

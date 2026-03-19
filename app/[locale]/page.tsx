@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Header } from '@/components/layout/Header';
@@ -69,6 +70,8 @@ export async function generateMetadata({
 // Landing page principal
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  const t = await getTranslations('home');
+  const tNav = await getTranslations('navigation');
 
   return (
     <main className="min-h-screen flex flex-col">
@@ -88,10 +91,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <div className="relative z-10 flex flex-col items-center max-w-4xl px-4 text-center space-y-8 py-20">
           <div className="space-y-4">
             <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight drop-shadow-md">
-              Descubre el Perú
+              {t('heroTitle')}
             </h1>
             <p className="text-lg md:text-xl text-white/90 font-medium max-w-2xl mx-auto drop-shadow-sm">
-              Encuentra y únete a los mejores grupos de trekking en Perú. Desde el clásico Camino Inca hasta joyas escondidas.
+              {t('heroSubtitle')}
             </p>
           </div>
 
@@ -120,12 +123,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-white shadow-lg shadow-accent/20">
               <Link href={`/${locale}/routes`}>
-                Explorar Rutas
+                {t('exploreRoutes')}
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="dark:border-white/20 dark:text-white text-black dark:hover:bg-white/10">
               <Link href={`/${locale}/routes/new`}>
-                Crear Ruta
+                {t('createRoute')}
               </Link>
             </Button>
           </div>
@@ -137,10 +140,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <div className="max-w-[1440px] mx-auto px-4 md:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              ¿Por qué elegir TrekPeru?
+              {t('whyChoose')}
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              La plataforma más completa para trekkers en Perú
+              {t('mostComplete')}
             </p>
           </div>
 
@@ -150,9 +153,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                 <MapPin className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-bold mb-2 text-foreground">Mapas Interactivos</h3>
+              <h3 className="text-xl font-bold mb-2 text-foreground">{t('featureMaps')}</h3>
               <p className="text-muted-foreground text-sm">
-                Visualiza rutas en mapas detallados con waypoints, elevación y puntos de interés
+                {t('featureMapsDesc')}
               </p>
             </div>
 
@@ -161,9 +164,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors">
                 <Users className="h-8 w-8 text-accent" />
               </div>
-              <h3 className="text-xl font-bold mb-2 text-foreground">Comunidad Activa</h3>
+              <h3 className="text-xl font-bold mb-2 text-foreground">{t('featureCommunity')}</h3>
               <p className="text-muted-foreground text-sm">
-                Únete a grupos de trekking, comparte experiencias y conoce nuevos aventureros
+                {t('featureCommunityDesc')}
               </p>
             </div>
 
@@ -172,9 +175,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                 <Star className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-bold mb-2 text-foreground">Reseñas Verificadas</h3>
+              <h3 className="text-xl font-bold mb-2 text-foreground">{t('featureReviews')}</h3>
               <p className="text-muted-foreground text-sm">
-                Lee reseñas de otros trekkers y califica tus experiencias en las rutas
+                {t('featureReviewsDesc')}
               </p>
             </div>
 
@@ -183,9 +186,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors">
                 <Mountain className="h-8 w-8 text-accent" />
               </div>
-              <h3 className="text-xl font-bold mb-2 text-foreground">Rutas Verificadas</h3>
+              <h3 className="text-xl font-bold mb-2 text-foreground">{t('featureRoutes')}</h3>
               <p className="text-muted-foreground text-sm">
-                Todas las rutas incluyen información detallada de dificultad, duración y equipo necesario
+                {t('featureRoutesDesc')}
               </p>
             </div>
           </div>

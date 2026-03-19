@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ImageUpload } from '@/components/shared/ImageUpload';
 import { ImageGallery } from '@/components/shared/ImageGallery';
@@ -19,16 +20,18 @@ export function StepImages({
   images,
   setImages,
 }: StepImagesProps) {
+  const t = useTranslations('routeForm');
+
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <ImageIcon className="h-5 w-5" />
-            6. Imágenes
+            {t('step6Title')}
           </CardTitle>
           <CardDescription>
-            Agrega fotos para mostrar la belleza de tu ruta (opcional)
+            {t('step6Desc')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-8">
@@ -36,10 +39,10 @@ export function StepImages({
           <div className="space-y-3">
             <Label className="flex items-center gap-2 text-base">
               <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-              Imagen Destacada
+              {t('featuredImageLabel')}
             </Label>
             <p className="text-sm text-muted-foreground">
-              Esta imagen se mostrará como portada de tu ruta en los listados y búsquedas
+              {t('featuredImageHint')}
             </p>
             <ImageUpload
               bucket="route-images"
@@ -53,10 +56,10 @@ export function StepImages({
           <div className="space-y-3">
             <Label className="flex items-center gap-2 text-base">
               <ImageIcon className="h-4 w-4" />
-              Galería de Imágenes
+              {t('galleryLabel')}
             </Label>
             <p className="text-sm text-muted-foreground">
-              Agrega más fotos del paisaje, camino, campamentos, flora, fauna, etc.
+              {t('galleryHint')}
             </p>
             <ImageGallery
               images={images}
@@ -67,44 +70,44 @@ export function StepImages({
               editable={true}
             />
             <p className="text-xs text-muted-foreground">
-              Máximo 10 imágenes. Formatos soportados: JPG, PNG, WebP
+              {t('galleryMax')}
             </p>
           </div>
 
           {/* Info box */}
           <div className="p-4 rounded-lg bg-muted/50 border border-border">
-            <p className="text-sm font-medium mb-2">Consejos para buenas fotos:</p>
+            <p className="text-sm font-medium mb-2">{t('photoTips')}</p>
             <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
-              <li>Usa fotos de alta calidad y bien iluminadas</li>
-              <li>Muestra diferentes perspectivas de la ruta</li>
-              <li>Incluye fotos del paisaje, camino y puntos de interés</li>
-              <li>Evita fotos borrosas o de baja resolución</li>
-              <li>Las fotos atractivas aumentan el interés de los participantes</li>
+              <li>{t('photoTip1')}</li>
+              <li>{t('photoTip2')}</li>
+              <li>{t('photoTip3')}</li>
+              <li>{t('photoTip4')}</li>
+              <li>{t('photoTip5')}</li>
             </ul>
           </div>
 
           {/* Resumen */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="p-3 rounded-lg bg-muted/30 border border-border">
-              <p className="text-xs text-muted-foreground mb-1">Imagen Destacada</p>
+              <p className="text-xs text-muted-foreground mb-1">{t('featuredImageLabel')}</p>
               <p className="text-sm font-medium">
                 {featuredImage ? (
-                  <span className="text-green-600 dark:text-green-400">✓ Agregada</span>
+                  <span className="text-green-600 dark:text-green-400">✓ {t('addedStatus')}</span>
                 ) : (
-                  <span className="text-muted-foreground">No agregada</span>
+                  <span className="text-muted-foreground">{t('notAddedStatus')}</span>
                 )}
               </p>
             </div>
 
             <div className="p-3 rounded-lg bg-muted/30 border border-border">
-              <p className="text-xs text-muted-foreground mb-1">Galería</p>
+              <p className="text-xs text-muted-foreground mb-1">{t('galleryLabel')}</p>
               <p className="text-sm font-medium">
                 {images.length > 0 ? (
                   <span className="text-green-600 dark:text-green-400">
-                    {images.length} {images.length === 1 ? 'imagen' : 'imágenes'}
+                    {images.length} {images.length === 1 ? t('imageSingular') : t('imagePlural')}
                   </span>
                 ) : (
-                  <span className="text-muted-foreground">Ninguna imagen</span>
+                  <span className="text-muted-foreground">{t('noImages')}</span>
                 )}
               </p>
             </div>

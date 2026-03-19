@@ -15,6 +15,7 @@ import { DailyItinerary, type DayItinerary } from '../DailyItinerary';
 import { Clock, Calendar } from 'lucide-react';
 import { UseFormRegister, FieldErrors, UseFormWatch, UseFormSetValue } from 'react-hook-form';
 import { RouteFormInput } from '@/lib/validations/route.schema';
+import { useTranslations } from 'next-intl';
 
 interface StepBasicInfoProps {
   register: UseFormRegister<RouteFormInput>;
@@ -39,6 +40,9 @@ export function StepBasicInfo({
   dailyItinerary,
   setDailyItinerary,
 }: StepBasicInfoProps) {
+  const t = useTranslations('routeForm');
+  const tDiff = useTranslations('routes.difficulty');
+
   const regiones = [
     'Cusco', 'Ancash', 'Arequipa', 'Puno', 'Lima', 'Junín', 'Huánuco',
     'Ayacucho', 'Apurímac', 'Huancavelica', 'Cajamarca', 'La Libertad',
@@ -54,7 +58,7 @@ export function StepBasicInfo({
         const existing = dailyItinerary.find(d => d.day === i + 1);
         return existing || {
           day: i + 1,
-          title: `Día ${i + 1}`,
+          title: t('dayDefault', { day: i + 1 }),
           description: '',
         };
       });
@@ -67,21 +71,21 @@ export function StepBasicInfo({
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>1. Información Básica</CardTitle>
+          <CardTitle>{t('step1Title')}</CardTitle>
           <CardDescription>
-            Completa los datos esenciales de la ruta de trekking
+            {t('step1Desc')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Título */}
           <div className="space-y-2">
             <Label htmlFor="title">
-              Título de la Ruta <span className="text-destructive">*</span>
+              {t('routeTitle')} <span className="text-destructive">*</span>
             </Label>
             <Input
               id="title"
               {...register('title')}
-              placeholder="Ej: Camino Inca a Machu Picchu"
+              placeholder={t('routeTitlePlaceholder')}
               className={errors.title ? 'border-destructive' : ''}
             />
             {errors.title && (
@@ -92,17 +96,17 @@ export function StepBasicInfo({
           {/* Descripción */}
           <div className="space-y-2">
             <Label htmlFor="description">
-              Descripción <span className="text-destructive">*</span>
+              {t('description')} <span className="text-destructive">*</span>
             </Label>
             <Textarea
               id="description"
               {...register('description')}
-              placeholder="Describe la ruta, sus atractivos, nivel de dificultad y qué pueden esperar los participantes..."
+              placeholder={t('descriptionPlaceholder2')}
               rows={5}
               className={errors.description ? 'border-destructive' : ''}
             />
             <p className="text-xs text-muted-foreground">
-              Mínimo 20 caracteres. Sé descriptivo para atraer participantes.
+              {t('descriptionHint')}
             </p>
             {errors.description && (
               <p className="text-sm text-destructive">{errors.description.message}</p>
@@ -113,20 +117,20 @@ export function StepBasicInfo({
             {/* Dificultad */}
             <div className="space-y-2">
               <Label htmlFor="difficulty">
-                Dificultad <span className="text-destructive">*</span>
+                {t('difficulty')} <span className="text-destructive">*</span>
               </Label>
               <Select
                 defaultValue={watch('difficulty')}
                 onValueChange={(value: any) => setValue('difficulty', value)}
               >
                 <SelectTrigger className={errors.difficulty ? 'border-destructive' : ''}>
-                  <SelectValue placeholder="Selecciona dificultad" />
+                  <SelectValue placeholder={t('selectDifficulty')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="easy">Fácil</SelectItem>
-                  <SelectItem value="moderate">Moderado</SelectItem>
-                  <SelectItem value="hard">Difícil</SelectItem>
-                  <SelectItem value="extreme">Extremo</SelectItem>
+                  <SelectItem value="easy">{tDiff('easy')}</SelectItem>
+                  <SelectItem value="moderate">{tDiff('moderate')}</SelectItem>
+                  <SelectItem value="hard">{tDiff('hard')}</SelectItem>
+                  <SelectItem value="extreme">{tDiff('extreme')}</SelectItem>
                 </SelectContent>
               </Select>
               {errors.difficulty && (
@@ -137,14 +141,14 @@ export function StepBasicInfo({
             {/* Región */}
             <div className="space-y-2">
               <Label htmlFor="region">
-                Región <span className="text-destructive">*</span>
+                {t('region')} <span className="text-destructive">*</span>
               </Label>
               <Select
                 defaultValue={watch('region')}
                 onValueChange={(value) => setValue('region', value)}
               >
                 <SelectTrigger className={errors.region ? 'border-destructive' : ''}>
-                  <SelectValue placeholder="Selecciona región" />
+                  <SelectValue placeholder={t('selectRegion')} />
                 </SelectTrigger>
                 <SelectContent>
                   {regiones.map((region) => (
@@ -162,12 +166,12 @@ export function StepBasicInfo({
             {/* Provincia */}
             <div className="space-y-2">
               <Label htmlFor="province">
-                Provincia
+                {t('province')}
               </Label>
               <Input
                 id="province"
                 {...register('province')}
-                placeholder="Ej: Urubamba"
+                placeholder={t('provincePlaceholder')}
                 className={errors.province ? 'border-destructive' : ''}
               />
               {errors.province && (
@@ -178,7 +182,7 @@ export function StepBasicInfo({
 
           {/* Duración */}
           <div className="space-y-4">
-            <Label>Duración <span className="text-destructive">*</span></Label>
+            <Label>{t('durationLabel')} <span className="text-destructive">*</span></Label>
 
             {/* Selector de tipo */}
             <div className="flex gap-4">
@@ -193,10 +197,10 @@ export function StepBasicInfo({
               >
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <Clock className="h-5 w-5" />
-                  <span className="font-semibold">Por Horas</span>
+                  <span className="font-semibold">{t('byHours')}</span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Para caminatas de un día
+                  {t('byHoursDesc')}
                 </p>
               </button>
 
@@ -211,10 +215,10 @@ export function StepBasicInfo({
               >
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <Calendar className="h-5 w-5" />
-                  <span className="font-semibold">Por Días</span>
+                  <span className="font-semibold">{t('byDays')}</span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Para expediciones multi-día
+                  {t('byDaysDesc')}
                 </p>
               </button>
             </div>
@@ -222,7 +226,7 @@ export function StepBasicInfo({
             {/* Input de valor */}
             <div className="space-y-2">
               <Label htmlFor="duration_value">
-                {durationType === 'hours' ? 'Horas' : 'Días'}
+                {durationType === 'hours' ? t('hours') : t('days')}
               </Label>
               <Input
                 id="duration_value"
@@ -230,7 +234,7 @@ export function StepBasicInfo({
                 min="1"
                 {...register('duration_value', { valueAsNumber: true })}
                 onChange={(e) => handleDurationValueChange(Number(e.target.value))}
-                placeholder={durationType === 'hours' ? 'Ej: 6' : 'Ej: 4'}
+                placeholder={durationType === 'hours' ? t('hoursPlaceholder') : t('daysPlaceholder')}
                 className={errors.duration_value ? 'border-destructive' : ''}
               />
               {errors.duration_value && (

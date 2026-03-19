@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Heart } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils/cn';
 import { useToast } from '@/components/ui/use-toast';
@@ -32,6 +33,7 @@ export function FavoriteButton({
   const [count, setCount] = useState(initialCount);
   const [isLoading, setIsLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const t = useTranslations('favorites');
   const { toast } = useToast();
   const supabase = createClient();
 
@@ -63,8 +65,8 @@ export function FavoriteButton({
 
     if (!isAuthenticated) {
       toast({
-        title: 'Inicia sesión',
-        description: 'Debes iniciar sesión para guardar favoritos',
+        title: t('mustLogin'),
+        description: t('mustLoginDesc'),
         variant: 'destructive'
       });
       return;
@@ -90,8 +92,8 @@ export function FavoriteButton({
         setCount(prev => Math.max(0, prev - 1));
 
         toast({
-          title: 'Eliminado de favoritos',
-          description: 'La ruta se ha quitado de tus favoritos'
+          title: t('removedFromFavorites'),
+          description: t('removedFromFavoritesDesc')
         });
       } else {
         // Agregar a favoritos
@@ -115,8 +117,8 @@ export function FavoriteButton({
         setCount(prev => prev + 1);
 
         toast({
-          title: 'Agregado a favoritos',
-          description: 'La ruta se ha guardado en tus favoritos'
+          title: t('addedToFavorites'),
+          description: t('addedToFavoritesDesc')
         });
       }
 
@@ -125,7 +127,7 @@ export function FavoriteButton({
       console.error('Error toggling favorite:', error);
       toast({
         title: 'Error',
-        description: 'No se pudo actualizar favoritos',
+        description: t('couldNotUpdate'),
         variant: 'destructive'
       });
     } finally {
@@ -185,7 +187,7 @@ export function FavoriteButton({
           : 'hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950',
         className
       )}
-      title={isFavorited ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+      title={isFavorited ? t('removeTitle') : t('addTitle')}
     >
       <Heart
         className={cn(

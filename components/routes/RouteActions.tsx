@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { AttendeesList } from './AttendeesList';
 import { JoinRouteModal } from './JoinRouteModal';
@@ -43,6 +44,8 @@ export function RouteActions({
   routeTitle,
   routeDate,
 }: RouteActionsProps) {
+  const t = useTranslations('attendees');
+  const tc = useTranslations('common');
   const { attendance, loading, refetch } = useMyAttendance(routeId);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
@@ -70,7 +73,7 @@ export function RouteActions({
           .delete()
           .eq('id', attendance.id);
         if (error) throw error;
-        toast({ title: 'Solicitud cancelada', description: 'Puedes volver a inscribirte cuando quieras.' });
+        toast({ title: t('requestCancelled'), description: t('canRejoin') });
       } else {
         // Confirmado que cancela: dejar registro para historial del creador
         const { error } = await supabase
@@ -83,8 +86,8 @@ export function RouteActions({
           .eq('id', attendance.id);
         if (error) throw error;
         toast({
-          title: 'Inscripción cancelada',
-          description: 'Para volver a inscribirte contacta al creador de la ruta.',
+          title: t('registrationCancelled'),
+          description: t('contactCreatorToRejoin'),
         });
       }
 
@@ -92,7 +95,7 @@ export function RouteActions({
     } catch (err) {
       toast({
         title: 'Error',
-        description: err instanceof Error ? err.message : 'No se pudo cancelar la inscripción',
+        description: err instanceof Error ? err.message : t('cancelFailed'),
         variant: 'destructive',
       });
     } finally {
@@ -114,7 +117,7 @@ export function RouteActions({
           <CardContent className="pt-6">
             {loading ? (
               <Button className="w-full" size="lg" disabled>
-                Cargando...
+                {tc('loading')}
               </Button>
 
             ) : attendance?.status === 'cancelled' && attendance.cancelled_by === 'creator' ? (
@@ -122,10 +125,10 @@ export function RouteActions({
               <div className="space-y-3">
                 <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
                   <p className="text-sm font-semibold text-red-800 dark:text-red-300">
-                    ❌ El creador rechazó tu solicitud
+                    ❌ {t('creatorRejected')}
                   </p>
                   <p className="text-xs text-red-600 dark:text-red-400 mt-1">
-                    No puedes volver a inscribirte. Si crees que es un error, contáctate con el organizador.
+                    {t('cannotRejoin')}
                   </p>
                 </div>
                 {creatorPhone && (
@@ -136,7 +139,7 @@ export function RouteActions({
                   >
                     <Button variant="outline" className="w-full gap-2 border-green-300 text-green-700 hover:bg-green-50 dark:border-green-700 dark:text-green-400">
                       <MessageCircle className="h-4 w-4" />
-                      Contactar al organizador por WhatsApp
+                      {t('contactOrganizer')}
                     </Button>
                   </a>
                 )}
@@ -147,10 +150,10 @@ export function RouteActions({
               <div className="space-y-3">
                 <div className="p-4 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800">
                   <p className="text-sm font-semibold text-yellow-800 dark:text-yellow-300">
-                    Cancelaste tu inscripción confirmada
+                    {t('cancelledConfirmed')}
                   </p>
                   <p className="text-xs text-yellow-700 dark:text-yellow-400 mt-1">
-                    Para volver a inscribirte necesitas que el organizador reactive tu lugar.
+                    {t('needReactivation')}
                   </p>
                 </div>
                 {creatorPhone && (
@@ -163,7 +166,7 @@ export function RouteActions({
                   >
                     <Button variant="outline" className="w-full gap-2 border-green-300 text-green-700 hover:bg-green-50 dark:border-green-700 dark:text-green-400">
                       <MessageCircle className="h-4 w-4" />
-                      Pedir reactivación por WhatsApp
+                      {t('requestReactivation')}
                     </Button>
                   </a>
                 )}
@@ -174,15 +177,15 @@ export function RouteActions({
               <div className="space-y-3">
                 <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
                   <p className="text-sm text-blue-800 dark:text-blue-300 font-medium">
-                    {attendance.status === 'confirmed' && '✅ Tu inscripción ha sido confirmada'}
-                    {attendance.status === 'pending' && '⏳ Tu inscripción está pendiente de confirmación'}
-                    {attendance.status === 'waiting_list' && '🕐 Estás en la lista de espera'}
+                    {attendance.status === 'confirmed' && <>✅ {t('confirmedStatus')}</>}
+                    {attendance.status === 'pending' && <>⏳ {t('pendingStatus')}</>}
+                    {attendance.status === 'waiting_list' && <>🕐 {t('waitlistStatus')}</>}
                   </p>
                   {attendance.status === 'confirmed' && (
                     <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
-                      {attendance.payment_status === 'paid' && '💚 Pago recibido'}
-                      {attendance.payment_status === 'pending_payment' && '💛 Pago pendiente'}
-                      {attendance.payment_status === 'unpaid' && '💸 Sin registro de pago aún'}
+                      {attendance.payment_status === 'paid' && <>💚 {t('paymentReceived')}</>}
+                      {attendance.payment_status === 'pending_payment' && <>💛 {t('paymentPendingStatus')}</>}
+                      {attendance.payment_status === 'unpaid' && <>💸 {t('noPaymentRecord')}</>}
                     </p>
                   )}
                   {attendance.creator_message && (
@@ -199,7 +202,7 @@ export function RouteActions({
                   disabled={isCancelling}
                 >
                   <UserMinus className="h-5 w-5 mr-2" />
-                  {attendance.status === 'confirmed' ? 'Cancelar inscripción confirmada' : 'Cancelar solicitud'}
+                  {attendance.status === 'confirmed' ? t('cancelConfirmedBtn') : t('cancelRequest')}
                 </Button>
               </div>
 
@@ -211,8 +214,8 @@ export function RouteActions({
                 onClick={() => {
                   if (!currentUserId) {
                     toast({
-                      title: 'Debes iniciar sesión',
-                      description: 'Para inscribirte a una ruta debes tener una cuenta.',
+                      title: t('mustLogin'),
+                      description: t('mustLoginDesc'),
                       variant: 'destructive',
                     });
                     return;
@@ -222,7 +225,7 @@ export function RouteActions({
                 // disabled={!currentUserId}
               >
                 <UserPlus className="h-5 w-5 mr-2" />
-                {isFull ? 'Unirme a Lista de Espera' : 'Inscribirse a la Ruta'}
+                {isFull ? t('joinWaitingList') : t('joinRoute')}
               </Button>
             )}
           </CardContent>
@@ -234,7 +237,7 @@ export function RouteActions({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
-            Asistentes
+            {t('title')}
           </CardTitle>
         </CardHeader>
         <CardContent>

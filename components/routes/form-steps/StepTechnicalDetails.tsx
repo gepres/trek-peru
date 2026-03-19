@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { UseFormRegister, FieldErrors, UseFormSetValue, UseFormWatch, Controller, Control } from 'react-hook-form';
 import { RouteFormInput } from '@/lib/validations/route.schema';
+import { useTranslations } from 'next-intl';
 
 interface StepTechnicalDetailsProps {
   register: UseFormRegister<RouteFormInput>;
@@ -47,13 +48,6 @@ const TERRAIN_TYPES = [
   'Pradera',
 ];
 
-const TECHNICAL_LEVELS = [
-  { value: 'none', label: 'Sin requerimiento técnico' },
-  { value: 'basic', label: 'Básico - Caminata simple' },
-  { value: 'intermediate', label: 'Intermedio - Terreno irregular' },
-  { value: 'advanced', label: 'Avanzado - Uso de cuerdas/equipos' },
-  { value: 'expert', label: 'Experto - Alta montaña/técnico' },
-];
 
 // Tip con prompt de IA para obtener datos técnicos difíciles de conocer
 function AltitudeTip({
@@ -69,6 +63,7 @@ function AltitudeTip({
   region?: string;
   province?: string;
 }) {
+  const t = useTranslations('routeForm');
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -132,7 +127,7 @@ function AltitudeTip({
         <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400">
           <Lightbulb className="h-4 w-4 shrink-0" />
           <span className="text-sm font-medium">
-            ¿No sabes el desnivel o la altitud? Obtén los datos fácilmente
+            {t('helpPromptLabel')}
           </span>
         </div>
         {open
@@ -145,7 +140,7 @@ function AltitudeTip({
       {open && (
         <div className="px-4 pb-4 space-y-3 border-t border-amber-200 dark:border-amber-800/40 pt-3">
           <p className="text-xs text-amber-700 dark:text-amber-400">
-            Copia este prompt y pégalo en <strong>ChatGPT</strong>, <strong>Gemini</strong> o cualquier IA:
+            {t('copyPromptLabel')}
           </p>
 
           {/* Prompt copiable */}
@@ -161,8 +156,8 @@ function AltitudeTip({
               onClick={handleCopy}
             >
               {copied
-                ? <><Check className="h-3 w-3 text-green-600" /> Copiado</>
-                : <><Copy className="h-3 w-3" /> Copiar</>
+                ? <><Check className="h-3 w-3 text-green-600" /> {t('copied')}</>
+                : <><Copy className="h-3 w-3" /> {t('copy')}</>
               }
             </Button>
           </div>
@@ -170,7 +165,7 @@ function AltitudeTip({
           {/* Alternativa: Google */}
           <div className="flex items-center gap-2">
             <div className="h-px flex-1 bg-amber-200 dark:bg-amber-800/40" />
-            <span className="text-xs text-amber-600 dark:text-amber-500">o busca en Google</span>
+            <span className="text-xs text-amber-600 dark:text-amber-500">{t('orSearchGoogle')}</span>
             <div className="h-px flex-1 bg-amber-200 dark:bg-amber-800/40" />
           </div>
 
@@ -181,7 +176,7 @@ function AltitudeTip({
             className="flex items-center justify-center gap-2 text-xs text-amber-700 dark:text-amber-400 hover:underline"
           >
             <ExternalLink className="h-3 w-3" />
-            Buscar &quot;{nombre}&quot; en Google
+            {t('searchInGoogle', { name: nombre })}
           </a>
         </div>
       )}
@@ -198,6 +193,16 @@ export function StepTechnicalDetails({
   watch,
   control,
 }: StepTechnicalDetailsProps) {
+  const t = useTranslations('routeForm');
+
+  const TECHNICAL_LEVELS = [
+    { value: 'none', label: t('techNone') },
+    { value: 'basic', label: t('techBasic') },
+    { value: 'intermediate', label: t('techIntermediate') },
+    { value: 'advanced', label: t('techAdvanced') },
+    { value: 'expert', label: t('techExpert') },
+  ];
+
   const waterAvailable = watch('water_available');
   const shelters = watch('shelters');
   const mobileSignal = watch('mobile_signal');
@@ -238,9 +243,9 @@ export function StepTechnicalDetails({
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>4. Detalles Técnicos</CardTitle>
+          <CardTitle>{t('step4Title')}</CardTitle>
           <CardDescription>
-            Información adicional sobre la ruta (todos los campos son opcionales)
+            {t('step4Desc')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -250,7 +255,7 @@ export function StepTechnicalDetails({
             <div className="space-y-2">
               <Label htmlFor="distance" className="flex items-center gap-2">
                 <Ruler className="h-4 w-4" />
-                Distancia (km)
+                {t('distance')}
               </Label>
               <Input
                 id="distance"
@@ -258,7 +263,7 @@ export function StepTechnicalDetails({
                 min="0"
                 step="0.1"
                 {...register('distance', { valueAsNumber: true })}
-                placeholder="Ej: 12.5"
+                placeholder={t('distancePlaceholder')}
                 className={errors.distance ? 'border-destructive' : ''}
               />
               {errors.distance && (
@@ -270,14 +275,14 @@ export function StepTechnicalDetails({
             <div className="space-y-2">
               <Label htmlFor="elevation_gain" className="flex items-center gap-2">
                 <TrendingUp className="h-4 w-4 text-green-500" />
-                Desnivel + (m)
+                {t('elevationGain')}
               </Label>
               <Input
                 id="elevation_gain"
                 type="number"
                 min="0"
                 {...register('elevation_gain', { valueAsNumber: true })}
-                placeholder="Ej: 800"
+                placeholder={t('elevationGainPlaceholder')}
                 className={errors.elevation_gain ? 'border-destructive' : ''}
               />
               {errors.elevation_gain && (
@@ -289,14 +294,14 @@ export function StepTechnicalDetails({
             <div className="space-y-2">
               <Label htmlFor="elevation_loss" className="flex items-center gap-2">
                 <TrendingDown className="h-4 w-4 text-red-500" />
-                Desnivel - (m)
+                {t('elevationLoss')}
               </Label>
               <Input
                 id="elevation_loss"
                 type="number"
                 min="0"
                 {...register('elevation_loss', { valueAsNumber: true })}
-                placeholder="Ej: 600"
+                placeholder={t('elevationLossPlaceholder')}
                 className={errors.elevation_loss ? 'border-destructive' : ''}
               />
               {errors.elevation_loss && (
@@ -311,14 +316,14 @@ export function StepTechnicalDetails({
             <div className="space-y-2">
               <Label htmlFor="min_altitude" className="flex items-center gap-2">
                 <Mountain className="h-4 w-4" />
-                Altitud Mínima (m.s.n.m)
+                {t('minAltitude')}
               </Label>
               <Input
                 id="min_altitude"
                 type="number"
                 min="0"
                 {...register('min_altitude', { valueAsNumber: true })}
-                placeholder="Ej: 2800"
+                placeholder={t('minAltitudePlaceholder')}
                 className={errors.min_altitude ? 'border-destructive' : ''}
               />
               {errors.min_altitude && (
@@ -330,14 +335,14 @@ export function StepTechnicalDetails({
             <div className="space-y-2">
               <Label htmlFor="max_altitude" className="flex items-center gap-2">
                 <Mountain className="h-4 w-4" />
-                Altitud Máxima (m.s.n.m)
+                {t('maxAltitudeLabel')}
               </Label>
               <Input
                 id="max_altitude"
                 type="number"
                 min="0"
                 {...register('max_altitude', { valueAsNumber: true })}
-                placeholder="Ej: 4200"
+                placeholder={t('maxAltitudePlaceholder')}
                 className={errors.max_altitude ? 'border-destructive' : ''}
               />
               {errors.max_altitude && (
@@ -359,7 +364,7 @@ export function StepTechnicalDetails({
           <div className="space-y-2">
             <Label className="flex items-center gap-2">
               <Backpack className="h-4 w-4" />
-              Equipo Esencial
+              {t('essentialEquipment')}
             </Label>
             <EquipmentList
               value={equipment}
@@ -369,7 +374,7 @@ export function StepTechnicalDetails({
               }}
             />
             <p className="text-xs text-muted-foreground">
-              Lista de equipo recomendado o requerido para el trekking
+              {t('equipmentHint')}
             </p>
           </div>
 
@@ -377,17 +382,17 @@ export function StepTechnicalDetails({
           <div className="space-y-2">
             <Label htmlFor="emergency_contact" className="flex items-center gap-2">
               <AlertCircle className="h-4 w-4" />
-              Contacto de Emergencia
+              {t('emergencyContact')}
             </Label>
             <Input
               id="emergency_contact"
               type="text"
               {...register('emergency_contact')}
-              placeholder="Nombre y teléfono: Juan Pérez - +51 987 654 321"
+              placeholder={t('emergencyPlaceholder')}
               className={errors.emergency_contact ? 'border-destructive' : ''}
             />
             <p className="text-xs text-muted-foreground">
-              Persona de contacto en caso de emergencia durante la ruta
+              {t('emergencyHint')}
             </p>
             {errors.emergency_contact && (
               <p className="text-sm text-destructive">{errors.emergency_contact.message}</p>
@@ -401,10 +406,10 @@ export function StepTechnicalDetails({
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <Thermometer className="h-5 w-5 text-amber-500" />
-            Condiciones y Servicios
+            {t('conditionsTitle')}
           </CardTitle>
           <CardDescription>
-            Información sobre servicios disponibles en la ruta
+            {t('conditionsDesc')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -418,10 +423,10 @@ export function StepTechnicalDetails({
                 </div>
                 <div>
                   <Label htmlFor="water_available" className="font-medium cursor-pointer">
-                    Agua Disponible
+                    {t('waterAvailable')}
                   </Label>
                   <p className="text-xs text-muted-foreground">
-                    Fuentes de agua en la ruta
+                    {t('waterHint')}
                   </p>
                 </div>
               </div>
@@ -440,10 +445,10 @@ export function StepTechnicalDetails({
                 </div>
                 <div>
                   <Label htmlFor="shelters" className="font-medium cursor-pointer">
-                    Refugios
+                    {t('shelters')}
                   </Label>
                   <p className="text-xs text-muted-foreground">
-                    Refugios o zonas de descanso
+                    {t('sheltersHint')}
                   </p>
                 </div>
               </div>
@@ -462,10 +467,10 @@ export function StepTechnicalDetails({
                 </div>
                 <div>
                   <Label htmlFor="mobile_signal" className="font-medium cursor-pointer">
-                    Señal Móvil
+                    {t('mobileSignal')}
                   </Label>
                   <p className="text-xs text-muted-foreground">
-                    Cobertura de señal celular
+                    {t('mobileSignalHint')}
                   </p>
                 </div>
               </div>
@@ -483,7 +488,7 @@ export function StepTechnicalDetails({
             <div className="flex items-center justify-between gap-2 flex-wrap">
               <Label htmlFor="expected_weather" className="flex items-center gap-2">
                 <Thermometer className="h-4 w-4" />
-                Clima Esperado
+                {t('expectedWeather')}
               </Label>
               {/* Tabs de unidad de temperatura */}
               <div className="flex rounded-lg border overflow-hidden text-xs h-7">
@@ -519,7 +524,7 @@ export function StepTechnicalDetails({
                 type="text"
                 value={weatherText}
                 onChange={(e) => setWeatherText(e.target.value)}
-                placeholder={tempUnit === 'C' ? 'Ej: Soleado con nubes, 16-20' : 'Ej: Partly cloudy, 61-68'}
+                placeholder={tempUnit === 'C' ? t('weatherPlaceholderC') : t('weatherPlaceholderF')}
                 className={`rounded-r-none ${errors.expected_weather ? 'border-destructive' : ''}`}
               />
               {/* Sufijo de unidad — solo visual, la unidad se concatena al valor del form */}
@@ -530,7 +535,7 @@ export function StepTechnicalDetails({
 
             {/* Hint compacto */}
             <p className="text-xs text-muted-foreground">
-              Escribe el clima y temperatura — se guardará como{' '}
+              {t('weatherSaveHint')}{' '}
               <code className="px-1 py-0.5 rounded bg-muted font-mono">
                 {weatherText || (tempUnit === 'C' ? '16-20' : '61-68')}{tempUnit === 'C' ? '°C' : '°F'}
               </code>
@@ -541,7 +546,7 @@ export function StepTechnicalDetails({
           <div className="space-y-3">
             <Label className="flex items-center gap-2">
               <Footprints className="h-4 w-4" />
-              Tipo de Terreno
+              {t('terrainType')}
             </Label>
             <div className="flex flex-wrap gap-2">
               {TERRAIN_TYPES.map((terrain) => (
@@ -560,7 +565,7 @@ export function StepTechnicalDetails({
               ))}
             </div>
             <p className="text-xs text-muted-foreground">
-              Selecciona los tipos de terreno que encontrarás en la ruta
+              {t('terrainHint')}
             </p>
           </div>
 
@@ -568,7 +573,7 @@ export function StepTechnicalDetails({
           <div className="space-y-2">
             <Label htmlFor="technical_level" className="flex items-center gap-2">
               <Gauge className="h-4 w-4" />
-              Nivel Técnico Requerido
+              {t('technicalLevel')}
             </Label>
             <Controller
               control={control}
@@ -576,7 +581,7 @@ export function StepTechnicalDetails({
               render={({ field }) => (
                 <Select value={field.value || ''} onValueChange={field.onChange}>
                   <SelectTrigger className={errors.technical_level ? 'border-destructive' : ''}>
-                    <SelectValue placeholder="Selecciona el nivel técnico" />
+                    <SelectValue placeholder={t('selectTechnicalLevel')} />
                   </SelectTrigger>
                   <SelectContent>
                     {TECHNICAL_LEVELS.map((level) => (
@@ -589,7 +594,7 @@ export function StepTechnicalDetails({
               )}
             />
             <p className="text-xs text-muted-foreground">
-              Nivel de habilidades técnicas necesarias para completar la ruta
+              {t('technicalLevelHint')}
             </p>
           </div>
         </CardContent>
