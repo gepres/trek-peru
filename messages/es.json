@@ -81,13 +81,23 @@
     "linkExpires": "El enlace expira en 24 horas",
     "verifyEmailCorrect": "Verifica que el correo sea correcto",
     "backToRegister": "Volver al registro",
+    "backToLogin": "Volver al inicio de sesión",
+    "sendResetLink": "Enviar enlace de recuperación",
+    "resetLinkSent": "Enlace enviado",
+    "resetLinkSentDesc": "Hemos enviado instrucciones a tu correo para restablecer tu contraseña. Revisa también el spam.",
+    "newPassword": "Nueva contraseña",
+    "updatePassword": "Actualizar contraseña",
+    "passwordUpdated": "Contraseña actualizada",
+    "passwordUpdatedDesc": "Tu contraseña fue actualizada exitosamente. Ya puedes iniciar sesión.",
     "errors": {
       "invalidCredentials": "Correo o contraseña incorrectos. Verifica tus datos e intenta de nuevo.",
       "emailNotConfirmed": "Debes confirmar tu correo electrónico antes de iniciar sesión.",
       "tooManyRequests": "Demasiados intentos fallidos. Espera unos minutos antes de intentar de nuevo.",
       "userNotFound": "No existe una cuenta con ese correo electrónico.",
       "networkError": "Error de conexión. Verifica tu internet e intenta de nuevo.",
-      "genericLogin": "Ocurrió un error al iniciar sesión. Intenta de nuevo."
+      "genericLogin": "Ocurrió un error al iniciar sesión. Intenta de nuevo.",
+      "resetPasswordError": "Error al enviar el correo. Verifica tu dirección e intenta de nuevo.",
+      "updatePasswordError": "Error al actualizar la contraseña. El enlace puede haber expirado."
     }
   },
   "routes": {

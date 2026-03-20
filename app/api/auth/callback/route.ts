@@ -10,6 +10,7 @@ export async function GET(request: Request) {
   const code = searchParams.get('code');
   const next = searchParams.get('next') ?? '/';
   const locale = searchParams.get('locale') ?? 'es';
+  const type = searchParams.get('type');
 
   if (code) {
     const cookieStore = await cookies();
@@ -35,6 +36,11 @@ export async function GET(request: Request) {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error && data.user) {
+      // Flujo de recuperación de contraseña: redirigir directo a reset-password
+      if (type === 'recovery') {
+        return NextResponse.redirect(`${origin}${next}`);
+      }
+
       // Verificar si el perfil tiene username y phone (requerido tras login Google)
       const { data: profile } = await supabase
         .from('profiles')

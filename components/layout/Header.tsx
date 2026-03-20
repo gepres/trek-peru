@@ -389,6 +389,22 @@ export function Header({ locale }: HeaderProps) {
                     </div>
                   </div>
 
+                  {/* Profile - Mobile */}
+                  <Button
+                    asChild
+                    variant="outline"
+                    className={cn(
+                      "w-full",
+                      useWhiteText
+                        ? "border-white/20 text-white hover:bg-white/10"
+                        : "border-border text-foreground dark:border-white/20 dark:text-white"
+                    )}
+                  >
+                    <Link href={`/${locale}/profile`} onClick={() => setMobileMenuOpen(false)}>
+                      {t('profile')}
+                    </Link>
+                  </Button>
+
                   {/* Create Route - Mobile */}
                   <Button
                     asChild

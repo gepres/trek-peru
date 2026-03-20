@@ -33,7 +33,7 @@ export default async function LocaleLayout({
         <GlobalJsonLd locale={locale} />
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >

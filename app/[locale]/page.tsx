@@ -9,7 +9,6 @@ import { Search, Mountain, Users, MapPin, Star } from 'lucide-react';
 
 // URL base y OG image (imagen hero reutilizada como Open Graph)
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.vercel.app';
-// const HERO_OG_IMAGE ='https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=1200&h=630&fit=crop';
 
 const HERO_OG_IMAGE = `${APP_URL}/images/hero/hero-seo-trek-peru.png`;
 

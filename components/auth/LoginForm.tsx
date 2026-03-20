@@ -129,6 +129,14 @@ export function LoginForm({ locale }: LoginFormProps) {
         {errors.password && (
           <p className="text-sm text-red-600">{errors.password.message}</p>
         )}
+        <div className="flex justify-end">
+          <a
+            href={`/${locale}/forgot-password`}
+            className="text-sm text-primary hover:underline"
+          >
+            {t('forgotPassword')}
+          </a>
+        </div>
       </div>
 
       {/* Error general */}

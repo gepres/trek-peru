@@ -80,13 +80,23 @@
     "linkExpires": "The link expires in 24 hours",
     "verifyEmailCorrect": "Verify the email is correct",
     "backToRegister": "Back to register",
+    "backToLogin": "Back to login",
+    "sendResetLink": "Send reset link",
+    "resetLinkSent": "Link sent",
+    "resetLinkSentDesc": "We've sent instructions to your email to reset your password. Check your spam too.",
+    "newPassword": "New password",
+    "updatePassword": "Update password",
+    "passwordUpdated": "Password updated",
+    "passwordUpdatedDesc": "Your password was updated successfully. You can now sign in.",
     "errors": {
       "invalidCredentials": "Incorrect email or password. Check your credentials and try again.",
       "emailNotConfirmed": "You must confirm your email before signing in.",
       "tooManyRequests": "Too many failed attempts. Wait a few minutes and try again.",
       "userNotFound": "No account exists with that email.",
       "networkError": "Connection error. Check your internet and try again.",
-      "genericLogin": "An error occurred while signing in. Please try again."
+      "genericLogin": "An error occurred while signing in. Please try again.",
+      "resetPasswordError": "Error sending the email. Check your address and try again.",
+      "updatePasswordError": "Error updating the password. The link may have expired."
     }
   },
   "routes": {
