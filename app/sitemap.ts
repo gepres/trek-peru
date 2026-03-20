@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { MetadataRoute } from 'next';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.vercel.app';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.com';
   const supabase = await createClient();
 
   // Obtener todas las rutas publicadas

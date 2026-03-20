@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.vercel.app';
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.com';
 
 // Metadata dinámica bilingüe para el listado de rutas
 export async function generateMetadata({

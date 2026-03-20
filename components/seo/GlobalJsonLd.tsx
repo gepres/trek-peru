@@ -7,7 +7,7 @@ interface GlobalJsonLdProps {
 }
 
 export function GlobalJsonLd({ locale }: GlobalJsonLdProps) {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.vercel.app';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.com';
 
   const jsonLd = {
     '@context': 'https://schema.org',

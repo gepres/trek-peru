@@ -8,7 +8,7 @@ import { Footer } from '@/components/layout/Footer';
 import { Search, Mountain, Users, MapPin, Star } from 'lucide-react';
 
 // URL base y OG image (imagen hero reutilizada como Open Graph)
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.vercel.app';
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.com';
 
 const HERO_OG_IMAGE = `${APP_URL}/images/hero/hero-seo-trek-peru.png`;
 
