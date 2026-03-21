@@ -1,11 +1,20 @@
 import { createClient } from '@/lib/supabase/server';
 import { MetadataRoute } from 'next';
 
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://www.trek-peru.com';
+
+// new Date() se evalúa en build time (no en cada request),
+// por lo que refleja la fecha real del último deploy en Vercel
+const DEPLOY_DATE = new Date();
+
+// Páginas estáticas indexables (excluye login, register, dashboard — son noindex)
+// /routes y /routes/completed usan lastModified dinámico basado en la ruta más reciente
+const STATIC_PATHS = ['', '/about', '/contact', '/terms', '/privacy'];
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.com';
   const supabase = await createClient();
 
-  // Obtener todas las rutas publicadas
+  // Obtener rutas publicadas con timestamp real de actualización
   const { data: routes } = await supabase
     .from('routes')
     .select('slug, updated_at, created_at')
@@ -13,79 +22,113 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .eq('visibility', 'public')
     .order('updated_at', { ascending: false });
 
-  // Páginas estáticas
-  const staticPages: MetadataRoute.Sitemap = [
+  // Fecha de la ruta más reciente — refleja cuándo cambió el listado
+  const latestRouteDate = routes?.[0]
+    ? new Date(routes[0].updated_at || routes[0].created_at)
+    : DEPLOY_DATE;
+
+  // Rutas dinámicas con timestamp real de la DB
+  const routeEntries: MetadataRoute.Sitemap = (routes ?? []).flatMap((route) => {
+    const lastModified = new Date(route.updated_at || route.created_at);
+    return [
+      {
+        url: `${BASE_URL}/es/routes/${route.slug}`,
+        lastModified,
+        alternates: {
+          languages: {
+            es: `${BASE_URL}/es/routes/${route.slug}`,
+            en: `${BASE_URL}/en/routes/${route.slug}`,
+            'x-default': `${BASE_URL}/es/routes/${route.slug}`,
+          },
+        },
+      },
+      {
+        url: `${BASE_URL}/en/routes/${route.slug}`,
+        lastModified,
+        alternates: {
+          languages: {
+            es: `${BASE_URL}/es/routes/${route.slug}`,
+            en: `${BASE_URL}/en/routes/${route.slug}`,
+            'x-default': `${BASE_URL}/es/routes/${route.slug}`,
+          },
+        },
+      },
+    ];
+  });
+
+  // Páginas de listado de rutas — lastModified basado en la ruta más reciente
+  const routeListingEntries: MetadataRoute.Sitemap = [
     {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 1,
+      url: `${BASE_URL}/es/routes`,
+      lastModified: latestRouteDate,
+      alternates: {
+        languages: {
+          es: `${BASE_URL}/es/routes`,
+          en: `${BASE_URL}/en/routes`,
+          'x-default': `${BASE_URL}/es/routes`,
+        },
+      },
     },
     {
-      url: `${baseUrl}/es`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 1,
+      url: `${BASE_URL}/en/routes`,
+      lastModified: latestRouteDate,
+      alternates: {
+        languages: {
+          es: `${BASE_URL}/es/routes`,
+          en: `${BASE_URL}/en/routes`,
+          'x-default': `${BASE_URL}/es/routes`,
+        },
+      },
     },
     {
-      url: `${baseUrl}/en`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 1,
+      url: `${BASE_URL}/es/routes/completed`,
+      lastModified: latestRouteDate,
+      alternates: {
+        languages: {
+          es: `${BASE_URL}/es/routes/completed`,
+          en: `${BASE_URL}/en/routes/completed`,
+          'x-default': `${BASE_URL}/es/routes/completed`,
+        },
+      },
     },
     {
-      url: `${baseUrl}/es/routes`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/en/routes`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/es/login`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/en/login`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/es/register`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/en/register`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
+      url: `${BASE_URL}/en/routes/completed`,
+      lastModified: latestRouteDate,
+      alternates: {
+        languages: {
+          es: `${BASE_URL}/es/routes/completed`,
+          en: `${BASE_URL}/en/routes/completed`,
+          'x-default': `${BASE_URL}/es/routes/completed`,
+        },
+      },
     },
   ];
 
-  // Páginas dinámicas de rutas
-  const routePages: MetadataRoute.Sitemap = routes?.flatMap(route => [
+  // Páginas estáticas — lastModified basado en el último deploy
+  const staticEntries: MetadataRoute.Sitemap = STATIC_PATHS.flatMap((path) => [
     {
-      url: `${baseUrl}/es/routes/${route.slug}`,
-      lastModified: new Date(route.updated_at || route.created_at),
-      changeFrequency: 'weekly' as const,
-      priority: 0.8,
+      url: `${BASE_URL}/es${path}`,
+      lastModified: DEPLOY_DATE,
+      alternates: {
+        languages: {
+          es: `${BASE_URL}/es${path}`,
+          en: `${BASE_URL}/en${path}`,
+          'x-default': `${BASE_URL}/es${path}`,
+        },
+      },
     },
     {
-      url: `${baseUrl}/en/routes/${route.slug}`,
-      lastModified: new Date(route.updated_at || route.created_at),
-      changeFrequency: 'weekly' as const,
-      priority: 0.8,
+      url: `${BASE_URL}/en${path}`,
+      lastModified: DEPLOY_DATE,
+      alternates: {
+        languages: {
+          es: `${BASE_URL}/es${path}`,
+          en: `${BASE_URL}/en${path}`,
+          'x-default': `${BASE_URL}/es${path}`,
+        },
+      },
     },
-  ]) || [];
+  ]);
 
-  return [...staticPages, ...routePages];
+  return [...staticEntries, ...routeListingEntries, ...routeEntries];
 }

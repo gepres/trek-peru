@@ -1,4 +1,4 @@
-// Schema.org global: Organization + WebSite
+// Schema.org global: TravelAgency + WebSite
 // Se incluye en el layout de locale para todas las páginas públicas.
 // Mejora el conocimiento del grafo de entidades en Google y citabilidad en motores de IA.
 
@@ -7,14 +7,14 @@ interface GlobalJsonLdProps {
 }
 
 export function GlobalJsonLd({ locale }: GlobalJsonLdProps) {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.com';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://www.trek-peru.com';
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
-      // Entidad Organization — identifica quién es TrekPeru
+      // TravelAgency — identifica a TrekPeru como agencia de turismo de aventura
       {
-        '@type': 'Organization',
+        '@type': 'TravelAgency',
         '@id': `${baseUrl}/#organization`,
         name: 'TrekPeru',
         url: baseUrl,
@@ -28,12 +28,24 @@ export function GlobalJsonLd({ locale }: GlobalJsonLdProps) {
         },
         description:
           'Plataforma colaborativa para descubrir, compartir y organizar rutas de trekking en Perú.',
+        email: 'contacto@trek-peru.com',
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: 'Cusco',
+          addressRegion: 'Cusco',
+          addressCountry: 'PE',
+        },
         contactPoint: {
           '@type': 'ContactPoint',
-          email: 'genaropretill@gmail.com',
-          contactType: 'customer support',
+          email: 'contacto@trek-peru.com',
+          // "customer service" es el valor requerido por Google (no "customer support")
+          contactType: 'customer service',
           availableLanguage: ['Spanish', 'English'],
         },
+        sameAs: [
+          'https://www.instagram.com/trekperu',
+          'https://www.facebook.com/trekperu',
+        ],
         founder: {
           '@type': 'Person',
           name: 'Genaro Pretill Escobar',
@@ -53,7 +65,7 @@ export function GlobalJsonLd({ locale }: GlobalJsonLdProps) {
         ],
       },
 
-      // Entidad WebSite — permite el sitelinks searchbox en Google
+      // WebSite — habilita el sitelinks searchbox en Google
       {
         '@type': 'WebSite',
         '@id': `${baseUrl}/#website`,
@@ -64,7 +76,6 @@ export function GlobalJsonLd({ locale }: GlobalJsonLdProps) {
         publisher: {
           '@id': `${baseUrl}/#organization`,
         },
-        // SearchAction habilita el cuadro de búsqueda en resultados de Google
         potentialAction: {
           '@type': 'SearchAction',
           target: {

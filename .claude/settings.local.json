@@ -53,7 +53,8 @@
       "Bash(node -e \"const m = require\\(''./messages/es.json''\\); console.log\\(JSON.stringify\\(m.routeFilters, null, 2\\)\\);\")",
       "Bash(node -e \"const m = require\\(''''./messages/es.json''''\\); console.log\\(JSON.stringify\\(m.routes, null, 2\\)\\);\")",
       "Bash(node -e \"JSON.parse\\(require\\(''fs''\\).readFileSync\\(''D:/PROYECTOS/gepres/trek/messages/es.json'',''utf8''\\)\\); console.log\\(''es.json: valid''\\)\")",
-      "Bash(node -e \"JSON.parse\\(require\\(''fs''\\).readFileSync\\(''D:/PROYECTOS/gepres/trek/messages/en.json'',''utf8''\\)\\); console.log\\(''en.json: valid''\\)\")"
+      "Bash(node -e \"JSON.parse\\(require\\(''fs''\\).readFileSync\\(''D:/PROYECTOS/gepres/trek/messages/en.json'',''utf8''\\)\\); console.log\\(''en.json: valid''\\)\")",
+      "Bash(cd:*)"
     ]
   }
 }

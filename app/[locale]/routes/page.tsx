@@ -7,7 +7,10 @@ import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.com';
+// ISR: reconstruir la página de rutas cada 5 minutos para datos frescos
+export const revalidate = 300;
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://www.trek-peru.com';
 
 // Metadata dinámica bilingüe para el listado de rutas
 export async function generateMetadata({
@@ -18,7 +21,10 @@ export async function generateMetadata({
   const { locale } = await params;
   const isEs = locale === 'es';
 
-  const title = isEs ? 'Rutas de Trekking en Perú' : 'Trekking Routes in Peru';
+  // Keyword al inicio, marca al final — max 60 chars
+  const title = isEs
+    ? 'Explorar Rutas de Trekking en Perú | TrekPeru'
+    : 'Explore Trekking Routes in Peru | TrekPeru';
   const description = isEs
     ? 'Explora cientos de rutas de trekking verificadas en Perú. Filtra por dificultad, región y fecha. Camino Inca, Salkantay, Huaraz y más destinos de aventura.'
     : 'Explore hundreds of verified trekking routes in Peru. Filter by difficulty, region and date. Inca Trail, Salkantay, Huaraz and more adventure destinations.';

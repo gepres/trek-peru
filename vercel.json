@@ -1,0 +1,10 @@
+{
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "trek-peru.com" }],
+      "destination": "https://www.trek-peru.com/$1",
+      "permanent": true
+    }
+  ]
+}

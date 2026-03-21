@@ -39,7 +39,7 @@ interface RouteJsonLdProps {
 }
 
 export function RouteJsonLd({ route, locale }: RouteJsonLdProps) {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.com';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://www.trek-peru.com';
 
   // Formatear duración en ISO 8601
   const formatDuration = () => {

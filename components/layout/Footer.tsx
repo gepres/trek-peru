@@ -39,7 +39,7 @@ export function Footer({ locale }: FooterProps) {
 
           {/* Enlaces rápidos */}
           <div>
-            <h3 className="font-semibold mb-4 text-white">{t('quickLinks')}</h3>
+            <p className="font-semibold mb-4 text-white">{t('quickLinks')}</p>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href={`/${locale}/routes`} className="text-primary-foreground/70 hover:text-white transition-colors">
@@ -61,7 +61,7 @@ export function Footer({ locale }: FooterProps) {
 
           {/* Información */}
           <div>
-            <h3 className="font-semibold mb-4 text-white">{t('information')}</h3>
+            <p className="font-semibold mb-4 text-white">{t('information')}</p>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href={`/${locale}/about`} className="text-primary-foreground/70 hover:text-white transition-colors">

@@ -58,10 +58,11 @@ export async function generateMetadata({
   const description = route.description?.substring(0, 160) ||
     `Ruta de trekking ${difficultyLabels[route.difficulty] || ''} en ${route.region || 'Perú'}. ${route.distance ? `${route.distance}km` : ''} ${route.max_altitude ? `hasta ${route.max_altitude}m de altitud` : ''}`.trim();
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.com';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://www.trek-peru.com';
 
   return {
-    title: `${route.title} | TrekPeru`,
+    // Patrón: [Nombre de ruta] — Ruta de Trekking | TrekPeru
+    title: `${route.title} — Ruta de Trekking | TrekPeru`,
     description,
     keywords: [
       'trekking',
@@ -99,6 +100,7 @@ export async function generateMetadata({
       languages: {
         'es': `${baseUrl}/es/routes/${id}`,
         'en': `${baseUrl}/en/routes/${id}`,
+        'x-default': `${baseUrl}/es/routes/${id}`,
       },
     },
   };

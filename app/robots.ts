@@ -8,10 +8,10 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
+        // /_next/ excluido: Googlebot necesita CSS y JS para renderizar páginas
         disallow: [
           '/api/',
           '/auth/',
-          '/_next/',
           '/private/',
         ],
       },

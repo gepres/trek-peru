@@ -1,16 +1,18 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { getTranslations } from 'next-intl/server';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Search, Mountain, Users, MapPin, Star } from 'lucide-react';
+import { createClient } from '@/lib/supabase/server';
 
-// URL base y OG image (imagen hero reutilizada como Open Graph)
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.com';
+// ISR: reconstruir la página como máximo cada hora
+export const revalidate = 3600;
 
-const HERO_OG_IMAGE = `${APP_URL}/images/hero/hero-seo-trek-peru.png`;
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://www.trek-peru.com';
+const HERO_OG_IMAGE = `${BASE_URL}/images/hero/hero-seo-trek-peru.png`;
 
 // Metadata dinámica bilingüe para la homepage
 export async function generateMetadata({
@@ -21,11 +23,14 @@ export async function generateMetadata({
   const { locale } = await params;
   const isEs = locale === 'es';
 
-  const title = isEs ? 'TrekPeru — Descubre el Perú' : 'TrekPeru — Discover Peru';
+  // Keyword al inicio, marca al final — max 60 chars
+  const title = isEs
+    ? 'Rutas de Trekking en Perú — TrekPeru'
+    : 'Trekking Routes in Peru — TrekPeru';
   const description = isEs
     ? 'Descubre y únete a los mejores grupos de trekking en todo el Perú. Costa, sierra y selva con cientos de rutas verificadas y mapas interactivos.'
     : 'Discover and join the best trekking groups throughout Peru. Coast, mountains, and jungle with hundreds of verified routes and interactive maps.';
-  const url = `${APP_URL}/${locale}`;
+  const url = `${BASE_URL}/${locale}`;
 
   return {
     title,
@@ -33,13 +38,12 @@ export async function generateMetadata({
     keywords: isEs
       ? ['trekking Perú', 'rutas trekking', 'Camino Inca', 'Salkantay', 'Ausangate', 'senderismo Perú', 'grupos trekking', 'turismo aventura Perú', 'montañismo Andes']
       : ['trekking Peru', 'hiking routes Peru', 'Inca Trail', 'Salkantay', 'Ausangate', 'Peru adventure tourism', 'trekking groups Peru', 'Andes hiking'],
-    // hreflang: indica a Google las versiones de idioma de esta página
     alternates: {
       canonical: url,
       languages: {
-        es: `${APP_URL}/es`,
-        en: `${APP_URL}/en`,
-        'x-default': `${APP_URL}/es`,
+        es: `${BASE_URL}/es`,
+        en: `${BASE_URL}/en`,
+        'x-default': `${BASE_URL}/`,
       },
     },
     openGraph: {
@@ -59,7 +63,6 @@ export async function generateMetadata({
       ],
     },
     twitter: {
-      card: 'summary_large_image',
       title,
       description,
       images: [HERO_OG_IMAGE],
@@ -73,19 +76,59 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const t = await getTranslations('home');
   const tNav = await getTranslations('navigation');
 
+  // Obtener rutas destacadas para el ItemList schema
+  const supabase = await createClient();
+  const { data: featuredRoutes } = await supabase
+    .from('routes')
+    .select('slug, title')
+    .eq('status', 'published')
+    .eq('visibility', 'public')
+    .order('created_at', { ascending: false })
+    .limit(6);
+
+  // ItemList schema para rutas destacadas — mejora la visibilidad en Google
+  const itemListSchema = featuredRoutes && featuredRoutes.length > 0
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: locale === 'es'
+          ? 'Rutas de Trekking Destacadas en Perú'
+          : 'Featured Trekking Routes in Peru',
+        url: `${BASE_URL}/${locale}/routes`,
+        itemListElement: featuredRoutes.map((route, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          url: `${BASE_URL}/${locale}/routes/${route.slug}`,
+          name: route.title,
+        })),
+      }
+    : null;
+
   return (
     <main className="min-h-screen flex flex-col">
+      {itemListSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+        />
+      )}
+
       <Header locale={locale} />
 
-      {/* Hero Section con background gradiente */}
-      <section
-        className="relative w-full min-h-[500px] flex items-center justify-center bg-cover bg-center overflow-hidden pt-16"
-        style={{
-          backgroundImage: `linear-gradient(rgba(6, 76, 57, 0.4) 0%, hsl(var(--background)) 100%), url('/images/hero/HERO-BACKGROUND-TREK.jpg')`,
-        }}
-      >
-        {/* Gradiente overlay adicional */}
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-black/30"></div>
+      {/* Hero Section — Next.js Image para LCP óptimo (WebP/AVIF automático + preload) */}
+      <section className="relative w-full min-h-[500px] flex items-center justify-center overflow-hidden pt-16">
+        <Image
+          src="/images/hero/HERO-BACKGROUND-TREK.jpg"
+          alt="Trekking en los Andes del Perú — paisaje de montañas nevadas"
+          fill
+          priority
+          quality={75}
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        {/* Overlay gradiente */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[rgba(6,76,57,0.4)] via-transparent to-background" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-black/30" />
 
         {/* Contenido Hero */}
         <div className="relative z-10 flex flex-col items-center max-w-4xl px-4 text-center space-y-8 py-20">
@@ -97,27 +140,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               {t('heroSubtitle')}
             </p>
           </div>
-
-          {/* Barra de búsqueda */}
-          {/* <div className="w-full max-w-xl">
-            <div className="relative flex items-center w-full h-14 md:h-16 glass-dark border border-white/10 rounded-2xl shadow-2xl focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all">
-              <div className="pl-5 text-gray-400">
-                <Search className="h-5 w-5" />
-              </div>
-              <Input
-                className="w-full h-full bg-transparent border-none text-white placeholder-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 px-4 text-base"
-                placeholder="Buscar Camino Inca, Salkantay, Ausangate..."
-                type="text"
-              />
-              <div className="pr-2">
-                <Button
-                  className="h-10 md:h-12 px-6 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold transition-colors"
-                >
-                  Buscar
-                </Button>
-              </div>
-            </div>
-          </div> */}
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">

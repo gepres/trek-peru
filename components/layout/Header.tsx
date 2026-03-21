@@ -117,7 +117,8 @@ export function Header({ locale }: HeaderProps) {
           <div className="size-8 text-primary bg-white rounded-lg flex items-center justify-center">
             <Image
               src="/images/logo/logo-trek2.svg"
-              alt="Logo"
+              alt="TrekPeru — Plataforma de trekking en Perú"
+              loading="eager"
               width={34}
               height={34}
             />
