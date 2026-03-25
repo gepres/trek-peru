@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -6,6 +7,7 @@ import { locales } from '@/i18n';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import { GlobalJsonLd } from '@/components/seo/GlobalJsonLd';
+import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://www.trek-peru.com';
 
@@ -45,6 +47,10 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body>
+        {/* GA4: Suspense requerido por useSearchParams en GoogleAnalytics */}
+        <Suspense fallback={null}>
+          <GoogleAnalytics />
+        </Suspense>
         <GlobalJsonLd locale={locale} />
         <ThemeProvider
           attribute="class"
