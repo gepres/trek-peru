@@ -5,7 +5,7 @@ import { getTranslations } from 'next-intl/server';
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { Search, Mountain, Users, MapPin, Star } from 'lucide-react';
+import { Search, Mountain, Users, MapPin, Star, ArrowRight } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 
 // ISR: reconstruir la página como máximo cada hora
@@ -75,6 +75,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   const t = await getTranslations('home');
   const tNav = await getTranslations('navigation');
+  const tFeatures = await getTranslations('features.common');
 
   // Obtener rutas destacadas para el ItemList schema
   const supabase = await createClient();
@@ -170,49 +171,28 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Feature 1 */}
-            <div className="group flex flex-col items-center text-center p-6 rounded-2xl border border-border bg-card hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300">
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                <MapPin className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold mb-2 text-foreground">{t('featureMaps')}</h3>
-              <p className="text-muted-foreground text-sm">
-                {t('featureMapsDesc')}
-              </p>
-            </div>
-
-            {/* Feature 2 */}
-            <div className="group flex flex-col items-center text-center p-6 rounded-2xl border border-border bg-card hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300">
-              <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors">
-                <Users className="h-8 w-8 text-accent" />
-              </div>
-              <h3 className="text-xl font-bold mb-2 text-foreground">{t('featureCommunity')}</h3>
-              <p className="text-muted-foreground text-sm">
-                {t('featureCommunityDesc')}
-              </p>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="group flex flex-col items-center text-center p-6 rounded-2xl border border-border bg-card hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300">
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                <Star className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold mb-2 text-foreground">{t('featureReviews')}</h3>
-              <p className="text-muted-foreground text-sm">
-                {t('featureReviewsDesc')}
-              </p>
-            </div>
-
-            {/* Feature 4 */}
-            <div className="group flex flex-col items-center text-center p-6 rounded-2xl border border-border bg-card hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300">
-              <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors">
-                <Mountain className="h-8 w-8 text-accent" />
-              </div>
-              <h3 className="text-xl font-bold mb-2 text-foreground">{t('featureRoutes')}</h3>
-              <p className="text-muted-foreground text-sm">
-                {t('featureRoutesDesc')}
-              </p>
-            </div>
+            {[
+              { slug: 'interactive-maps', Icon: MapPin, title: t('featureMaps'), desc: t('featureMapsDesc'), color: 'primary' },
+              { slug: 'community', Icon: Users, title: t('featureCommunity'), desc: t('featureCommunityDesc'), color: 'accent' },
+              { slug: 'reviews', Icon: Star, title: t('featureReviews'), desc: t('featureReviewsDesc'), color: 'primary' },
+              { slug: 'routes', Icon: Mountain, title: t('featureRoutes'), desc: t('featureRoutesDesc'), color: 'accent' },
+            ].map(({ slug, Icon, title, desc, color }) => (
+              <Link
+                key={slug}
+                href={`/${locale}/features/${slug}`}
+                className="group flex flex-col items-center text-center p-6 rounded-2xl border border-border bg-card hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300"
+              >
+                <div className={`w-16 h-16 rounded-full ${color === 'primary' ? 'bg-primary/10 group-hover:bg-primary/20' : 'bg-accent/10 group-hover:bg-accent/20'} flex items-center justify-center mb-4 transition-colors group-hover:scale-110`}>
+                  <Icon className={`h-8 w-8 ${color === 'primary' ? 'text-primary' : 'text-accent'}`} />
+                </div>
+                <h3 className="text-xl font-bold mb-2 text-foreground">{title}</h3>
+                <p className="text-muted-foreground text-sm mb-4">{desc}</p>
+                <span className={`inline-flex items-center gap-1 text-sm font-semibold ${color === 'primary' ? 'text-primary' : 'text-accent'} opacity-0 group-hover:opacity-100 transition-opacity`}>
+                  {tFeatures('learnMore')}
+                  <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
