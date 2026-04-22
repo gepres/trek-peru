@@ -199,12 +199,13 @@ export function ImageGallery({
         open={selectedImageIndex !== null}
         onOpenChange={(open) => !open && setSelectedImageIndex(null)}
       >
-        <DialogContent className="max-w-5xl p-0 bg-black/95">
+        <DialogContent className="max-w-5xl w-[calc(100vw-1rem)] sm:w-full p-0 bg-black/95 max-h-[95vh] overflow-hidden">
           <DialogTitle className="sr-only">Galería de imágenes</DialogTitle>
           {selectedImageIndex !== null && (
             <div className="relative">
-              {/* Imagen principal */}
-              <div className="relative aspect-video w-full min-h-[60vh] bg-black">
+              {/* Imagen principal — en mobile usa altura de viewport;
+                  en desktop mantiene aspect-video con min-h-[60vh] */}
+              <div className="relative w-full h-[80vh] sm:h-auto sm:aspect-video sm:min-h-[60vh] bg-black">
                 <Image
                   src={images[selectedImageIndex]}
                   alt={`Imagen ${selectedImageIndex + 1}`}
@@ -221,24 +222,24 @@ export function ImageGallery({
                   <Button
                     variant="secondary"
                     size="icon"
-                    className="absolute left-4 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full shadow-xl"
+                    className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 h-10 w-10 sm:h-12 sm:w-12 rounded-full shadow-xl"
                     onClick={handlePrevImage}
                   >
-                    <ChevronLeft className="h-7 w-7" />
+                    <ChevronLeft className="h-6 w-6 sm:h-7 sm:w-7" />
                   </Button>
                   <Button
                     variant="secondary"
                     size="icon"
-                    className="absolute right-4 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full shadow-xl"
+                    className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 h-10 w-10 sm:h-12 sm:w-12 rounded-full shadow-xl"
                     onClick={handleNextImage}
                   >
-                    <ChevronRight className="h-7 w-7" />
+                    <ChevronRight className="h-6 w-6 sm:h-7 sm:w-7" />
                   </Button>
                 </>
               )}
 
               {/* Contador */}
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-sm text-white text-sm font-medium px-4 py-2 rounded-full">
+              <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-sm text-white text-xs sm:text-sm font-medium px-3 sm:px-4 py-1.5 sm:py-2 rounded-full">
                 {selectedImageIndex + 1} / {images.length}
               </div>
             </div>
