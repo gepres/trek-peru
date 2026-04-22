@@ -11,6 +11,9 @@ const DEPLOY_DATE = new Date();
 // /routes y /routes/completed usan lastModified dinámico basado en la ruta más reciente
 const STATIC_PATHS = ['', '/about', '/contact', '/terms', '/privacy'];
 
+// Slugs de las páginas de detalle de features (landing secundarias)
+const FEATURE_SLUGS = ['interactive-maps', 'community', 'reviews', 'routes'];
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient();
 
@@ -130,5 +133,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]);
 
-  return [...staticEntries, ...routeListingEntries, ...routeEntries];
+  // Páginas de detalle de features — contenido estático con lastModified en deploy
+  const featureEntries: MetadataRoute.Sitemap = FEATURE_SLUGS.flatMap((slug) => [
+    {
+      url: `${BASE_URL}/es/features/${slug}`,
+      lastModified: DEPLOY_DATE,
+      alternates: {
+        languages: {
+          es: `${BASE_URL}/es/features/${slug}`,
+          en: `${BASE_URL}/en/features/${slug}`,
+          'x-default': `${BASE_URL}/es/features/${slug}`,
+        },
+      },
+    },
+    {
+      url: `${BASE_URL}/en/features/${slug}`,
+      lastModified: DEPLOY_DATE,
+      alternates: {
+        languages: {
+          es: `${BASE_URL}/es/features/${slug}`,
+          en: `${BASE_URL}/en/features/${slug}`,
+          'x-default': `${BASE_URL}/es/features/${slug}`,
+        },
+      },
+    },
+  ]);
+
+  return [...staticEntries, ...featureEntries, ...routeListingEntries, ...routeEntries];
 }

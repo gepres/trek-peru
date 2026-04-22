@@ -89,4 +89,11 @@ export const analytics = {
   // Compartir
   share: (routeId: string, method: string) =>
     trackEvent('share', { route_id: routeId, method }),
+
+  // Páginas de features — rastrea qué features del landing generan más interés
+  featureView: (slug: string) =>
+    trackEvent('feature_view', { feature_slug: slug }),
+
+  featureCtaClick: (slug: string, cta: string) =>
+    trackEvent('feature_cta_click', { feature_slug: slug, cta }),
 };

@@ -9,6 +9,8 @@ import { InteractiveMapsVisual } from '@/components/features/visuals/Interactive
 import { CommunityVisual } from '@/components/features/visuals/CommunityVisual';
 import { ReviewsVisual } from '@/components/features/visuals/ReviewsVisual';
 import { RoutesVisual } from '@/components/features/visuals/RoutesVisual';
+import { FeatureAnalytics } from '@/components/features/FeatureAnalytics';
+import { FeatureJsonLd } from '@/components/seo/FeatureJsonLd';
 import {
   MapPin,
   Users,
@@ -33,32 +35,48 @@ import {
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.com';
 
-// Metadata estático por slug: iconos, gradientes y los 4 iconos de beneficios.
-// El contenido textual (title, subtitle, benefits, steps) se resuelve por i18n.
+// Metadata estático por slug: iconos, gradientes, iconos de beneficios y
+// keywords SEO bilingües. El contenido textual (title/subtitle/etc.) vive en i18n.
 const FEATURES = {
   'interactive-maps': {
     icon: MapPin,
     iconBg: 'from-primary to-emerald-700',
     benefitIcons: [Navigation, TrendingUp, Layers, Compass],
     Visual: InteractiveMapsVisual,
+    keywords: {
+      es: ['mapas interactivos trekking', 'rutas GPX Perú', 'waypoints trekking', 'perfil elevación Perú', 'mapa topográfico trek'],
+      en: ['interactive trekking maps', 'GPX routes Peru', 'trekking waypoints', 'elevation profile Peru', 'topographic trek map'],
+    },
   },
   community: {
     icon: Users,
     iconBg: 'from-accent to-orange-600',
     benefitIcons: [UserPlus, MessageCircle, Calendar, Users],
     Visual: CommunityVisual,
+    keywords: {
+      es: ['comunidad trekking Perú', 'grupos de trekking', 'salidas grupales Perú', 'trekkers Perú', 'compañeros de trekking'],
+      en: ['Peru trekking community', 'trekking groups', 'group hikes Peru', 'Peru trekkers', 'trekking companions'],
+    },
   },
   reviews: {
     icon: Star,
     iconBg: 'from-amber-400 to-orange-600',
     benefitIcons: [Shield, ThumbsUp, BadgeCheck, MessageCircle],
     Visual: ReviewsVisual,
+    keywords: {
+      es: ['reseñas rutas trekking', 'opiniones trekking Perú', 'valoraciones caminatas Perú', 'calificaciones rutas', 'reviews trek Perú'],
+      en: ['trekking route reviews', 'Peru trekking reviews', 'hike ratings Peru', 'trail ratings', 'verified trek reviews'],
+    },
   },
   routes: {
     icon: Mountain,
     iconBg: 'from-accent to-red-600',
     benefitIcons: [CheckCircle2, Clock, TrendingUp, Shield],
     Visual: RoutesVisual,
+    keywords: {
+      es: ['rutas verificadas Perú', 'dificultad trekking Perú', 'duración rutas trek', 'equipo trekking', 'rutas curadas Perú'],
+      en: ['verified routes Peru', 'Peru trekking difficulty', 'trek duration Peru', 'trekking gear', 'curated routes Peru'],
+    },
   },
 } as const;
 
@@ -83,8 +101,10 @@ export async function generateMetadata({
   const { locale, slug } = await params;
   if (!(slug in FEATURES)) return {};
 
+  const feature = FEATURES[slug as FeatureSlug];
   const t = await getTranslations({ locale, namespace: `features.${slug}` });
   const isEs = locale === 'es';
+  const lang: 'es' | 'en' = isEs ? 'es' : 'en';
   const title = `${t('title')} — TrekPeru`;
   const description = t('subtitle');
   const url = `${APP_URL}/${locale}/features/${slug}`;
@@ -92,6 +112,7 @@ export async function generateMetadata({
   return {
     title,
     description,
+    keywords: [...feature.keywords[lang]],
     alternates: {
       canonical: url,
       languages: {
@@ -107,6 +128,12 @@ export async function generateMetadata({
       type: 'article',
       locale: isEs ? 'es_PE' : 'en_US',
       alternateLocale: isEs ? 'en_US' : 'es_PE',
+      siteName: 'TrekPeru',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
     },
   };
 }
@@ -143,6 +170,17 @@ export default async function FeatureDetailPage({
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      {/* Schema.org (WebPage + BreadcrumbList) + evento GA4 feature_view */}
+      <FeatureJsonLd
+        slug={slug}
+        title={t('title')}
+        description={t('subtitle')}
+        locale={locale}
+        breadcrumbHomeLabel={tc('home')}
+        breadcrumbFeatureLabel={t('title')}
+      />
+      <FeatureAnalytics slug={slug} />
+
       <Header locale={locale} />
 
       <main className="flex-1 pt-20">
