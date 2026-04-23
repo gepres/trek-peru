@@ -40,6 +40,7 @@ interface RouteJsonLdProps {
 
 export function RouteJsonLd({ route, locale }: RouteJsonLdProps) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://www.trek-peru.com';
+  const routeUrl = `${baseUrl}/${locale}/routes/${route.slug}`;
 
   // Formatear duración en ISO 8601
   const formatDuration = () => {
@@ -55,145 +56,152 @@ export function RouteJsonLd({ route, locale }: RouteJsonLdProps) {
     return undefined;
   };
 
-  // Datos estructurados principales (Event + TouristAttraction)
+  // Calcula endDate sumando la duración real a startDate.
+  // Google requiere endDate en Event schema — sin este campo no aparecen rich results.
+  const computeEndDate = (startIso: string): string => {
+    const start = new Date(startIso);
+    if (route.duration_type === 'days' && route.duration_value) {
+      start.setDate(start.getDate() + route.duration_value);
+    } else if (route.duration_value) {
+      start.setHours(start.getHours() + route.duration_value);
+    } else if (route.estimated_duration) {
+      start.setHours(start.getHours() + route.estimated_duration);
+    } else {
+      // Fallback conservador: 3 horas (duración típica de trek corto)
+      start.setHours(start.getHours() + 3);
+    }
+    return start.toISOString();
+  };
+
+  // Datos de ubicación compartidos entre Event y TouristAttraction
+  const locationName = route.meeting_point?.name
+    || `${route.region ?? ''}${route.province ? `, ${route.province}` : ''}`.trim();
+
+  const postalAddress = {
+    '@type': 'PostalAddress',
+    addressRegion: route.region,
+    addressLocality: route.province,
+    addressCountry: 'PE',
+  };
+
+  const geoCoordinates = route.meeting_point?.coordinates
+    ? {
+        '@type': 'GeoCoordinates',
+        latitude: route.meeting_point.coordinates.latitude,
+        longitude: route.meeting_point.coordinates.longitude,
+      }
+    : undefined;
+
+  // Bloque Event — solo se emite si la ruta tiene fecha de salida.
+  // Sin departure_date, un "Event" sin startDate es un schema inválido y Google lo ignora.
+  const eventSchema = route.departure_date
+    ? {
+        '@type': 'Event',
+        '@id': `${routeUrl}#event`,
+        name: route.title,
+        description: route.description,
+        image: route.featured_image
+          ? [route.featured_image, ...(route.images || [])]
+          : route.images,
+        url: routeUrl,
+        startDate: route.departure_date,
+        endDate: computeEndDate(route.departure_date),
+        // Campos REQUERIDOS por Google desde 2022 para Event rich results
+        eventStatus: 'https://schema.org/EventScheduled',
+        eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+        duration: formatDuration(),
+        location: {
+          '@type': 'Place',
+          name: locationName,
+          address: postalAddress,
+          ...(geoCoordinates ? { geo: geoCoordinates } : {}),
+        },
+        organizer: route.creator
+          ? {
+              '@type': 'Person',
+              name: route.creator.full_name,
+              url: `${baseUrl}/${locale}/profile/${route.creator.username}`,
+            }
+          : undefined,
+        offers: {
+          '@type': 'Offer',
+          price: route.cost ?? 0,
+          priceCurrency: route.currency || 'PEN',
+          availability: 'https://schema.org/InStock',
+          url: routeUrl,
+          validFrom: new Date().toISOString(),
+          // validThrough = día del evento (23:59:59) para señalar fin de la ventana de compra
+          validThrough: new Date(
+            new Date(route.departure_date).setHours(23, 59, 59, 999)
+          ).toISOString(),
+        },
+        maximumAttendeeCapacity: route.max_capacity,
+        aggregateRating:
+          route.average_rating && route.total_ratings
+            ? {
+                '@type': 'AggregateRating',
+                ratingValue: route.average_rating,
+                reviewCount: route.total_ratings,
+                bestRating: 5,
+                worstRating: 1,
+              }
+            : undefined,
+      }
+    : null;
+
+  // Bloque TouristAttraction — se emite siempre (describe el lugar, no el evento)
+  const attractionSchema = {
+    '@type': 'TouristAttraction',
+    '@id': `${routeUrl}#attraction`,
+    name: route.title,
+    description: route.description,
+    image: route.featured_image,
+    url: routeUrl,
+    touristType: ['Backpackers', 'Adventure travelers', 'Nature lovers'],
+    isAccessibleForFree: !route.cost,
+    publicAccess: true,
+    address: postalAddress,
+    ...(geoCoordinates ? { geo: geoCoordinates } : {}),
+    additionalProperty: [
+      route.distance
+        ? { '@type': 'PropertyValue', name: 'Distance', value: route.distance, unitCode: 'KMT' }
+        : null,
+      route.elevation_gain
+        ? { '@type': 'PropertyValue', name: 'Elevation Gain', value: route.elevation_gain, unitCode: 'MTR' }
+        : null,
+      route.max_altitude
+        ? { '@type': 'PropertyValue', name: 'Maximum Altitude', value: route.max_altitude, unitCode: 'MTR' }
+        : null,
+      { '@type': 'PropertyValue', name: 'Difficulty', value: route.difficulty },
+    ].filter(Boolean),
+    aggregateRating:
+      route.average_rating && route.total_ratings
+        ? {
+            '@type': 'AggregateRating',
+            ratingValue: route.average_rating,
+            reviewCount: route.total_ratings,
+            bestRating: 5,
+            worstRating: 1,
+          }
+        : undefined,
+  };
+
+  const breadcrumbSchema = {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: locale === 'es' ? 'Inicio' : 'Home', item: `${baseUrl}/${locale}` },
+      { '@type': 'ListItem', position: 2, name: locale === 'es' ? 'Rutas' : 'Routes', item: `${baseUrl}/${locale}/routes` },
+      { '@type': 'ListItem', position: 3, name: route.title, item: routeUrl },
+    ],
+  };
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
-      // Como evento de trekking
-      {
-        '@type': 'SportsEvent',
-        '@id': `${baseUrl}/${locale}/routes/${route.slug}#event`,
-        name: route.title,
-        description: route.description,
-        image: route.featured_image ? [route.featured_image, ...(route.images || [])] : route.images,
-        url: `${baseUrl}/${locale}/routes/${route.slug}`,
-        startDate: route.departure_date,
-        duration: formatDuration(),
-        sport: 'Hiking',
-        location: route.meeting_point?.coordinates ? {
-          '@type': 'Place',
-          name: route.meeting_point?.name || `${route.region}${route.province ? `, ${route.province}` : ''}`,
-          address: {
-            '@type': 'PostalAddress',
-            addressRegion: route.region,
-            addressLocality: route.province,
-            addressCountry: 'PE'
-          },
-          geo: {
-            '@type': 'GeoCoordinates',
-            latitude: route.meeting_point.coordinates.latitude,
-            longitude: route.meeting_point.coordinates.longitude
-          }
-        } : {
-          '@type': 'Place',
-          name: `${route.region}${route.province ? `, ${route.province}` : ''}`,
-          address: {
-            '@type': 'PostalAddress',
-            addressRegion: route.region,
-            addressLocality: route.province,
-            addressCountry: 'PE'
-          }
-        },
-        organizer: route.creator ? {
-          '@type': 'Person',
-          name: route.creator.full_name,
-          url: `${baseUrl}/${locale}/profile/${route.creator.username}`
-        } : undefined,
-        offers: route.cost ? {
-          '@type': 'Offer',
-          price: route.cost,
-          priceCurrency: route.currency || 'PEN',
-          availability: 'https://schema.org/InStock',
-          validFrom: new Date().toISOString()
-        } : {
-          '@type': 'Offer',
-          price: 0,
-          priceCurrency: 'PEN',
-          availability: 'https://schema.org/InStock'
-        },
-        maximumAttendeeCapacity: route.max_capacity,
-        aggregateRating: route.average_rating && route.total_ratings ? {
-          '@type': 'AggregateRating',
-          ratingValue: route.average_rating,
-          reviewCount: route.total_ratings,
-          bestRating: 5,
-          worstRating: 1
-        } : undefined
-      },
-      // Como atracción turística
-      {
-        '@type': 'TouristAttraction',
-        '@id': `${baseUrl}/${locale}/routes/${route.slug}#attraction`,
-        name: route.title,
-        description: route.description,
-        image: route.featured_image,
-        url: `${baseUrl}/${locale}/routes/${route.slug}`,
-        touristType: ['Backpackers', 'Adventure travelers', 'Nature lovers'],
-        isAccessibleForFree: !route.cost,
-        publicAccess: true,
-        address: {
-          '@type': 'PostalAddress',
-          addressRegion: route.region,
-          addressLocality: route.province,
-          addressCountry: 'PE'
-        },
-        geo: route.meeting_point?.coordinates ? {
-          '@type': 'GeoCoordinates',
-          latitude: route.meeting_point.coordinates.latitude,
-          longitude: route.meeting_point.coordinates.longitude
-        } : undefined,
-        // Características adicionales de la ruta
-        additionalProperty: [
-          route.distance ? {
-            '@type': 'PropertyValue',
-            name: 'Distance',
-            value: route.distance,
-            unitCode: 'KMT'
-          } : null,
-          route.elevation_gain ? {
-            '@type': 'PropertyValue',
-            name: 'Elevation Gain',
-            value: route.elevation_gain,
-            unitCode: 'MTR'
-          } : null,
-          route.max_altitude ? {
-            '@type': 'PropertyValue',
-            name: 'Maximum Altitude',
-            value: route.max_altitude,
-            unitCode: 'MTR'
-          } : null,
-          {
-            '@type': 'PropertyValue',
-            name: 'Difficulty',
-            value: route.difficulty
-          }
-        ].filter(Boolean)
-      },
-      // Breadcrumbs
-      {
-        '@type': 'BreadcrumbList',
-        itemListElement: [
-          {
-            '@type': 'ListItem',
-            position: 1,
-            name: 'Inicio',
-            item: `${baseUrl}/${locale}`
-          },
-          {
-            '@type': 'ListItem',
-            position: 2,
-            name: 'Rutas',
-            item: `${baseUrl}/${locale}/routes`
-          },
-          {
-            '@type': 'ListItem',
-            position: 3,
-            name: route.title,
-            item: `${baseUrl}/${locale}/routes/${route.slug}`
-          }
-        ]
-      }
-    ]
+      ...(eventSchema ? [eventSchema] : []),
+      attractionSchema,
+      breadcrumbSchema,
+    ],
   };
 
   return (
