@@ -5,7 +5,7 @@ import { CompletedRoutesList } from '@/components/routes/CompletedRoutesList';
 import { History } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.com';
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.trek-peru.com';
 
 export async function generateMetadata({
   params,

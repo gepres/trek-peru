@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 // URL base de la aplicación (producción o desarrollo)
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.com';
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.trek-peru.com';
 
 export const metadata: Metadata = {
   // metadataBase es CRÍTICO: resuelve rutas relativas en openGraph.images, twitter.images, etc.

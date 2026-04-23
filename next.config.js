@@ -56,10 +56,13 @@ const nextConfig = {
       {
         source: '/(.*)',
         headers: [
-          // Bloquear indexación en dominios Vercel preview (trek-peru.vercel.app)
+          // Bloquear indexación en deployments no-production (previews, dev).
+          // VERCEL_ENV es 'production' | 'preview' | 'development'.
+          // NOTA: VERCEL_URL siempre contiene 'vercel.app' (es el host interno),
+          // incluso en production con dominio custom — por eso usamos VERCEL_ENV.
           {
             key: 'X-Robots-Tag',
-            value: process.env.VERCEL_URL?.includes('vercel.app')
+            value: process.env.VERCEL_ENV && process.env.VERCEL_ENV !== 'production'
               ? 'noindex, nofollow'
               : 'index, follow',
           },

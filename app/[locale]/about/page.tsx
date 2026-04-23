@@ -2,7 +2,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Mountain } from 'lucide-react';
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.com';
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.trek-peru.com';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

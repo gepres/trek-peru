@@ -33,7 +33,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://trek-peru.com';
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.trek-peru.com';
 
 // Metadata estático por slug: iconos, gradientes, iconos de beneficios y
 // keywords SEO bilingües. El contenido textual (title/subtitle/etc.) vive en i18n.
