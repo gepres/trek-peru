@@ -68,6 +68,18 @@ const nextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      // Raíz → locale por defecto con 308 permanente.
+      // Google trata 308 como 301 (preserva PageRank). Evita el 307 temporal de next-intl
+      // que no transfiere señales de ranking entre bots.
+      {
+        source: '/',
+        destination: '/es',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 module.exports = withNextIntl(nextConfig);

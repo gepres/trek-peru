@@ -994,6 +994,24 @@
     "serverError": "Error del servidor",
     "networkError": "Error de red"
   },
+  "notFoundPage": {
+    "metaTitle": "Página no encontrada — TrekPeru",
+    "metaDescription": "Lo sentimos, la página que buscas no existe. Explora nuestras rutas de trekking en Perú.",
+    "badge": "Error 404",
+    "heading": "Te desviaste del sendero",
+    "description": "La página que buscas no existe, fue movida o el enlace está mal escrito. No te preocupes — hay mucho por explorar.",
+    "suggestionsTitle": "¿Qué quieres hacer ahora?",
+    "exploreRoutes": "Explorar rutas de trekking",
+    "exploreRoutesDesc": "Cientos de rutas verificadas en toda la sierra, costa y selva del Perú",
+    "goHome": "Volver al inicio",
+    "goHomeDesc": "Empieza de nuevo desde la página principal",
+    "createRoute": "Crear una ruta",
+    "createRouteDesc": "Comparte tu próxima aventura con la comunidad",
+    "contact": "Contáctanos",
+    "contactDesc": "¿Crees que esto es un error? Cuéntanos",
+    "popularRoutes": "Rutas populares",
+    "help": "Si llegaste aquí desde un enlace externo, por favor avísanos para corregirlo."
+  },
   "routeDetail": {
     "difficulty": {
       "easy": "Fácil",

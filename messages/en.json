@@ -992,6 +992,24 @@
     "serverError": "Server error",
     "networkError": "Network error"
   },
+  "notFoundPage": {
+    "metaTitle": "Page not found — TrekPeru",
+    "metaDescription": "Sorry, the page you're looking for doesn't exist. Explore our trekking routes in Peru.",
+    "badge": "Error 404",
+    "heading": "You've wandered off the trail",
+    "description": "The page you're looking for doesn't exist, was moved, or the link is misspelled. No worries — there's plenty more to explore.",
+    "suggestionsTitle": "What would you like to do next?",
+    "exploreRoutes": "Explore trekking routes",
+    "exploreRoutesDesc": "Hundreds of verified routes across Peru's mountains, coast and jungle",
+    "goHome": "Back to home",
+    "goHomeDesc": "Start fresh from the main page",
+    "createRoute": "Create a route",
+    "createRouteDesc": "Share your next adventure with the community",
+    "contact": "Contact us",
+    "contactDesc": "Think this is an error? Let us know",
+    "popularRoutes": "Popular routes",
+    "help": "If you arrived here from an external link, please let us know so we can fix it."
+  },
   "routeDetail": {
     "difficulty": {
       "easy": "Easy",
