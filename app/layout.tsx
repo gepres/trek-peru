@@ -84,6 +84,12 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+
+  // Verificación de propiedad en Google Search Console.
+  // Next.js inyecta <meta name="google-site-verification" content="..." /> en <head>.
+  verification: {
+    google: 'ejpw3DsyNCn2JV7bDkcbYR1F6KHSdFuO-QlSb9VP8ws',
+  },
 };
 
 export default function RootLayout({
