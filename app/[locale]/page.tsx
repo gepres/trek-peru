@@ -23,10 +23,11 @@ export async function generateMetadata({
   const { locale } = await params;
   const isEs = locale === 'es';
 
-  // Keyword al inicio, marca al final — max 60 chars
+  // Title sin sufijo de marca — el template '%s | TrekPeru' del layout lo añade.
+  // Resultado final: "Rutas de Trekking en Perú | TrekPeru" (< 60 chars).
   const title = isEs
-    ? 'Rutas de Trekking en Perú — TrekPeru'
-    : 'Trekking Routes in Peru — TrekPeru';
+    ? 'Rutas de Trekking en Perú'
+    : 'Trekking Routes in Peru';
   const description = isEs
     ? 'Descubre y únete a los mejores grupos de trekking en todo el Perú. Costa, sierra y selva con cientos de rutas verificadas y mapas interactivos.'
     : 'Discover and join the best trekking groups throughout Peru. Coast, mountains, and jungle with hundreds of verified routes and interactive maps.';

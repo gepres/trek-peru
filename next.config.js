@@ -27,8 +27,12 @@ const securityHeaders = [
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
-  // Report-Only primero para detectar violaciones sin bloquear tráfico real
-  { key: 'Content-Security-Policy-Report-Only', value: csp },
+  // CSP enforced — las violaciones bloquean el recurso.
+  // Dominios permitidos: Supabase, Mapbox, GA4, EmailJS.
+  { key: 'Content-Security-Policy', value: csp },
+  // Aisla el browsing context de ventanas cross-origin (mitiga Spectre/XS-Leaks).
+  // same-origin es seguro: no afecta imágenes/scripts con CSP ya configurado.
+  { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
 ];
 
 const nextConfig = {

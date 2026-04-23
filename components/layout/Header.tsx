@@ -123,14 +123,14 @@ export function Header({ locale }: HeaderProps) {
               height={34}
             />
           </div>
-          <h2
+          <span
             className={cn(
               "text-lg font-bold tracking-tight",
               useWhiteText ? "text-white" : "text-foreground dark:text-white"
             )}
           >
             TrekPeru
-          </h2>
+          </span>
         </Link>
 
         {/* Desktop Navigation */}

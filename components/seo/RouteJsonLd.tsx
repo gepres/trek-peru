@@ -195,11 +195,51 @@ export function RouteJsonLd({ route, locale }: RouteJsonLdProps) {
     ],
   };
 
+  // TouristTrip — describe la ruta como itinerario/tour (complementa TouristAttraction que describe el lugar).
+  // Semánticamente más preciso que TouristAttraction para contenido del tipo "hacer una caminata de X días".
+  const tripSchema = {
+    '@type': 'TouristTrip',
+    '@id': `${routeUrl}#trip`,
+    name: route.title,
+    description: route.description,
+    image: route.featured_image,
+    url: routeUrl,
+    touristType: ['Backpackers', 'Adventure travelers', 'Nature lovers'],
+    itinerary: {
+      '@type': 'Place',
+      name: locationName,
+      address: postalAddress,
+      ...(geoCoordinates ? { geo: geoCoordinates } : {}),
+    },
+    offers: {
+      '@type': 'Offer',
+      price: route.cost ?? 0,
+      priceCurrency: route.currency || 'PEN',
+      availability: 'https://schema.org/InStock',
+      url: routeUrl,
+    },
+    provider: {
+      '@id': `${baseUrl}/#organization`,
+    },
+    ...(formatDuration() ? { duration: formatDuration() } : {}),
+    aggregateRating:
+      route.average_rating && route.total_ratings
+        ? {
+            '@type': 'AggregateRating',
+            ratingValue: route.average_rating,
+            reviewCount: route.total_ratings,
+            bestRating: 5,
+            worstRating: 1,
+          }
+        : undefined,
+  };
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
       ...(eventSchema ? [eventSchema] : []),
       attractionSchema,
+      tripSchema,
       breadcrumbSchema,
     ],
   };
