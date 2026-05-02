@@ -663,7 +663,20 @@
     "routeDeleted": "Route deleted",
     "routeDeletedDesc": "was deleted successfully.",
     "deleteError": "Error deleting",
-    "deleteErrorDesc": "An unexpected error occurred."
+    "deleteErrorDesc": "An unexpected error occurred.",
+    "transferBtn": "Transfer",
+    "transferTitle": "Transfer route",
+    "transferDescription": "You are about to transfer \"{title}\" to another account. The route will leave your list and appear in the new creator's list.",
+    "transferRecipientLabel": "Email or username",
+    "transferRecipientPlaceholder": "email@example.com or username",
+    "transferRecipientHint": "The recipient must have a registered account.",
+    "transferRecipientRequired": "Enter the recipient user's email or username.",
+    "confirmTransfer": "Transfer route",
+    "transferring": "Transferring...",
+    "routeTransferred": "Route transferred",
+    "routeTransferredDesc": "\"{title}\" was transferred successfully.",
+    "transferError": "Error transferring",
+    "transferErrorDesc": "An unexpected error occurred."
   },
   "myAttendances": {
     "loading": "Loading your attendances...",

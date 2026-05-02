@@ -5,3 +5,4 @@ export { createRoute } from './create-route.usecase';
 export { updateRoute } from './update-route.usecase';
 export { deleteRoute } from './delete-route.usecase';
 export { getCompletedRoutes } from './get-completed-routes.usecase';
+export { transferRoute } from './transfer-route.usecase';

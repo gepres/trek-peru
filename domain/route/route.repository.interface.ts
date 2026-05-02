@@ -8,5 +8,6 @@ export interface IRouteRepository {
   findByCreatorId(creatorId: string): Promise<RouteWithCreator[]>;
   create(routeData: RouteForm, creatorId: string): Promise<Route>;
   update(id: string, routeData: Partial<RouteForm>): Promise<Route>;
+  transferOwnership(id: string, recipient: string): Promise<void>;
   deleteById(id: string): Promise<void>;
 }

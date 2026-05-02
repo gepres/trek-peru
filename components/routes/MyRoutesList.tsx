@@ -8,9 +8,11 @@ import { useToast } from '@/components/ui/use-toast';
 import { RouteCard } from './RouteCard';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { EmptyState } from '@/components/shared/EmptyState';
-import { Mountain, Users, Trash2, AlertTriangle } from 'lucide-react';
+import { ArrowRightLeft, Mountain, Users, Trash2, AlertTriangle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Dialog,
   DialogContent,
@@ -29,14 +31,17 @@ interface MyRoutesListProps {
 // Componente para mostrar las rutas del usuario autenticado con gestión (editar, asistentes, eliminar)
 export function MyRoutesList({ locale }: MyRoutesListProps) {
   const t = useTranslations('myRoutes');
-  const { routes, loading, error, removeRoute, deletingId } = useMyRoutes();
+  const { routes, loading, error, removeRoute, transferMyRoute, deletingId, transferringId } = useMyRoutes();
   const { deleteFile } = useStorageDelete();
   const { toast } = useToast();
-  const router = useRouter();
+  const { push } = useRouter();
 
   // Ruta pendiente de confirmar eliminación
   const [routeToDelete, setRouteToDelete] = useState<RouteWithCreator | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [routeToTransfer, setRouteToTransfer] = useState<RouteWithCreator | null>(null);
+  const [transferRecipient, setTransferRecipient] = useState('');
+  const [isTransferring, setIsTransferring] = useState(false);
 
   if (loading) {
     return (
@@ -64,7 +69,7 @@ export function MyRoutesList({ locale }: MyRoutesListProps) {
         description={t('noRoutesDesc')}
         action={{
           label: t('createFirst'),
-          onClick: () => router.push(`/${locale}/routes/new`),
+          onClick: () => push(`/${locale}/routes/new`),
         }}
       />
     );
@@ -121,6 +126,47 @@ export function MyRoutesList({ locale }: MyRoutesListProps) {
     }
   }
 
+  async function handleConfirmTransfer() {
+    if (!routeToTransfer) return;
+
+    const recipient = transferRecipient.trim();
+    if (!recipient) {
+      toast({
+        title: t('transferError'),
+        description: t('transferRecipientRequired'),
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    try {
+      setIsTransferring(true);
+      await transferMyRoute(routeToTransfer.id, recipient);
+
+      // TODO: Cuando exista el modulo de notificaciones, avisar al usuario receptor del traspaso.
+      toast({
+        title: t('routeTransferred'),
+        description: t('routeTransferredDesc', { title: routeToTransfer.title }),
+      });
+      setRouteToTransfer(null);
+      setTransferRecipient('');
+    } catch (err) {
+      toast({
+        title: t('transferError'),
+        description: err instanceof Error ? err.message : t('transferErrorDesc'),
+        variant: 'destructive',
+      });
+    } finally {
+      setIsTransferring(false);
+    }
+  }
+
+  function handleTransferDialogChange(open: boolean) {
+    if (open || isTransferring) return;
+    setRouteToTransfer(null);
+    setTransferRecipient('');
+  }
+
   return (
     <>
       <div className="space-y-6">
@@ -139,12 +185,12 @@ export function MyRoutesList({ locale }: MyRoutesListProps) {
               <RouteCard route={route} locale={locale} />
 
               {/* Acciones del creador */}
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <Button
                   asChild
                   variant="outline"
                   size="sm"
-                  className="flex-1 gap-2"
+                  className="flex-1 min-w-[130px] gap-2"
                 >
                   <Link href={`/${locale}/my-routes/${route.id}/attendees`}>
                     <Users className="h-3.5 w-3.5" />
@@ -155,9 +201,20 @@ export function MyRoutesList({ locale }: MyRoutesListProps) {
                 <Button
                   variant="outline"
                   size="sm"
+                  className="flex-1 min-w-[130px] gap-2"
+                  onClick={() => setRouteToTransfer(route)}
+                  disabled={deletingId === route.id || transferringId === route.id}
+                >
+                  <ArrowRightLeft className="h-3.5 w-3.5" />
+                  {t('transferBtn')}
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="sm"
                   className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50 hover:border-red-300"
                   onClick={() => setRouteToDelete(route)}
-                  disabled={deletingId === route.id}
+                  disabled={deletingId === route.id || transferringId === route.id}
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   {t('deleteBtn')}
@@ -204,6 +261,62 @@ export function MyRoutesList({ locale }: MyRoutesListProps) {
                 <>
                   <Trash2 className="h-4 w-4" />
                   {t('confirmDelete')}
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialogo de traspaso de ruta */}
+      <Dialog open={!!routeToTransfer} onOpenChange={handleTransferDialogChange}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <ArrowRightLeft className="h-5 w-5 text-primary" />
+              {t('transferTitle')}
+            </DialogTitle>
+            <DialogDescription className="pt-1">
+              {t('transferDescription', { title: routeToTransfer?.title })}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-2">
+            <Label htmlFor="transfer-recipient">{t('transferRecipientLabel')}</Label>
+            <Input
+              id="transfer-recipient"
+              value={transferRecipient}
+              onChange={(event) => setTransferRecipient(event.target.value)}
+              placeholder={t('transferRecipientPlaceholder')}
+              disabled={isTransferring}
+            />
+            <p className="text-xs text-muted-foreground">
+              {t('transferRecipientHint')}
+            </p>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() => handleTransferDialogChange(false)}
+              disabled={isTransferring}
+            >
+              {t('cancelBtn')}
+            </Button>
+            <Button
+              onClick={handleConfirmTransfer}
+              disabled={isTransferring}
+              className="gap-2"
+            >
+              {isTransferring ? (
+                <>
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" />
+                  {t('transferring')}
+                </>
+              ) : (
+                <>
+                  <ArrowRightLeft className="h-4 w-4" />
+                  {t('confirmTransfer')}
                 </>
               )}
             </Button>

@@ -664,7 +664,20 @@
     "routeDeleted": "Ruta eliminada",
     "routeDeletedDesc": "fue eliminada correctamente.",
     "deleteError": "Error al eliminar",
-    "deleteErrorDesc": "Ocurrió un error inesperado."
+    "deleteErrorDesc": "Ocurrió un error inesperado.",
+    "transferBtn": "Traspasar",
+    "transferTitle": "Traspasar ruta",
+    "transferDescription": "Vas a traspasar \"{title}\" a otra cuenta. La ruta saldrá de tu listado y aparecerá en el listado del nuevo creador.",
+    "transferRecipientLabel": "Correo o username",
+    "transferRecipientPlaceholder": "correo@ejemplo.com o username",
+    "transferRecipientHint": "El usuario receptor debe tener una cuenta registrada.",
+    "transferRecipientRequired": "Ingresa el correo o username del usuario receptor.",
+    "confirmTransfer": "Traspasar ruta",
+    "transferring": "Traspasando...",
+    "routeTransferred": "Ruta traspasada",
+    "routeTransferredDesc": "\"{title}\" fue traspasada correctamente.",
+    "transferError": "Error al traspasar",
+    "transferErrorDesc": "Ocurrió un error inesperado."
   },
   "myAttendances": {
     "loading": "Cargando tus asistencias...",

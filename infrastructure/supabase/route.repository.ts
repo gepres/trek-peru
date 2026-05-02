@@ -151,6 +151,16 @@ export function createRouteRepository(supabase: SupabaseClient): IRouteRepositor
       return data;
     },
 
+    // Traspasar una ruta a otro usuario por email o username
+    async transferOwnership(id: string, recipient: string): Promise<void> {
+      const { error } = await supabase.rpc('transfer_route_ownership', {
+        p_route_id: id,
+        p_recipient: recipient,
+      });
+
+      if (error) throw error;
+    },
+
     // Eliminar una ruta
     async deleteById(id: string): Promise<void> {
       const { error } = await supabase

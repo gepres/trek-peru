@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { createRouteRepository } from '@/infrastructure/supabase';
-import { getRoutes, getRoute, getMyRoutes, deleteRoute, getCompletedRoutes } from '@/application/routes';
+import { getRoutes, getRoute, getMyRoutes, deleteRoute, getCompletedRoutes, transferRoute } from '@/application/routes';
 import { RouteWithCreator, RouteFilters } from '@/types/route.types';
 
 // Hook para obtener y gestionar rutas públicas con filtros
@@ -99,6 +99,7 @@ export function useMyRoutes() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [transferringId, setTransferringId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchMyRoutes();
@@ -140,5 +141,29 @@ export function useMyRoutes() {
     }
   }
 
-  return { routes, loading, error, refetch: fetchMyRoutes, removeRoute, deletingId };
+  async function transferMyRoute(routeId: string, recipient: string): Promise<void> {
+    try {
+      setTransferringId(routeId);
+      const supabase = createClient();
+      const repository = createRouteRepository(supabase);
+      await transferRoute(repository, routeId, recipient);
+      setRoutes((prev) => prev.filter((r) => r.id !== routeId));
+    } catch (err) {
+      console.error('Error al traspasar ruta:', err);
+      throw err;
+    } finally {
+      setTransferringId(null);
+    }
+  }
+
+  return {
+    routes,
+    loading,
+    error,
+    refetch: fetchMyRoutes,
+    removeRoute,
+    transferMyRoute,
+    deletingId,
+    transferringId,
+  };
 }
