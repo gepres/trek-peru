@@ -60,6 +60,8 @@ export const routeFormSchema = z.object({
     .trim()
     .min(20, 'La descripción debe tener al menos 20 caracteres')
     .max(2000, 'La descripción no puede exceder 2000 caracteres'),
+  group_id: z.string().uuid().nullable().optional(),
+  show_creator_on_group_routes: z.boolean().default(false),
   difficulty: z.enum(['easy', 'moderate', 'hard', 'extreme'], {
     required_error: 'La dificultad es requerida',
   }),

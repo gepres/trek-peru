@@ -27,7 +27,8 @@
     "profile": "Profile",
     "logout": "Logout",
     "completed": "Completed",
-    "createRoute": "Create Route"
+    "createRoute": "Create Route",
+    "groups": "Groups"
   },
   "theme": {
     "theme": "Theme",
@@ -777,6 +778,14 @@
     "recommendation": "Recommendation:",
     "draft": "Draft",
     "published": "Published",
+    "organizerTitle": "Route organizer",
+    "organizerDesc": "Choose whether this route is published from your personal account or from a group where you have permissions.",
+    "organizerPersonal": "My personal account",
+    "organizerPersonalDesc": "Default option. The route will be shown with your profile.",
+    "noGroupsHint": "You do not have groups with route organizer permissions.",
+    "createGroupLink": "Create group",
+    "showCreatorLabel": "Show my name as this route's creator",
+    "showCreatorHint": "When enabled, the public route shows the group and your name as creator.",
     "step4Title": "4. Technical Details",
     "step4Desc": "Additional route information (all fields are optional)",
     "distance": "Distance (km)",
@@ -1107,5 +1116,98 @@
     "favorites": "Favorites",
     "rating": "Rating",
     "video": "Video"
+  },
+  "groups": {
+    "loading": "Loading groups...",
+    "createGroup": "Create group",
+    "create": "Create group",
+    "cancel": "Cancel",
+    "saving": "Saving...",
+    "company": "Company",
+    "verified": "Verified",
+    "follow": "Follow",
+    "following": "Following",
+    "fallbackUser": "User",
+    "emptyTitle": "You do not belong to any groups yet",
+    "emptyDesc": "Create a community to organize routes with others or register a more formal organization.",
+    "page": {
+      "title": "Groups",
+      "description": "Manage the groups you created or participate in."
+    },
+    "new": {
+      "title": "Create group",
+      "description": "Create a community or register an organization to associate routes."
+    },
+    "detail": {
+      "membersCount": "{count} {count, plural, one {member} other {members}}",
+      "routesCount": "{count} {count, plural, one {route} other {routes}}",
+      "followersCount": "{count} {count, plural, one {follower} other {followers}}",
+      "manage": "Manage",
+      "about": "About the group",
+      "routesTitle": "Group routes",
+      "emptyRoutes": "This group does not have any public routes associated yet.",
+      "data": "Details",
+      "creator": "Creator",
+      "website": "Website"
+    },
+    "types": {
+      "community": "Community",
+      "company": "Company or organization"
+    },
+    "roles": {
+      "owner": "Owner",
+      "admin": "Admin",
+      "organizer": "Organizer",
+      "member": "Member"
+    },
+    "verification": {
+      "none": "Not verified",
+      "pending": "Pending",
+      "verified": "Verified",
+      "rejected": "Rejected"
+    },
+    "form": {
+      "identityTitle": "Group identity",
+      "identityDesc": "These details will be visible on the public group page.",
+      "name": "Name",
+      "slug": "Public nick",
+      "slugHint": "Used in the group's public URL.",
+      "slogan": "Slogan",
+      "description": "Description",
+      "logo": "Optional logo",
+      "typeTitle": "Group type",
+      "typeDesc": "A company can request verification and show a certificate on its routes.",
+      "legalName": "Legal name",
+      "taxId": "Tax ID",
+      "businessEmail": "Business email",
+      "businessPhone": "Business phone",
+      "website": "Website",
+      "address": "Address"
+    },
+    "settings": {
+      "pageTitle": "Manage group",
+      "groupDataTitle": "Group details",
+      "groupDataDesc": "Update the group's public information.",
+      "type": "Type",
+      "companyData": "Company details",
+      "saveChanges": "Save changes",
+      "savedInline": "Data saved successfully.",
+      "savedToastTitle": "Data saved",
+      "savedToastDesc": "The group information was updated successfully.",
+      "updateError": "Could not update the group.",
+      "membersTitle": "Members and roles",
+      "membersDesc": "Add members by email or username and define their permissions.",
+      "memberPlaceholder": "email@example.com or username",
+      "addMember": "Add",
+      "memberSaved": "Member added or updated.",
+      "memberAddError": "Could not add the member.",
+      "viewPublicPage": "View public page"
+    },
+    "errors": {
+      "required": "Complete the group name and a valid public nick.",
+      "companyRequired": "To register a company, complete legal name, tax ID and business email.",
+      "mustLogin": "You must sign in to create a group.",
+      "generic": "The operation could not be completed."
+    }
   }
 }

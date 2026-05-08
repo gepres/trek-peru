@@ -9,7 +9,8 @@ import {
   Waypoint,
   Timestamps
 } from './database.types';
-import { Profile } from './user.types';
+import type { Profile } from './user.types';
+import type { Group } from './group.types';
 
 // Estado de pago de un asistente
 export type PaymentStatus = 'unpaid' | 'pending_payment' | 'paid';
@@ -18,6 +19,8 @@ export type PaymentStatus = 'unpaid' | 'pending_payment' | 'paid';
 export interface Route extends Timestamps {
   id: string;
   creator_id: string;
+  group_id?: string | null;
+  show_creator_on_group_routes?: boolean;
 
   // Información básica
   title: string;
@@ -95,6 +98,7 @@ export interface Route extends Timestamps {
 // Ruta con información del creador
 export interface RouteWithCreator extends Route {
   creator: Profile;
+  group?: Group | null;
   total_attendees?: number;
   is_favorite?: boolean;
   my_attendance?: Attendee;
@@ -163,6 +167,8 @@ export interface Favorite {
 export interface RouteForm {
   title: string;
   description?: string;
+  group_id?: string | null;
+  show_creator_on_group_routes?: boolean;
   difficulty: Difficulty;
   distance?: number;
   elevation_gain?: number;

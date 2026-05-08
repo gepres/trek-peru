@@ -66,6 +66,7 @@ export function Header({ locale }: HeaderProps) {
   // Enlaces autenticados
   const authenticatedLinks = [
     { href: `/${locale}/my-routes`, label: t('myRoutes') },
+    { href: `/${locale}/groups`, label: t('groups') },
     { href: `/${locale}/my-attendances`, label: t('myAttendances') },
     { href: `/${locale}/favorites`, label: t('favorites') },
   ];

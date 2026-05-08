@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
@@ -53,12 +53,20 @@ export function RouteFormSteps({ route, locale }: RouteFormStepsProps) {
     { id: '5', title: tForm('step5Nav'), description: tForm('step5NavDesc') },
     { id: '6', title: tForm('step6Nav'), description: tForm('step6NavDesc') },
   ];
-  const router = useRouter();
+  const { push } = useRouter();
   const supabase = createClient();
 
   const [currentStep, setCurrentStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [availableGroups, setAvailableGroups] = useState<Array<{
+    id: string;
+    name: string;
+    slug: string;
+    logo_url?: string | null;
+    type: 'community' | 'company';
+    role: 'owner' | 'admin' | 'organizer' | 'member';
+  }>>([]);
 
   // Estados del mapa
   // Supabase/PostgREST devuelve columnas GEOGRAPHY como WKB hex, no como GeoJSON.
@@ -103,6 +111,8 @@ export function RouteFormSteps({ route, locale }: RouteFormStepsProps) {
     defaultValues: route ? {
       title: route.title,
       description: route.description || '',
+      group_id: route.group_id ?? null,
+      show_creator_on_group_routes: route.show_creator_on_group_routes ?? false,
       difficulty: route.difficulty,
       region: route.region || '',
       province: route.province || '',
@@ -140,6 +150,8 @@ export function RouteFormSteps({ route, locale }: RouteFormStepsProps) {
       // (undefined → "Required" en inglés; '' → mensaje personalizado del schema)
       title: '',
       description: '',
+      group_id: null,
+      show_creator_on_group_routes: false,
       region: '',
       difficulty: 'moderate',
       currency: 'PEN',
@@ -157,6 +169,36 @@ export function RouteFormSteps({ route, locale }: RouteFormStepsProps) {
 
   const durationType = watch('duration_type');
   const durationValue = watch('duration_value');
+
+  useEffect(() => {
+    async function fetchAvailableGroups() {
+      const client = createClient();
+      const { data: { user } } = await client.auth.getUser();
+      if (!user) return;
+
+      const { data } = await client
+        .from('group_members')
+        .select(`
+          role,
+          group:groups(
+            id,
+            name,
+            slug,
+            logo_url,
+            type
+          )
+        `)
+        .eq('user_id', user.id)
+        .in('role', ['owner', 'admin', 'organizer']);
+
+      setAvailableGroups((data || [])
+        .map((item: any) => ({ ...item.group, role: item.role }))
+        .filter((group: any) => Boolean(group?.id))
+      );
+    }
+
+    fetchAvailableGroups();
+  }, []);
 
   // Manejar cambio de tipo de duración
   const handleDurationTypeChange = (type: 'hours' | 'days') => {
@@ -338,7 +380,7 @@ export function RouteFormSteps({ route, locale }: RouteFormStepsProps) {
         result = newRoute;
       }
 
-      router.push(`/${locale}/routes/${result.slug}`);
+      push(`/${locale}/routes/${result.slug}`);
     } catch (err: any) {
       console.error('Error al guardar ruta:', err);
       setError(err.message || tForm('unknownError'));
@@ -410,7 +452,14 @@ export function RouteFormSteps({ route, locale }: RouteFormStepsProps) {
         )}
 
         {currentStep === 2 && (
-          <StepPublication register={register} errors={errors} watch={watch} setValue={setValue} />
+          <StepPublication
+            register={register}
+            errors={errors}
+            watch={watch}
+            setValue={setValue}
+            groups={availableGroups}
+            locale={locale}
+          />
         )}
 
         {currentStep === 3 && (

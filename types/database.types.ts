@@ -5,6 +5,10 @@ export type RouteStatus = 'draft' | 'published' | 'cancelled' | 'completed';
 export type RouteVisibility = 'public' | 'private' | 'link';
 export type AttendeeStatus = 'pending' | 'confirmed' | 'cancelled' | 'waiting_list' | 'completed';
 export type AttendanceStatus = 'attended' | 'absent';
+export type GroupType = 'community' | 'company';
+export type GroupVisibility = 'public' | 'private';
+export type GroupVerificationStatus = 'none' | 'pending' | 'verified' | 'rejected';
+export type GroupMemberRole = 'owner' | 'admin' | 'organizer' | 'member';
 
 // Tipo para punto de encuentro
 export interface MeetingPoint {

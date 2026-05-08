@@ -123,6 +123,7 @@ export default async function RouteDetailPage({
     .select(`
       *,
       creator:profiles(*),
+      group:groups(*),
       attendees(count)
     `)
     .eq('slug', id)
@@ -161,7 +162,7 @@ export default async function RouteDetailPage({
 
   // Color según dificultad
   const difficultyConfig = {
-    easy: { color: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20', label: t('difficulty.easy'), icon: '🟢' },
+    easy: { color: 'bg-emerald-500/90 text-emerald-600 border-emerald-500/20', label: t('difficulty.easy'), icon: '🟢' },
     moderate: { color: 'bg-amber-500/10 text-amber-600 border-amber-500/20', label: t('difficulty.moderate'), icon: '🟡' },
     hard: { color: 'bg-orange-500/10 text-orange-600 border-orange-500/20', label: t('difficulty.hard'), icon: '🟠' },
     extreme: { color: 'bg-red-500/10 text-red-600 border-red-500/20', label: t('difficulty.extreme'), icon: '🔴' },
@@ -782,29 +783,43 @@ export default async function RouteDetailPage({
                   )}
 
                   {/* Organizador */}
-                  {route.creator && (
+                  {(route.group || route.creator) && (
                     <div className="flex items-center gap-3 p-3 bg-muted/40 rounded-lg mb-6">
                       <Avatar className="h-10 w-10 shrink-0">
                         <AvatarImage
-                          src={route.creator.avatar_url || undefined}
-                          alt={route.creator.full_name || ''}
+                          src={(route.group?.logo_url || route.creator?.avatar_url) || undefined}
+                          alt={(route.group?.name || route.creator?.full_name) || ''}
                         />
                         <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm">
-                          {getInitials(route.creator.full_name || route.creator.username || 'O')}
+                          {getInitials(route.group?.name || route.creator?.full_name || route.creator?.username || 'O')}
                         </AvatarFallback>
                       </Avatar>
                       <div className="min-w-0 flex-1">
                         <p className="text-[11px] text-muted-foreground leading-none mb-1">{t('organizedBy')}</p>
-                        <p className="font-semibold text-sm leading-tight truncate">
-                          {route.creator.full_name || route.creator.username}
-                        </p>
-                        {route.creator.username && route.creator.full_name && (
+                        {route.group ? (
+                          <Link
+                            href={`/${locale}/groups/${route.group.slug}`}
+                            className="font-semibold text-sm leading-tight truncate hover:text-primary"
+                          >
+                            {route.group.name}
+                          </Link>
+                        ) : (
+                          <p className="font-semibold text-sm leading-tight truncate">
+                            {route.creator.full_name || route.creator.username}
+                          </p>
+                        )}
+                        {route.group && route.show_creator_on_group_routes && route.creator && (
+                          <p className="text-xs text-muted-foreground leading-none mt-1">
+                            Creada por {route.creator.full_name || `@${route.creator.username}`}
+                          </p>
+                        )}
+                        {!route.group && route.creator?.username && route.creator?.full_name && (
                           <p className="text-xs text-muted-foreground leading-none mt-0.5">
                             @{route.creator.username}
                           </p>
                         )}
                       </div>
-                      {route.verified && (
+                      {(route.group?.verification_status === 'verified' || route.verified) && (
                         <CheckCircle2 className="h-4 w-4 text-blue-500 shrink-0" />
                       )}
                     </div>
@@ -841,6 +856,16 @@ export default async function RouteDetailPage({
                         initialCount={attendeeCount}
                       />
                     )}
+
+                    {route.emergency_contact && (
+                      <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+                        <Phone className="h-5 w-5 text-primary" />
+                        <div>
+                          <p className="text-xs text-muted-foreground">{t('emergencies')}</p>
+                          <p className="font-medium">{route.emergency_contact}</p>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Acciones */}
@@ -872,16 +897,6 @@ export default async function RouteDetailPage({
                     </div>
                   )}
 
-                  {/* Contacto de emergencia */}
-                  {route.emergency_contact && (
-                    <div className="mt-4 pt-4 border-t">
-                      <div className="flex items-center gap-2 text-sm">
-                        <Phone className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">{t('emergencies')}</span>
-                        <span className="font-medium">{route.emergency_contact}</span>
-                      </div>
-                    </div>
-                  )}
                 </CardContent>
               </Card>
 

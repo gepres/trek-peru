@@ -27,7 +27,8 @@
     "profile": "Perfil",
     "logout": "Cerrar Sesión",
     "completed": "Completadas",
-    "createRoute": "Crear Ruta"
+    "createRoute": "Crear Ruta",
+    "groups": "Grupos"
   },
   "theme": {
     "theme": "Tema",
@@ -779,6 +780,14 @@
     "recommendation": "Recomendación:",
     "draft": "Borrador",
     "published": "Publicada",
+    "organizerTitle": "Organizador de la ruta",
+    "organizerDesc": "Elige si esta ruta se publica desde tu cuenta personal o desde un grupo donde tienes permisos.",
+    "organizerPersonal": "Mi cuenta personal",
+    "organizerPersonalDesc": "Opción por defecto. La ruta se mostrará con tu perfil.",
+    "noGroupsHint": "No tienes grupos con permisos para organizar rutas.",
+    "createGroupLink": "Crear grupo",
+    "showCreatorLabel": "Mostrar mi nombre como creador de esta ruta",
+    "showCreatorHint": "Si está activo, en la ruta pública se verá el grupo y también tu nombre como creador.",
     "step4Title": "4. Detalles Técnicos",
     "step4Desc": "Información adicional sobre la ruta (todos los campos son opcionales)",
     "distance": "Distancia (km)",
@@ -1109,5 +1118,98 @@
     "favorites": "Favoritos",
     "rating": "Rating",
     "video": "Video"
+  },
+  "groups": {
+    "loading": "Cargando grupos...",
+    "createGroup": "Crear grupo",
+    "create": "Crear grupo",
+    "cancel": "Cancelar",
+    "saving": "Guardando...",
+    "company": "Empresa",
+    "verified": "Verificado",
+    "follow": "Seguir",
+    "following": "Siguiendo",
+    "fallbackUser": "Usuario",
+    "emptyTitle": "Aún no perteneces a ningún grupo",
+    "emptyDesc": "Crea una comunidad para organizar rutas en equipo o registra una organización más formal.",
+    "page": {
+      "title": "Grupos",
+      "description": "Administra los grupos que creaste o donde participas."
+    },
+    "new": {
+      "title": "Crear grupo",
+      "description": "Crea una comunidad o registra una organización para asociar rutas."
+    },
+    "detail": {
+      "membersCount": "{count} {count, plural, one {miembro} other {miembros}}",
+      "routesCount": "{count} {count, plural, one {ruta} other {rutas}}",
+      "followersCount": "{count} {count, plural, one {seguidor} other {seguidores}}",
+      "manage": "Administrar",
+      "about": "Sobre el grupo",
+      "routesTitle": "Rutas del grupo",
+      "emptyRoutes": "Este grupo todavía no tiene rutas públicas asociadas.",
+      "data": "Datos",
+      "creator": "Creador",
+      "website": "Sitio web"
+    },
+    "types": {
+      "community": "Comunidad",
+      "company": "Empresa u organización"
+    },
+    "roles": {
+      "owner": "Creador",
+      "admin": "Administrador",
+      "organizer": "Organizador",
+      "member": "Miembro"
+    },
+    "verification": {
+      "none": "Sin verificación",
+      "pending": "Pendiente",
+      "verified": "Verificado",
+      "rejected": "Rechazado"
+    },
+    "form": {
+      "identityTitle": "Identidad del grupo",
+      "identityDesc": "Estos datos serán visibles en la página pública del grupo.",
+      "name": "Nombre",
+      "slug": "Nick público",
+      "slugHint": "Se usará en la URL pública del grupo.",
+      "slogan": "Eslogan",
+      "description": "Descripción",
+      "logo": "Logo opcional",
+      "typeTitle": "Tipo de grupo",
+      "typeDesc": "Una empresa puede solicitar verificación y mostrar un certificado en sus rutas.",
+      "legalName": "Razón social",
+      "taxId": "RUC o identificador fiscal",
+      "businessEmail": "Correo de empresa",
+      "businessPhone": "Teléfono de empresa",
+      "website": "Sitio web",
+      "address": "Dirección"
+    },
+    "settings": {
+      "pageTitle": "Administrar grupo",
+      "groupDataTitle": "Datos del grupo",
+      "groupDataDesc": "Actualiza la información pública del grupo.",
+      "type": "Tipo",
+      "companyData": "Datos de empresa",
+      "saveChanges": "Guardar cambios",
+      "savedInline": "Datos guardados correctamente.",
+      "savedToastTitle": "Datos guardados",
+      "savedToastDesc": "La información del grupo se actualizó correctamente.",
+      "updateError": "No se pudo actualizar el grupo.",
+      "membersTitle": "Miembros y roles",
+      "membersDesc": "Agrega miembros por correo o username y define sus permisos.",
+      "memberPlaceholder": "correo@ejemplo.com o username",
+      "addMember": "Agregar",
+      "memberSaved": "Miembro agregado o actualizado.",
+      "memberAddError": "No se pudo agregar el miembro.",
+      "viewPublicPage": "Ver página pública"
+    },
+    "errors": {
+      "required": "Completa el nombre y un nick válido para el grupo.",
+      "companyRequired": "Para registrar una empresa completa razón social, RUC/código fiscal y correo.",
+      "mustLogin": "Debes iniciar sesión para crear un grupo.",
+      "generic": "No se pudo completar la operación."
+    }
   }
 }
