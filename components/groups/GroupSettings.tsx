@@ -55,7 +55,7 @@ function initials(name: string) {
 
 export function GroupSettings({ locale, group }: GroupSettingsProps) {
   const t = useTranslations('groups');
-  const router = useRouter();
+  const { push, refresh } = useRouter();
   const supabase = useMemo(() => createClient(), []);
   const [name, setName] = useState(group.name);
   const [slogan, setSlogan] = useState(group.slogan || '');
@@ -73,9 +73,13 @@ export function GroupSettings({ locale, group }: GroupSettingsProps) {
   const [newRole, setNewRole] = useState<Exclude<GroupMemberRole, 'owner'>>('member');
   const [isSaving, setIsSaving] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState('');
+  const [routeCount, setRouteCount] = useState<number | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const savedMessage = t('settings.savedInline');
+  const isDeleteConfirmed = deleteConfirmation.trim() === group.name;
 
   const fetchMembers = useCallback(async () => {
     const { data, error: membersError } = await supabase
@@ -92,6 +96,21 @@ export function GroupSettings({ locale, group }: GroupSettingsProps) {
   useEffect(() => {
     fetchMembers();
   }, [fetchMembers]);
+
+  useEffect(() => {
+    async function fetchRouteCount() {
+      const { count, error: routesError } = await supabase
+        .from('routes')
+        .select('id', { count: 'exact', head: true })
+        .eq('group_id', group.id);
+
+      if (!routesError) {
+        setRouteCount(count ?? 0);
+      }
+    }
+
+    fetchRouteCount();
+  }, [group.id, supabase]);
 
   async function saveGroup() {
     setError(null);
@@ -130,7 +149,7 @@ export function GroupSettings({ locale, group }: GroupSettingsProps) {
         title: t('settings.savedToastTitle'),
         description: t('settings.savedToastDesc'),
       });
-      router.refresh();
+      refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : t('settings.updateError'));
     } finally {
@@ -190,6 +209,36 @@ export function GroupSettings({ locale, group }: GroupSettingsProps) {
     }
 
     await fetchMembers();
+  }
+
+  async function deleteGroup() {
+    setError(null);
+    setMessage(null);
+
+    if (!isDeleteConfirmed) {
+      setError(t('settings.deleteNameMismatch'));
+      return;
+    }
+
+    try {
+      setIsDeleting(true);
+      const { error: deleteError } = await supabase.rpc('delete_group_with_cleanup', {
+        p_group_id: group.id,
+        p_group_name_confirmation: deleteConfirmation,
+      });
+
+      if (deleteError) throw deleteError;
+
+      toast({
+        title: t('settings.deleteToastTitle'),
+        description: t('settings.deleteToastDesc'),
+      });
+      push(`/${locale}/groups`);
+      refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t('settings.deleteError'));
+      setIsDeleting(false);
+    }
   }
 
   return (
@@ -255,7 +304,7 @@ export function GroupSettings({ locale, group }: GroupSettingsProps) {
           {type === 'company' && (
             <div className="grid gap-4 rounded-xl border bg-muted/20 p-4 md:grid-cols-2">
               <div className="md:col-span-2 flex items-center gap-2">
-                <Building2 className="h-4 w-4 text-primary" />
+                <Building2 className="size-4 text-primary" />
                 <p className="text-sm font-medium">{t('settings.companyData')}</p>
                 <Badge variant="outline">{t(`verification.${group.verification_status}`)}</Badge>
               </div>
@@ -289,14 +338,14 @@ export function GroupSettings({ locale, group }: GroupSettingsProps) {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             {message === savedMessage ? (
               <div className="flex items-center gap-2 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-700">
-                <CheckCircle2 className="h-4 w-4" />
+                <CheckCircle2 className="size-4" />
                 <span>{message}</span>
               </div>
             ) : (
               <span />
             )}
             <Button onClick={saveGroup} disabled={isSaving} className="gap-2">
-              {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                {isSaving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
               {t('settings.saveChanges')}
             </Button>
           </div>
@@ -306,7 +355,7 @@ export function GroupSettings({ locale, group }: GroupSettingsProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-primary" />
+              <Users className="size-5 text-primary" />
             {t('settings.membersTitle')}
           </CardTitle>
           <CardDescription>{t('settings.membersDesc')}</CardDescription>
@@ -329,7 +378,7 @@ export function GroupSettings({ locale, group }: GroupSettingsProps) {
               </SelectContent>
             </Select>
             <Button type="submit" disabled={isAdding} className="gap-2">
-              {isAdding ? <Loader2 className="h-4 w-4 animate-spin" /> : <UserPlus className="h-4 w-4" />}
+              {isAdding ? <Loader2 className="size-4 animate-spin" /> : <UserPlus className="size-4" />}
               {t('settings.addMember')}
             </Button>
           </form>
@@ -374,7 +423,7 @@ export function GroupSettings({ locale, group }: GroupSettingsProps) {
                       onClick={() => removeMember(member.id)}
                       className="text-red-600 hover:text-red-700"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="size-4" />
                     </Button>
                   </div>
                 </div>
@@ -389,6 +438,48 @@ export function GroupSettings({ locale, group }: GroupSettingsProps) {
           <Link href={`/${locale}/groups/${group.slug}`}>{t('settings.viewPublicPage')}</Link>
         </Button>
       </div>
+
+      <Card className="border-destructive/30">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-destructive">
+            <Trash2 className="size-5" />
+            {t('settings.deleteTitle')}
+          </CardTitle>
+          <CardDescription>{t('settings.deleteDesc')}</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-sm text-destructive">
+            {t('settings.deleteImpact', {
+              members: members.length,
+              routes: routeCount ?? 0,
+            })}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="delete-group-confirmation">
+              {t('settings.deleteConfirmationLabel', { name: group.name })}
+            </Label>
+            <Input
+              id="delete-group-confirmation"
+              value={deleteConfirmation}
+              onChange={(event) => setDeleteConfirmation(event.target.value)}
+              disabled={isDeleting}
+              autoComplete="off"
+            />
+          </div>
+
+          <Button
+            type="button"
+            variant="destructive"
+            onClick={deleteGroup}
+            disabled={isDeleting || !isDeleteConfirmed}
+            className="gap-2"
+          >
+            {isDeleting ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
+            {t('settings.deleteButton')}
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }
