@@ -68,8 +68,16 @@ export default async function GroupDetailPage({
       <main className="flex-1 pt-20">
         <section className="relative border-b bg-muted/30">
           <div className="relative h-56 overflow-hidden bg-gradient-to-br from-emerald-950 via-slate-900 to-amber-900">
-            {group.cover_image_url && (
+            {group.cover_image_url ? (
               <Image src={group.cover_image_url} alt={group.name} fill className="object-cover opacity-80" sizes="100vw" />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center px-6">
+                <div className="absolute left-1/2 top-1/2 h-44 w-[min(720px,85vw)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-300/15 blur-3xl" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,rgba(255,255,255,0.18),transparent_28%),radial-gradient(circle_at_82%_22%,rgba(245,158,11,0.22),transparent_26%)]" />
+                <p className="relative max-w-4xl text-center text-4xl font-black tracking-normal text-white/90 drop-shadow-2xl sm:text-5xl md:text-6xl">
+                  {group.name}
+                </p>
+              </div>
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
           </div>
