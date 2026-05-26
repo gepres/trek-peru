@@ -14,6 +14,7 @@ Plataforma colaborativa multiusuario para compartir y organizar rutas de trekkin
 - ✅ Soporte multiidioma (Español/Inglés)
 - ✅ Autenticación segura con Supabase
 - ✅ Responsive design (móvil, tablet, desktop)
+- 📐 **"¿Cómo llegar?"** — editor manual de tramos de transporte (bus, avión, taxi, combi, etc.) por el creador, con sugerencias dinámicas de alternativas para el lector basadas en el corpus crowdsourced de la plataforma. Ver [`docs/features/how-to-get-there.md`](docs/features/how-to-get-there.md).
 
 ## 🛠️ Stack Tecnológico
 
@@ -137,6 +138,8 @@ La aplicación estará disponible en [http://localhost:3000](http://localhost:30
 - **attendees**: Participantes de rutas
 - **favorites**: Rutas favoritas
 - **comments**: Comentarios en rutas
+- **groups** / **group_members**: Grupos y miembros (comunidades / empresas)
+- **route_transport_segments** / **route_transport_options** *(planeada — feature "¿Cómo llegar?")*: tramos de transporte definidos por el creador y sus alternativas
 
 ### Funciones Importantes
 

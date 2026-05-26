@@ -108,10 +108,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // Páginas estáticas — lastModified basado en el último deploy.
-  // Para la homepage (path === ''), x-default apunta a la URL raíz neutral
-  // (el middleware rewrite sirve el locale correcto según Accept-Language).
+  // x-default siempre apunta a la versión /es (URL 200 OK).
+  // No usar `/` aquí: redirige 308 a /es y Google entonces elige una canónica distinta.
   const staticEntries: MetadataRoute.Sitemap = STATIC_PATHS.flatMap((path) => {
-    const xDefault = path === '' ? `${BASE_URL}/` : `${BASE_URL}/es${path}`;
+    const xDefault = `${BASE_URL}/es${path}`;
     return [
       {
         url: `${BASE_URL}/es${path}`,

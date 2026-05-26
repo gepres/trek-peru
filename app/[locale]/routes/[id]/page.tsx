@@ -96,7 +96,11 @@ export async function generateMetadata({
       images: route.featured_image ? [route.featured_image] : [],
     },
     alternates: {
-      canonical: `${baseUrl}/${locale}/routes/${id}`,
+      // Las rutas se almacenan solo en español en Supabase; la versión /en sirve
+      // exactamente el mismo contenido. Hasta que exista traducción real, la canónica
+      // de ambas variantes apunta a /es para que Google consolide señales sin marcar
+      // duplicado-sin-canonical.
+      canonical: `${baseUrl}/es/routes/${id}`,
       languages: {
         'es': `${baseUrl}/es/routes/${id}`,
         'en': `${baseUrl}/en/routes/${id}`,

@@ -44,7 +44,9 @@ export async function generateMetadata({
       languages: {
         es: `${BASE_URL}/es`,
         en: `${BASE_URL}/en`,
-        'x-default': `${BASE_URL}/`,
+        // x-default debe apuntar a una URL 200 OK, nunca a `/` (redirige 308 a /es).
+        // Una URL con redirección en hreflang hace que Google elija una canónica distinta.
+        'x-default': `${BASE_URL}/es`,
       },
     },
     openGraph: {

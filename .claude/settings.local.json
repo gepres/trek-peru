@@ -55,7 +55,12 @@
       "Bash(node -e \"JSON.parse\\(require\\(''fs''\\).readFileSync\\(''D:/PROYECTOS/gepres/trek/messages/es.json'',''utf8''\\)\\); console.log\\(''es.json: valid''\\)\")",
       "Bash(node -e \"JSON.parse\\(require\\(''fs''\\).readFileSync\\(''D:/PROYECTOS/gepres/trek/messages/en.json'',''utf8''\\)\\); console.log\\(''en.json: valid''\\)\")",
       "Bash(cd:*)",
-      "Bash(echo \"EXIT=$?\")"
+      "Bash(echo \"EXIT=$?\")",
+      "Bash(git -C \"D:\\\\PROYECTOS\\\\gepres\\\\trek\" diff --stat HEAD)",
+      "Bash(git -C \"D:\\\\PROYECTOS\\\\gepres\\\\trek\" status -s)",
+      "WebFetch(domain:7lagunasdeausangate.netlify.app)",
+      "WebFetch(domain:guileless-chebakia-ab0b76.netlify.app)",
+      "WebSearch"
     ]
   }
 }
