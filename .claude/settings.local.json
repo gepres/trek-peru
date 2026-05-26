@@ -60,7 +60,13 @@
       "Bash(git -C \"D:\\\\PROYECTOS\\\\gepres\\\\trek\" status -s)",
       "WebFetch(domain:7lagunasdeausangate.netlify.app)",
       "WebFetch(domain:guileless-chebakia-ab0b76.netlify.app)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('messages/es.json','utf8'\\)\\); console.log\\('OK es'\\)\")",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('messages/en.json','utf8'\\)\\); console.log\\('OK en'\\)\")",
+      "Bash(node -e \"const j = JSON.parse\\(require\\('fs'\\).readFileSync\\('messages/es.json','utf8'\\)\\); console.log\\(Object.keys\\(j\\)\\)\")",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\(JSON.stringify\\({deps: Object.keys\\(p.dependencies\\).filter\\(k=>k.includes\\('dnd'\\)||k.includes\\('anthropic'\\)||k.includes\\('openai'\\)\\), allDeps: Object.keys\\(p.dependencies\\).length}\\)\\)\")",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\(JSON.stringify\\(Object.fromEntries\\(Object.entries\\(p.dependencies\\).filter\\(\\([k]\\)=>k.includes\\('dnd'\\)||k.includes\\('anthropic'\\)\\)\\)\\)\\)\")",
+      "Bash(node -e \"const p = JSON.parse\\(require\\('fs'\\).readFileSync\\(0,'utf8'\\)\\); console.log\\(JSON.stringify\\(p.scripts, null, 2\\)\\)\")"
     ]
   }
 }

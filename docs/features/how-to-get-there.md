@@ -1,8 +1,8 @@
 # Feature: "¿Cómo llegar?" — Editor manual de tramos de transporte
 
-> **Estado:** 📐 Diseñado · pendiente de implementación
+> **Estado:** ✅ Fase 1 implementada — pendiente de aplicar migración SQL en Supabase
 > **Owner:** GEPRES Team
-> **Fase MVP:** Manual-First (Fase 1 de 3)
+> **Fase MVP:** Manual-First + crowdsourced (Fase 1 de 3 completada)
 > **Ubicación UI:** Nuevo tab en `app/[locale]/routes/[id]/page.tsx`
 
 ---
@@ -54,9 +54,10 @@ Cuando el corpus tiene <2 alternativas para un tramo, llamar a Claude/GPT con pr
 
 Cachear la respuesta por hash `normalize(from)+normalize(to)` por 30 días en una tabla `transport_ai_cache` para no pagar el mismo prompt dos veces.
 
-### 🔜 Fase 3 — Rome2Rio + Mapbox enriquecimiento
-- **Rome2Rio:** sólo para tramos interurbanos grandes (Lima → Cusco, Cusco → Arequipa). Marcar resultados como "🔗 powered by Rome2Rio".
-- **Mapbox Directions:** auto-cálculo del último tramo `driving`/`walking` desde el `to_coordinates` del último segmento hasta `routes.meeting_point`.
+### ✅ Fase 3 — Mapbox enriquecimiento + Rome2Rio stub
+- **Mapbox Geocoding** ([`lib/mapbox/geocoding.ts`](../../lib/mapbox/geocoding.ts)): autocompletar `from_label`/`to_label` con sugerencias geocodificadas + coordenadas. Mejora calidad del corpus para sugerencias crowdsourced y habilita el tramo final.
+- **Mapbox Directions** ([`lib/mapbox/directions.ts`](../../lib/mapbox/directions.ts)): auto-cálculo del último tramo `driving`/`walking` desde el `to_coordinates` del último segmento hasta `routes.meeting_point`. Render como bloque azul "Tramo final automático · Mapbox".
+- **Rome2Rio:** stub creado en [`infrastructure/external/rome2rio.client.ts`](../../infrastructure/external/rome2rio.client.ts). **Activación pendiente** de aprobación al [Rome2Rio Partner Program](https://www.rome2rio.com/business) (no es self-service). Cuando se tenga la key, reemplazar el stub e integrar en `useTransportAlternatives` con `source='rome2rio'`.
 
 ---
 
@@ -479,25 +480,88 @@ Agregar a `messages/es.json` y `messages/en.json` bajo `routeDetail.howToGetTher
 
 ## 7. SEO
 
-Marcar cada segmento como `TouristTrip` → `subTrip` con `TaxiReservation` / `BusTrip` / `Flight` en el JSON-LD existente (`components/seo/RouteJsonLd.tsx`). Mejora citación en Google y AI Overviews.
+`components/seo/TransportJsonLd.tsx` es un **server component** que carga los segmentos vía Supabase y emite un `@graph` con un nodo por cada opción de transporte. Cada opción usa el tipo Schema.org más específico disponible:
+
+| Modo | Schema.org type | Endpoints |
+|---|---|---|
+| `bus`, `combi`, `colectivo` | `BusTrip` | `departureBusStop` / `arrivalBusStop` (BusStation) |
+| `plane` | `Flight` | `departureAirport` / `arrivalAirport` (Airport), `airline` |
+| `train` | `TrainTrip` | `departureStation` / `arrivalStation` (TrainStation) |
+| `boat` | `BoatTrip` | `departureBoatTerminal` / `arrivalBoatTerminal` (BoatTerminal) |
+| `taxi`, `car`, `motorcycle`, `walk`, `bike`, `other` | `Trip` (genérico) | `itinerary` con dos `Place` |
+
+Cada nodo lleva:
+- `partOfTrip` apuntando al `@id` del `TouristTrip` principal (emitido por `RouteJsonLd`).
+- `provider` (Organization) o `airline` (Airline) cuando hay operador.
+- `departureTime` / `arrivalTime` en ISO 8601 cuando la opción tiene `time_mode = exact` formato `HH:MM` y la ruta tiene `departure_date`.
+- `offers` como `Offer` (precio único) o `AggregateOffer` (`lowPrice` / `highPrice` cuando hay rango).
+- `disambiguatingDescription` con las notas del creador y `url` con `booking_url` si existe.
+
+Este enriquecimiento permite que Google reconozca cada tramo como un trayecto real, mejorando la elegibilidad para rich results de viaje y la citación en AI Overviews. La carga server-side garantiza que el JSON-LD esté en el HTML inicial (los crawlers no esperan a JavaScript).
 
 ---
 
-## 8. Plan de implementación (estimado)
+## 8. Plan de implementación
 
-| Sprint | Tarea | Archivos | Esfuerzo |
+| Sprint | Tarea | Archivos | Estado |
 |---|---|---|---|
-| 1 | Migración SQL (tablas + normalización + RLS) | `supabase/migrations/017_transport_segments.sql` | S |
-| 1 | Tipos + dominio + infraestructura | `types/transport.types.ts`, `domain/transport/*`, `infrastructure/supabase/transport.repository.ts` | M |
-| 1 | Use-cases CRUD + hooks | `application/transport/*`, `presentation/hooks/useTransport*.ts` | M |
-| 1 | Editor manual (creador) drag-and-drop con `@dnd-kit` | `components/routes/transport/TransportEditor.tsx` + formularios | L |
-| 1 | Vista pública estática (sin sugerencias) | `components/routes/transport/HowToGetThere.tsx`, modificar `app/[locale]/routes/[id]/page.tsx` | M |
-| 1 | i18n completo (ES/EN) | `messages/*.json` | S |
-| 2 | **Flujo dinámico — corpus crowdsourced** (`suggest-alternatives` + bloque "Otras alternativas") | `application/transport/suggest-alternatives.usecase.ts`, `infrastructure/supabase/transport.repository.ts`, `components/routes/transport/AlternativesPanel.tsx` | M |
-| 2 | JSON-LD enriquecido (BusTrip, Flight, TaxiReservation) | `components/seo/RouteJsonLd.tsx` | S |
-| 3 (futuro) | Asistente IA en runtime + cache | `app/api/transport/ai-suggest/route.ts`, migración `transport_ai_cache` | M |
-| 3 (futuro) | Rome2Rio para tramos interurbanos | `infrastructure/external/rome2rio.client.ts` | M |
-| 3 (futuro) | Mapbox tramo final | `application/transport/auto-final-leg.usecase.ts` | M |
+| 1 | Migración SQL (tablas + normalización + RLS + función agregada) | `supabase/migrations/017_transport_segments.sql` | ✅ |
+| 1 | Tipos | `types/transport.types.ts` | ✅ |
+| 1 | Dominio (interface) | `domain/transport/transport.repository.interface.ts` | ✅ |
+| 1 | Infrastructure (Supabase repo) | `infrastructure/supabase/transport.repository.ts` | ✅ |
+| 1 | Use-cases CRUD + suggest-alternatives | `application/transport/*` | ✅ |
+| 1 | Validaciones Zod | `lib/validations/transport.schema.ts` | ✅ |
+| 1 | Hooks de presentation | `presentation/hooks/useTransport{Segments,Editor,Alternatives}.ts` | ✅ |
+| 1 | Editor manual (creador) con reordenar por botones ↑↓ | `components/routes/transport/TransportEditor.tsx` + forms | ✅ |
+| 1 | Vista pública con flujo dinámico de alternativas crowdsourced | `components/routes/transport/HowToGetThere.tsx`, `TransportSegmentCard.tsx`, `AlternativesPanel.tsx`, `AlternativeBadgeCard.tsx` | ✅ |
+| 1 | Wrapper que alterna vista/editor según rol | `components/routes/transport/HowToGetThereTab.tsx` | ✅ |
+| 1 | Tab "Cómo llegar" en la página de detalle | `app/[locale]/routes/[id]/page.tsx` | ✅ |
+| 1 | i18n completo (ES/EN) | `messages/es.json`, `messages/en.json` | ✅ |
+| 2 | Drag-and-drop con `@dnd-kit/sortable` (KeyboardSensor + PointerSensor) | `components/routes/transport/TransportEditor.tsx` | ✅ |
+| 2 | JSON-LD enriquecido (BusTrip, Flight, TrainTrip, BoatTrip, Trip + AggregateOffer) | `components/seo/TransportJsonLd.tsx` + integración en `app/[locale]/routes/[id]/page.tsx` | ✅ |
+| 2 | Asistente IA en runtime + cache 30d | `supabase/migrations/018_transport_ai_cache.sql`, `app/api/transport/ai-suggest/route.ts`, integración en `useTransportAlternatives` | ✅ |
+| 3 | Mapbox Geocoding (autocomplete `from`/`to` con coordenadas) | `lib/mapbox/geocoding.ts`, `components/routes/transport/LocationAutocomplete.tsx`, integración en `TransportSegmentForm` | ✅ |
+| 3 | Mapbox tramo final (auto driving/walking hasta `meeting_point`) | `lib/mapbox/directions.ts`, `presentation/hooks/useFinalLegDirection.ts`, `components/routes/transport/FinalLegSuggestion.tsx`, integración en `HowToGetThere` | ✅ |
+| 3 (stub) | Rome2Rio cliente — pendiente partnership | `infrastructure/external/rome2rio.client.ts` | 📝 |
+| 4 | Mini-mapa del tramo final con `mapbox-gl` (polyline + markers + fit bounds) | `components/routes/transport/FinalLegMap.tsx`, geometry en `useFinalLegDirection` | ✅ |
+| 4 | Cron semanal `cleanup_expired_ai_cache()` con `pg_cron` (domingo 03:00 UTC) | `supabase/migrations/019_schedule_ai_cache_cleanup.sql` | ✅ |
+| 4 | Geocoding inverso (`geocodeReverse`) | `lib/mapbox/geocoding.ts` | ✅ |
+| 4 (manual) | Aplicar al [Rome2Rio Partner Program](https://www.rome2rio.com/business) | acción humana — pendiente | ⏳ |
+
+### Aplicar migración Fase 2
+
+```bash
+# desde el repo:
+supabase db push   # aplica 018_transport_ai_cache.sql + 019_schedule_ai_cache_cleanup.sql
+```
+
+O pegar los SQL en el SQL Editor.
+
+> **Nota sobre `pg_cron`:** en proyectos Supabase nuevos viene preinstalado. En planos antiguos hay que habilitarlo desde Dashboard → Database → Extensions → `pg_cron` antes de aplicar la migración 019.
+
+### Variables de entorno opcionales (asistente IA)
+
+```env
+ANTHROPIC_API_KEY=sk-ant-...          # sin esto, el flujo IA se omite gracilmente
+SUPABASE_SERVICE_ROLE_KEY=eyJ...      # requerido para escribir cache; sin esto, cada llamada paga al LLM
+```
+
+### Comportamiento del flujo IA
+
+1. El hook `useTransportAlternatives` consulta el corpus crowdsourced vía RPC.
+2. Si el corpus tiene **menos de 2** alternativas, llama a `POST /api/transport/ai-suggest`.
+3. El endpoint busca primero en `transport_ai_cache` (clave SHA-256 de `from_norm + '→' + to_norm`). Si hit válido → respuesta inmediata.
+4. Si miss, llama a Claude Haiku (`claude-haiku-4-5-20251001`) con prompt curado que pide JSON estricto (1-4 alternativas realistas), sanitiza la respuesta y la persiste con TTL 30 días.
+5. El hook dedupea por `mode + currency` (creador > comunidad > IA) y mergea sin duplicar modos.
+6. La UI muestra cada sugerencia con su badge de fuente (`👥 comunidad`, `🤖 IA estimado`).
+
+### Aplicar la migración
+
+Antes de probar en local/producción, aplicar `supabase/migrations/017_transport_segments.sql`:
+- **Supabase CLI:** `supabase db push`
+- **Dashboard:** copiar/pegar el SQL en SQL Editor y ejecutar.
+
+Requiere la extensión `unaccent` (la migración la crea si no existe).
 
 ---
 

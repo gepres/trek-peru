@@ -25,7 +25,9 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { RouteJsonLd } from '@/components/seo/RouteJsonLd';
+import { TransportJsonLd } from '@/components/seo/TransportJsonLd';
 import { CommentsSection } from '@/components/comments';
+import { HowToGetThereTab } from '@/components/routes/transport';
 
 // Generar metadata dinámica para SEO
 export async function generateMetadata({
@@ -199,6 +201,11 @@ export default async function RouteDetailPage({
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <RouteJsonLd route={route} locale={locale} />
+      <TransportJsonLd
+        routeId={route.id}
+        routeUrl={`${process.env.NEXT_PUBLIC_APP_URL ?? 'https://www.trek-peru.com'}/${locale}/routes/${route.slug}`}
+        departureBaseDate={route.departure_date ?? undefined}
+      />
       <Header locale={locale} />
 
       <main className="flex-1">
@@ -336,6 +343,7 @@ export default async function RouteDetailPage({
                   {route.daily_itinerary && route.daily_itinerary.length > 0 && (
                     <TabsTrigger value="itinerary" className="flex-1 sm:flex-none">{t('tabs.itinerary')}</TabsTrigger>
                   )}
+                  <TabsTrigger value="howToGetThere" className="flex-1 sm:flex-none">{t('tabs.howToGetThere')}</TabsTrigger>
                 </TabsList>
 
                 {/* Tab: Información */}
@@ -712,6 +720,15 @@ export default async function RouteDetailPage({
                     )}
                   </TabsContent>
                 )}
+
+                {/* Tab: ¿Cómo llegar? */}
+                <TabsContent value="howToGetThere" className="mt-6">
+                  <HowToGetThereTab
+                    routeId={route.id}
+                    isCreator={isCreator}
+                    meetingPoint={route.meeting_point ?? undefined}
+                  />
+                </TabsContent>
 
                 {/* Tab: Itinerario */}
                 {route.daily_itinerary && route.daily_itinerary.length > 0 && (

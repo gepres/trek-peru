@@ -13,3 +13,6 @@ export type { CommentRepository, CommentCreateData, CommentUpdateData } from './
 
 export { createFavoriteRepository } from './favorite.repository';
 export type { FavoriteRepository } from './favorite.repository';
+
+export { createTransportRepository } from './transport.repository';
+export type { TransportRepository } from './transport.repository';

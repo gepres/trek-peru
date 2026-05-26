@@ -4,3 +4,4 @@ export type { IUserRepository } from './user/user.repository.interface';
 export type { IAttendeeRepository } from './attendee/attendee.repository.interface';
 export type { ICommentRepository } from './comment/comment.repository.interface';
 export type { IFavoriteRepository } from './favorite/favorite.repository.interface';
+export type { ITransportRepository } from './transport/transport.repository.interface';
