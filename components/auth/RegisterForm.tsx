@@ -139,14 +139,6 @@ export function RegisterForm({ locale }: RegisterFormProps) {
             </li>
           </ul>
         </div>
-
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={() => setRegisteredEmail(null)}
-        >
-          {t('backToRegister')}
-        </Button>
       </div>
     );
   }

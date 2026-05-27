@@ -81,7 +81,6 @@
     "checkSpam": "spam o correo no deseado",
     "linkExpires": "El enlace expira en 24 horas",
     "verifyEmailCorrect": "Verifica que el correo sea correcto",
-    "backToRegister": "Volver al registro",
     "backToLogin": "Volver al inicio de sesión",
     "sendResetLink": "Enviar enlace de recuperación",
     "resetLinkSent": "Enlace enviado",

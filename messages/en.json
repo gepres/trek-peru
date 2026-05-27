@@ -80,7 +80,6 @@
     "checkSpam": "spam or junk mail",
     "linkExpires": "The link expires in 24 hours",
     "verifyEmailCorrect": "Verify the email is correct",
-    "backToRegister": "Back to register",
     "backToLogin": "Back to login",
     "sendResetLink": "Send reset link",
     "resetLinkSent": "Link sent",
